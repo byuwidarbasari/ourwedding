@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Royal Wedding - PWA OFFLINE</title>
+<title>The Royal Wedding - PWA OFFLINE + HFS</title>
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <!-- Theme color untuk browser -->
@@ -65,6 +65,7 @@ body {
 [data-icon="spinner"]:before { content: "⟳"; animation: spin 1s infinite linear; display: inline-block; }
 [data-icon="fullscreen"]:before { content: "⛶"; }
 [data-icon="fullscreen-exit"]:before { content: "✕"; }
+[data-icon="hfs"]:before { content: "🌐"; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* ===== BACKGROUND EFFECTS ===== */
@@ -79,7 +80,6 @@ body {
   overflow: hidden;
 }
 
-/* Efek Hujan */
 .rain-effect {
   position: absolute;
   top: 0;
@@ -106,7 +106,6 @@ body {
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
-/* Efek Salju */
 .snow-effect {
   position: absolute;
   top: 0;
@@ -136,7 +135,6 @@ body {
   100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
 
-/* Efek Bunga Sakura */
 .sakura-effect {
   position: absolute;
   top: 0;
@@ -167,7 +165,6 @@ body {
   100% { transform: translateY(100vh) translateX(50px) rotate(720deg); opacity: 0; }
 }
 
-/* Efek Campuran */
 .mixed-effect {
   position: absolute;
   top: 0;
@@ -253,7 +250,6 @@ body {
   z-index: 1;
 }
 
-/* Animasi untuk gambar - BASE CLASS */
 .main {
   max-width: 100%;
   max-height: 100%;
@@ -270,20 +266,24 @@ body {
   transform-origin: center center;
 }
 
-/* ANIMASI 1: Zoom In Halus */
-.anim-zoom-in {
-  animation-name: zoomInSmooth;
-}
+/* ANIMASI SLIDE (lengkap) */
+.anim-zoom-in { animation-name: zoomInSmooth; }
+.anim-zoom-out { animation-name: zoomOutDramatic; }
+.anim-shatter { animation-name: shatterRealistic; }
+.anim-from-all { animation-name: fromAllDirectionsSmooth; }
+.anim-slide-left { animation-name: slideFromLeft; }
+.anim-slide-right { animation-name: slideFromRight; }
+.anim-slide-top { animation-name: slideFromTop; }
+.anim-slide-bottom { animation-name: slideFromBottom; }
+.anim-fade-rotate { animation-name: fadeRotate; }
+.anim-blur-in { animation-name: blurIn; }
+.anim-bounce { animation-name: bounceIn; }
+.anim-flip { animation-name: flipIn; }
 
 @keyframes zoomInSmooth {
   0% { transform: scale(0.7); opacity: 0; filter: blur(10px); }
   30% { opacity: 1; filter: blur(0); }
   100% { transform: scale(1); }
-}
-
-/* ANIMASI 2: Zoom Out Dramatis */
-.anim-zoom-out {
-  animation-name: zoomOutDramatic;
 }
 
 @keyframes zoomOutDramatic {
@@ -292,76 +292,21 @@ body {
   100% { transform: scale(1); }
 }
 
-/* ANIMASI 3: Pecah Seribu (Shatter) - REALISTIK */
-.anim-shatter {
-  animation-name: shatterRealistic;
-}
-
 @keyframes shatterRealistic {
-  0% { 
-    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
-    opacity: 0;
-    transform: scale(2);
-  }
-  20% { 
-    clip-path: polygon(30% 30%, 70% 20%, 80% 50%, 70% 80%, 30% 80%, 20% 50%, 30% 30%, 50% 50%);
-    opacity: 0.3;
-  }
-  40% { 
-    clip-path: polygon(20% 20%, 80% 10%, 90% 40%, 85% 70%, 60% 90%, 15% 70%, 10% 40%, 20% 20%);
-    opacity: 0.6;
-  }
-  60% { 
-    clip-path: polygon(10% 10%, 90% 5%, 95% 30%, 92% 60%, 70% 95%, 8% 80%, 5% 30%, 10% 10%);
-    opacity: 0.8;
-  }
-  80% { 
-    clip-path: polygon(5% 5%, 95% 2%, 98% 20%, 96% 50%, 85% 98%, 3% 90%, 2% 20%, 5% 5%);
-    opacity: 0.9;
-  }
-  100% { 
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%);
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* ANIMASI 4: Dari Segala Arah - Lebih Halus */
-.anim-from-all {
-  animation-name: fromAllDirectionsSmooth;
+  0% { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%); opacity: 0; transform: scale(2); }
+  20% { clip-path: polygon(30% 30%, 70% 20%, 80% 50%, 70% 80%, 30% 80%, 20% 50%, 30% 30%, 50% 50%); opacity: 0.3; }
+  40% { clip-path: polygon(20% 20%, 80% 10%, 90% 40%, 85% 70%, 60% 90%, 15% 70%, 10% 40%, 20% 20%); opacity: 0.6; }
+  60% { clip-path: polygon(10% 10%, 90% 5%, 95% 30%, 92% 60%, 70% 95%, 8% 80%, 5% 30%, 10% 10%); opacity: 0.8; }
+  80% { clip-path: polygon(5% 5%, 95% 2%, 98% 20%, 96% 50%, 85% 98%, 3% 90%, 2% 20%, 5% 5%); opacity: 0.9; }
+  100% { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%); opacity: 1; transform: scale(1); }
 }
 
 @keyframes fromAllDirectionsSmooth {
-  0% { 
-    clip-path: inset(50% 50% 50% 50%);
-    opacity: 0;
-    transform: scale(3) rotate(-10deg);
-  }
-  25% { 
-    clip-path: inset(30% 30% 30% 30%);
-    opacity: 0.3;
-    transform: scale(2) rotate(-5deg);
-  }
-  50% { 
-    clip-path: inset(15% 15% 15% 15%);
-    opacity: 0.6;
-    transform: scale(1.5) rotate(0deg);
-  }
-  75% { 
-    clip-path: inset(5% 5% 5% 5%);
-    opacity: 0.8;
-    transform: scale(1.2) rotate(2deg);
-  }
-  100% { 
-    clip-path: inset(0% 0% 0% 0%);
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-/* ANIMASI 5: Slide dari Kiri */
-.anim-slide-left {
-  animation-name: slideFromLeft;
+  0% { clip-path: inset(50% 50% 50% 50%); opacity: 0; transform: scale(3) rotate(-10deg); }
+  25% { clip-path: inset(30% 30% 30% 30%); opacity: 0.3; transform: scale(2) rotate(-5deg); }
+  50% { clip-path: inset(15% 15% 15% 15%); opacity: 0.6; transform: scale(1.5) rotate(0deg); }
+  75% { clip-path: inset(5% 5% 5% 5%); opacity: 0.8; transform: scale(1.2) rotate(2deg); }
+  100% { clip-path: inset(0% 0% 0% 0%); opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
 @keyframes slideFromLeft {
@@ -370,20 +315,10 @@ body {
   100% { transform: translateX(0) scale(1); }
 }
 
-/* ANIMASI 6: Slide dari Kanan */
-.anim-slide-right {
-  animation-name: slideFromRight;
-}
-
 @keyframes slideFromRight {
   0% { transform: translateX(100%) scale(0.8); opacity: 0; }
   40% { opacity: 1; transform: translateX(-5%) scale(1); }
   100% { transform: translateX(0) scale(1); }
-}
-
-/* ANIMASI 7: Slide dari Atas */
-.anim-slide-top {
-  animation-name: slideFromTop;
 }
 
 @keyframes slideFromTop {
@@ -392,20 +327,10 @@ body {
   100% { transform: translateY(0) scale(1); }
 }
 
-/* ANIMASI 8: Slide dari Bawah */
-.anim-slide-bottom {
-  animation-name: slideFromBottom;
-}
-
 @keyframes slideFromBottom {
   0% { transform: translateY(100%) scale(0.8); opacity: 0; }
   40% { opacity: 1; transform: translateY(-5%) scale(1); }
   100% { transform: translateY(0) scale(1); }
-}
-
-/* ANIMASI 9: Fade dengan Rotasi */
-.anim-fade-rotate {
-  animation-name: fadeRotate;
 }
 
 @keyframes fadeRotate {
@@ -414,20 +339,10 @@ body {
   100% { opacity: 1; transform: rotate(0) scale(1); }
 }
 
-/* ANIMASI 10: Efek Blur Masuk */
-.anim-blur-in {
-  animation-name: blurIn;
-}
-
 @keyframes blurIn {
   0% { filter: blur(20px); opacity: 0; transform: scale(1.2); }
   50% { filter: blur(5px); opacity: 0.7; }
   100% { filter: blur(0); opacity: 1; transform: scale(1); }
-}
-
-/* ANIMASI 11: Efek Bounce */
-.anim-bounce {
-  animation-name: bounceIn;
 }
 
 @keyframes bounceIn {
@@ -438,22 +353,11 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ANIMASI 12: Efek Flip */
-.anim-flip {
-  animation-name: flipIn;
-  transform-style: preserve-3d;
-}
-
 @keyframes flipIn {
   0% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
   40% { transform: perspective(400px) rotateY(-10deg); opacity: 0.8; }
   70% { transform: perspective(400px) rotateY(5deg); }
   100% { transform: perspective(400px) rotateY(0); opacity: 1; }
-}
-
-/* Daftar semua animasi yang tersedia */
-.animation-list {
-  display: none;
 }
 
 /* ===== OM SWASTYASTU ===== */
@@ -510,10 +414,7 @@ body {
 }
 
 .datetime-premium.hide { opacity: 0; }
-
-.datetime-premium.datetime-hidden-pos {
-  bottom: var(--date-bottom-pos-hidden);
-}
+.datetime-premium.datetime-hidden-pos { bottom: var(--date-bottom-pos-hidden); }
 
 .datetime-premium .day {
   font-size: clamp(10px, 2vw, 14px);
@@ -544,7 +445,7 @@ body {
   border-radius: 15px;
 }
 
-/* ===== BOTTOM BAR ===== */
+/* ===== BOTTOM BAR - TAMBAH TOMBOL HFS ===== */
 .bottom-bar {
   position: absolute;
   bottom: var(--running-height);
@@ -594,25 +495,17 @@ body {
   box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
 }
 
-.settings-btn {
-  order: 1;
+.settings-btn { order: 1; }
+
+/* Tombol HFS baru */
+.hfs-btn {
+  order: 0;
 }
 
-.folder-input input[type="file"] {
-  display: none;
-}
-
-.audio-control button {
-  font-size: 0;
-}
-
-.audio-control button span[data-icon] {
-  font-size: clamp(14px, 2.5vw, 18px);
-}
-
-.audio-control button span#audioBtnText {
-  display: none;
-}
+.folder-input input[type="file"] { display: none; }
+.audio-control button { font-size: 0; }
+.audio-control button span[data-icon] { font-size: clamp(14px, 2.5vw, 18px); }
+.audio-control button span#audioBtnText { display: none; }
 
 /* ===== RUNNING TEXT ===== */
 .running-box {
@@ -630,10 +523,7 @@ body {
   transition: opacity 0.5s ease;
 }
 
-.running-box.hide-by-settings { 
-  opacity: 0; 
-  pointer-events: none;
-}
+.running-box.hide-by-settings { opacity: 0; pointer-events: none; }
 
 .running-content {
   position: relative;
@@ -744,6 +634,7 @@ body {
 
 .empty-state.hide { opacity: 0; pointer-events: none; }
 .empty-state span[data-icon="folder"] { font-size: 80px; color: var(--gold); margin-bottom: 20px; display: block; text-shadow: 0 0 30px rgba(197, 160, 89, 0.5); }
+.empty-state span[data-icon="hfs"] { font-size: 80px; color: var(--gold); margin-bottom: 20px; display: block; text-shadow: 0 0 30px rgba(197, 160, 89, 0.5); }
 .empty-state h2 { font-family: 'Times New Roman', serif; font-size: 32px; color: var(--gold); }
 
 /* ===== SETTINGS PANEL ===== */
@@ -766,10 +657,7 @@ body {
   border-radius: 20px;
 }
 
-.settings-panel.hide {
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
+.settings-panel.hide { opacity: 0 !important; pointer-events: none !important; }
 
 .settings-panel h3 {
   font-family: 'Times New Roman', serif;
@@ -1003,9 +891,7 @@ body {
   box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
 }
 
-.install-btn.hide {
-  display: none;
-}
+.install-btn.hide { display: none; }
 
 /* Online indicator */
 .online-indicator {
@@ -1056,6 +942,7 @@ body {
       <span data-icon="folder"></span>
       <h2>SELECT FOLDER</h2>
       <p>Klik ikon folder di bawah untuk memulai</p>
+      <p style="margin-top: 20px; font-size: 14px; color: var(--gold-light);">Atau gunakan 🌐 untuk mode HFS (HTTP File Server)</p>
     </div>
   </div>
   
@@ -1077,7 +964,7 @@ body {
     </div>
   </div>
 
-  <!-- BOTTOM BAR -->
+  <!-- BOTTOM BAR - TAMBAH TOMBOL HFS -->
   <div class="bottom-bar" id="bottomBar">
     <button onclick="prevSlide()" title="Previous" id="prevBtn"><span data-icon="prev"></span></button>
     <button onclick="togglePlay()" id="playBtn" title="Play/Pause"><span data-icon="pause"></span></button>
@@ -1089,6 +976,11 @@ body {
         <span id="audioBtnText">Play MP3</span>
       </button>
     </div>
+    
+    <!-- Tombol HFS BARU -->
+    <button class="hfs-btn" id="hfsBtn" title="Load dari HFS (HTTP File Server)" onclick="loadFromHFS()">
+      <span data-icon="hfs">🌐</span>
+    </button>
     
     <label class="folder-input" id="folderWrapper" title="Select Folder">
       <span data-icon="folder"></span>
@@ -1113,9 +1005,23 @@ body {
     <span data-icon="folder"></span> <span id="folderInfoText">KLIK SELECT FOLDER</span>
   </div>
   
-  <!-- SETTINGS PANEL -->
+  <!-- SETTINGS PANEL (lengkap seperti sebelumnya) -->
   <div class="settings-panel hide" id="settingsPanel">
     <h3><span data-icon="settings"></span> PENGATURAN OFFLINE</h3>
+    
+    <div class="settings-section">
+      <h4>🌐 HFS (HTTP FILE SERVER)</h4>
+      <div class="setting-item">
+        <span class="setting-label">IP Address Laptop</span>
+        <input type="text" class="setting-textarea" id="hfsIpInput" value="192.168.1.5" style="height: 40px;">
+        <small style="color: var(--gold-light); display: block; margin-top: 5px;">Cek IP dengan cmd → ipconfig</small>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Port HFS</span>
+        <input type="text" class="setting-textarea" id="hfsPortInput" value="80" style="height: 40px;">
+      </div>
+      <button class="settings-btn-small" id="testHfsBtn" style="width:100%;">🔄 Test Koneksi HFS</button>
+    </div>
     
     <div class="settings-section">
       <h4>🌸 BACKGROUND EFFECT</h4>
@@ -1580,24 +1486,15 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   let hideTimer;
 
   // Animasi slide
-  let slideMode = 'random-all'; // Default random semua animasi
+  let slideMode = 'random-all';
   let fixedAnimation = 'anim-zoom-in';
   let animationDuration = 8;
   
-  // Daftar semua animasi yang tersedia (12 animasi)
+  // Daftar semua animasi
   const allAnimations = [
-    'anim-zoom-in',
-    'anim-zoom-out',
-    'anim-shatter',
-    'anim-from-all',
-    'anim-slide-left',
-    'anim-slide-right',
-    'anim-slide-top',
-    'anim-slide-bottom',
-    'anim-fade-rotate',
-    'anim-blur-in',
-    'anim-bounce',
-    'anim-flip'
+    'anim-zoom-in', 'anim-zoom-out', 'anim-shatter', 'anim-from-all',
+    'anim-slide-left', 'anim-slide-right', 'anim-slide-top', 'anim-slide-bottom',
+    'anim-fade-rotate', 'anim-blur-in', 'anim-bounce', 'anim-flip'
   ];
   
   // Untuk cycle animations
@@ -1639,6 +1536,8 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   const settingsPanel = document.getElementById('settingsPanel');
   const audioPlaylist = document.getElementById('audioPlaylist');
   const fontPreview = document.getElementById('fontPreview');
+  const hfsIpInput = document.getElementById('hfsIpInput');
+  const hfsPortInput = document.getElementById('hfsPortInput');
   
   const logoLeft = document.getElementById('logoLeft');
   const logoRight = document.getElementById('logoRight');
@@ -1658,21 +1557,16 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
     omTitle.classList.add("hide");
     folderInfo.classList.add("hide");
     bottomBar.classList.add("hide");
-    
     datetime.classList.add("datetime-hidden-pos");
   }
 
   function showControls() {
     if (!autoHideEnabled) return;
-    
     clearTimeout(hideTimer);
-    
     omTitle.classList.remove("hide");
     folderInfo.classList.remove("hide");
     bottomBar.classList.remove("hide");
-    
     datetime.classList.remove("datetime-hidden-pos");
-    
     hideTimer = setTimeout(hideControls, hideDelay * 1000);
   }
 
@@ -1698,52 +1592,36 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   function getNextAnimation() {
     switch(slideMode) {
       case 'random-all':
-        // Random dari semua 12 animasi
         return allAnimations[Math.floor(Math.random() * allAnimations.length)];
-        
       case 'cycle-3':
-        // Cycle 3 animasi bergantian
         if (cycleAnimations.length !== 3) {
-          // Ambil 3 animasi random
           cycleAnimations = [];
           const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 3; i++) {
-            cycleAnimations.push(shuffled[i]);
-          }
+          for (let i = 0; i < 3; i++) cycleAnimations.push(shuffled[i]);
         }
         const anim3 = cycleAnimations[cycleIndex % 3];
         cycleIndex++;
         return anim3;
-        
       case 'cycle-5':
-        // Cycle 5 animasi bergantian
         if (cycleAnimations.length !== 5) {
           cycleAnimations = [];
           const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 5; i++) {
-            cycleAnimations.push(shuffled[i]);
-          }
+          for (let i = 0; i < 5; i++) cycleAnimations.push(shuffled[i]);
         }
         const anim5 = cycleAnimations[cycleIndex % 5];
         cycleIndex++;
         return anim5;
-        
       case 'cycle-7':
-        // Cycle 7 animasi bergantian
         if (cycleAnimations.length !== 7) {
           cycleAnimations = [];
           const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 7; i++) {
-            cycleAnimations.push(shuffled[i]);
-          }
+          for (let i = 0; i < 7; i++) cycleAnimations.push(shuffled[i]);
         }
         const anim7 = cycleAnimations[cycleIndex % 7];
         cycleIndex++;
         return anim7;
-        
       case 'fixed':
         return fixedAnimation;
-        
       default:
         return allAnimations[Math.floor(Math.random() * allAnimations.length)];
     }
@@ -1752,23 +1630,130 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   function applyAnimationToSlide(slideElement) {
     const img = slideElement.querySelector('.main');
     if (!img) return;
-    
-    // Hapus semua class animasi
-    allAnimations.forEach(animClass => {
-      img.classList.remove(animClass);
-    });
-    
-    // Dapatkan animasi berikutnya
+    allAnimations.forEach(animClass => img.classList.remove(animClass));
     const animClass = getNextAnimation();
-    
-    // Tambahkan class animasi
     img.classList.add(animClass);
-    
-    // Set durasi animasi
     img.style.animationDuration = animationDuration + 's';
-    
-    console.log('Menerapkan animasi:', animClass, 'durasi:', animationDuration + 's');
   }
+
+  // ===== FUNGSI HFS (BARU) =====
+  window.loadFromHFS = async function() {
+    const hfsIp = hfsIpInput.value || '192.168.1.5';
+    const hfsPort = hfsPortInput.value || '80';
+    const hfsUrl = `http://${hfsIp}:${hfsPort}`;
+    
+    emptyState.classList.add('hide');
+    container.innerHTML = "";
+    loadingIndicator.classList.add("show");
+    folderInfo.classList.remove('hide');
+    folderInfoText.innerHTML = `🌐 Menghubungi HFS di ${hfsIp}:${hfsPort}...`;
+    
+    try {
+      // Coba akses daftar file dari HFS
+      const response = await fetch(hfsUrl + '/?json');
+      
+      if (!response.ok) {
+        throw new Error(`Tidak bisa terhubung ke HFS (${response.status})`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.items || data.items.length === 0) {
+        folderInfoText.innerHTML = '🌐 Tidak ada file di HFS';
+        loadingIndicator.classList.remove("show");
+        return;
+      }
+      
+      // Filter file gambar dan video
+      const mediaItems = data.items.filter(item => 
+        item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|mp4|avi|mov|mkv)$/i)
+      );
+      
+      folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file ditemukan`;
+      
+      // Buat slide untuk setiap file
+      for (let i = 0; i < mediaItems.length; i++) {
+        const item = mediaItems[i];
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        
+        const fileUrl = hfsUrl + '/' + item.name;
+        
+        if (item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)) {
+          const img = document.createElement('img');
+          img.className = 'main';
+          img.src = fileUrl;
+          img.onerror = () => {
+            console.log('Gagal load:', item.name);
+            img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="%23333"/><text x="20" y="110" fill="%23C5A059">Error</text></svg>';
+          };
+          slide.appendChild(img);
+        } else {
+          const video = document.createElement('video');
+          video.className = 'main';
+          video.src = fileUrl;
+          video.controls = false;
+          video.onerror = () => console.log('Gagal load video:', item.name);
+          slide.appendChild(video);
+        }
+        
+        container.appendChild(slide);
+      }
+      
+      slides = document.querySelectorAll('.slide');
+      loadingIndicator.classList.remove("show");
+      
+      if (slides.length > 0) {
+        slides[0].classList.add('active');
+        startSlideshow();
+        folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file (${hfsIp}:${hfsPort})`;
+      }
+      
+    } catch (error) {
+      console.error('HFS error:', error);
+      folderInfoText.innerHTML = `🌐 Error: ${error.message}`;
+      loadingIndicator.classList.remove("show");
+      
+      emptyState.classList.remove('hide');
+      emptyState.innerHTML = `
+        <span data-icon="hfs">🌐</span>
+        <h2>GAGAL TERHUBUNG KE HFS</h2>
+        <p>${error.message}</p>
+        <p style="margin-top: 20px;">IP: ${hfsIp}:${hfsPort}</p>
+        <p style="font-size:12px; color: var(--gold-light);">Pastikan:</p>
+        <p style="font-size:12px;">1. HFS berjalan di laptop</p>
+        <p style="font-size:12px;">2. IP address sudah benar</p>
+        <p style="font-size:12px;">3. Firewall mengizinkan koneksi</p>
+        <button onclick="loadFromHFS()" class="settings-btn-small" style="margin-top:20px;">Coba Lagi</button>
+      `;
+    }
+  };
+
+  // ===== TEST KONEKSI HFS =====
+  document.getElementById('testHfsBtn').addEventListener('click', async () => {
+    const hfsIp = hfsIpInput.value || '192.168.1.5';
+    const hfsPort = hfsPortInput.value || '80';
+    const hfsUrl = `http://${hfsIp}:${hfsPort}`;
+    
+    try {
+      folderInfo.classList.remove('hide');
+      folderInfoText.innerHTML = `🌐 Testing koneksi ke ${hfsIp}:${hfsPort}...`;
+      
+      const response = await fetch(hfsUrl + '/?json');
+      
+      if (response.ok) {
+        const data = await response.json();
+        const fileCount = data.items ? data.items.length : 0;
+        folderInfoText.innerHTML = `🌐 ✅ Terhubung! ${fileCount} file tersedia`;
+        alert(`✅ Berhasil terhubung ke HFS!\nFile tersedia: ${fileCount}`);
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      folderInfoText.innerHTML = `🌐 ❌ Gagal: ${error.message}`;
+      alert(`❌ Gagal terhubung ke HFS!\nPastikan:\n1. HFS berjalan\n2. IP: ${hfsIp}:${hfsPort} benar\n3. Firewall tidak memblokir`);
+    }
+  });
 
   // ===== FUNGSI VALIDASI FILE =====
   function isValidImageForSlideshow(file) {
@@ -2106,7 +2091,7 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
     }
   };
 
-  // ===== LOAD MEDIA =====
+  // ===== LOAD MEDIA (LOKAL) =====
   if (folderInput) {
     folderInput.addEventListener('change', async function(e) {
       emptyState?.classList.add('hide');
@@ -2253,25 +2238,18 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   const animationDurationSlider = document.getElementById('animationDurationSlider');
   const animationDurationValue = document.getElementById('animationDurationValue');
   
-  // Tampilkan/sembunyikan fixed animation selector
   slideModeSelect.addEventListener('change', (e) => {
     slideMode = e.target.value;
-    
     if (slideMode === 'fixed') {
       fixedAnimationContainer.style.display = 'block';
     } else {
       fixedAnimationContainer.style.display = 'none';
-      // Reset cycle index untuk mode cycle
       if (slideMode.startsWith('cycle')) {
         cycleIndex = 0;
         cycleAnimations = [];
       }
     }
-    
-    // Terapkan ke slide aktif
-    if (slides[currentSlide]) {
-      applyAnimationToSlide(slides[currentSlide]);
-    }
+    if (slides[currentSlide]) applyAnimationToSlide(slides[currentSlide]);
   });
   
   fixedAnimationSelect.addEventListener('change', (e) => {
@@ -2284,8 +2262,6 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   animationDurationSlider.addEventListener('input', (e) => {
     animationDuration = parseInt(e.target.value);
     animationDurationValue.textContent = animationDuration + 's';
-    
-    // Update semua slide yang aktif
     if (slides[currentSlide]) {
       const img = slides[currentSlide].querySelector('.main');
       if (img) img.style.animationDuration = animationDuration + 's';
@@ -2452,6 +2428,8 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
         fontFamily, dateEnabled, kenBurnsEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
         logoScale, logoInterval, bgEffect, bgIntensity, 
         slideMode, fixedAnimation, animationDuration,
+        hfsIp: hfsIpInput.value,
+        hfsPort: hfsPortInput.value,
         runningText: document.getElementById('runningTextInput')?.value,
         logoLeft: logoLeftData,
         logoRight: logoRightData
@@ -2496,6 +2474,8 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
       if (data.slideMode !== undefined) slideMode = data.slideMode;
       if (data.fixedAnimation !== undefined) fixedAnimation = data.fixedAnimation;
       if (data.animationDuration !== undefined) animationDuration = data.animationDuration;
+      if (data.hfsIp) hfsIpInput.value = data.hfsIp;
+      if (data.hfsPort) hfsPortInput.value = data.hfsPort;
       
       if (data.runningText !== undefined) {
         document.getElementById('runningTextInput').value = data.runningText;
@@ -2536,11 +2516,8 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
       document.getElementById('animationDurationValue').textContent = animationDuration + 's';
       document.getElementById('animationDurationSlider').value = animationDuration;
       
-      if (slideMode === 'fixed') {
-        fixedAnimationContainer.style.display = 'block';
-      } else {
-        fixedAnimationContainer.style.display = 'none';
-      }
+      if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
+      else fixedAnimationContainer.style.display = 'none';
       
       document.getElementById('dateToggle').classList.toggle('active', dateEnabled);
       datetime.classList.toggle('hide', !dateEnabled);
@@ -2562,12 +2539,9 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
       updateRunningTextStyle();
       updateRunningTextContent();
       updateRunningTextSpeed();
-      
       updateBackgroundEffect();
       
-      if (autoHideEnabled) {
-        resetHideTimer();
-      }
+      if (autoHideEnabled) resetHideTimer();
     }
   } catch (e) {}
 
@@ -2588,14 +2562,10 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   
   updateLogoScale(logoScale);
   
-  // Set fixed animation container visibility
-  if (slideMode === 'fixed') {
-    fixedAnimationContainer.style.display = 'block';
-  } else {
-    fixedAnimationContainer.style.display = 'none';
-  }
+  if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
+  else fixedAnimationContainer.style.display = 'none';
   
-  console.log('✅ PWA Ready: The Royal Wedding Display dengan 12+ Animasi Slide');
+  console.log('✅ PWA Ready dengan Mode Lokal + HFS');
 })();
 </script>
 
