@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Royal Wedding - PWA with Google Drive</title>
+<title>The Royal Wedding - PWA OFFLINE</title>
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
-<!-- Theme color -->
+<!-- Theme color untuk browser -->
 <meta name="theme-color" content="#C5A059">
-<!-- Base URL -->
-<base href="/ourwedding/">
+<!-- Apple touch icon untuk iOS -->
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
+/* ===== RESET & VARIABLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --gold: #C5A059;
   --gold-light: #D4B47C;
@@ -21,6 +28,7 @@
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(197, 160, 89, 0.15);
   
+  /* UKURAN TOMBOL */
   --control-size: clamp(28px, 4vw, 38px);
   --logo-size: clamp(40px, 6vw, 60px);
   --logo-scale: 2;
@@ -31,47 +39,998 @@
   
   --running-height: clamp(60px, 10vh, 80px);
   --bottom-bar-height: calc(var(--control-size) + 30px);
+  
+  /* Posisi tanggal dan tombol */
   --date-bottom-pos: calc(var(--running-height) + var(--bottom-bar-height) + 10px);
   --date-bottom-pos-hidden: var(--running-height);
 }
 
-/* [SISIPKAN SEMUA CSS DARI KODE SEBELUMNYA DI SINI] */
-/* ... semua CSS styling yang sudah kita buat ... */
+body {
+  background: var(--dark);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
 
-/* Drive Status */
-.drive-status {
+/* Fallback icon system */
+[data-icon="prev"]:before { content: "◀◀"; }
+[data-icon="play"]:before { content: "▶"; }
+[data-icon="pause"]:before { content: "⏸"; }
+[data-icon="next"]:before { content: "▶▶"; }
+[data-icon="settings"]:before { content: "⚙"; }
+[data-icon="folder"]:before { content: "📁"; }
+[data-icon="music"]:before { content: "🎵"; }
+[data-icon="volume-up"]:before { content: "🔊"; }
+[data-icon="volume-mute"]:before { content: "🔇"; }
+[data-icon="spinner"]:before { content: "⟳"; animation: spin 1s infinite linear; display: inline-block; }
+[data-icon="fullscreen"]:before { content: "⛶"; }
+[data-icon="fullscreen-exit"]:before { content: "✕"; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ===== BACKGROUND EFFECTS ===== */
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+/* Efek Hujan */
+.rain-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.rain-drop {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
+  animation: rain linear infinite;
+}
+
+@keyframes rain {
+  0% { transform: translateY(-100px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.5; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Efek Salju */
+.snow-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.snow-flake {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.8;
+  animation: snow linear infinite;
+}
+
+@keyframes snow {
+  0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* Efek Bunga Sakura */
+.sakura-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.sakura-petal {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23FFB7C5" d="M50 10 Q60 20 70 10 Q80 0 90 10 Q100 20 90 30 Q80 40 70 30 Q60 20 50 30 Q40 40 30 30 Q20 20 30 10 Q40 0 50 10 Z"/><path fill="%23FF99AA" d="M50 30 Q60 40 70 30 Q80 20 70 40 Q60 60 50 40 Q40 60 30 40 Q20 20 30 30 Q40 40 50 30 Z"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  animation: sakura linear infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 183, 197, 0.5));
+}
+
+@keyframes sakura {
+  0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(100vh) translateX(50px) rotate(720deg); opacity: 0; }
+}
+
+/* Efek Campuran */
+.mixed-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ===== STAGE ===== */
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ===== LOGO CORNERS ===== */
+.logo-corner {
+  position: absolute;
+  top: 0;
+  width: calc(var(--logo-size) * var(--logo-scale));
+  height: calc(var(--logo-size) * var(--logo-scale));
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.logo-corner.left { left: 0; }
+.logo-corner.right { right: 0; }
+
+.logo-corner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(197, 160, 89, 0.5));
+}
+
+.logo-placeholder {
+  color: var(--gold);
+  font-size: calc(var(--logo-size) * 0.8 * var(--logo-scale));
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+}
+
+.logo-corner.hide-logo {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ===== SLIDE ===== */
+#slidesContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Animasi untuk gambar - BASE CLASS */
+.main {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  margin: auto;
+  display: block;
+  animation-duration: 8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  transform-origin: center center;
+}
+
+/* ANIMASI 1: Zoom In Halus */
+.anim-zoom-in {
+  animation-name: zoomInSmooth;
+}
+
+@keyframes zoomInSmooth {
+  0% { transform: scale(0.7); opacity: 0; filter: blur(10px); }
+  30% { opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); }
+}
+
+/* ANIMASI 2: Zoom Out Dramatis */
+.anim-zoom-out {
+  animation-name: zoomOutDramatic;
+}
+
+@keyframes zoomOutDramatic {
+  0% { transform: scale(1.8); opacity: 0; }
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ANIMASI 3: Pecah Seribu (Shatter) - REALISTIK */
+.anim-shatter {
+  animation-name: shatterRealistic;
+}
+
+@keyframes shatterRealistic {
+  0% { 
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    opacity: 0;
+    transform: scale(2);
+  }
+  20% { 
+    clip-path: polygon(30% 30%, 70% 20%, 80% 50%, 70% 80%, 30% 80%, 20% 50%, 30% 30%, 50% 50%);
+    opacity: 0.3;
+  }
+  40% { 
+    clip-path: polygon(20% 20%, 80% 10%, 90% 40%, 85% 70%, 60% 90%, 15% 70%, 10% 40%, 20% 20%);
+    opacity: 0.6;
+  }
+  60% { 
+    clip-path: polygon(10% 10%, 90% 5%, 95% 30%, 92% 60%, 70% 95%, 8% 80%, 5% 30%, 10% 10%);
+    opacity: 0.8;
+  }
+  80% { 
+    clip-path: polygon(5% 5%, 95% 2%, 98% 20%, 96% 50%, 85% 98%, 3% 90%, 2% 20%, 5% 5%);
+    opacity: 0.9;
+  }
+  100% { 
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ANIMASI 4: Dari Segala Arah - Lebih Halus */
+.anim-from-all {
+  animation-name: fromAllDirectionsSmooth;
+}
+
+@keyframes fromAllDirectionsSmooth {
+  0% { 
+    clip-path: inset(50% 50% 50% 50%);
+    opacity: 0;
+    transform: scale(3) rotate(-10deg);
+  }
+  25% { 
+    clip-path: inset(30% 30% 30% 30%);
+    opacity: 0.3;
+    transform: scale(2) rotate(-5deg);
+  }
+  50% { 
+    clip-path: inset(15% 15% 15% 15%);
+    opacity: 0.6;
+    transform: scale(1.5) rotate(0deg);
+  }
+  75% { 
+    clip-path: inset(5% 5% 5% 5%);
+    opacity: 0.8;
+    transform: scale(1.2) rotate(2deg);
+  }
+  100% { 
+    clip-path: inset(0% 0% 0% 0%);
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* ANIMASI 5: Slide dari Kiri */
+.anim-slide-left {
+  animation-name: slideFromLeft;
+}
+
+@keyframes slideFromLeft {
+  0% { transform: translateX(-100%) scale(0.8); opacity: 0; }
+  40% { opacity: 1; transform: translateX(5%) scale(1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+/* ANIMASI 6: Slide dari Kanan */
+.anim-slide-right {
+  animation-name: slideFromRight;
+}
+
+@keyframes slideFromRight {
+  0% { transform: translateX(100%) scale(0.8); opacity: 0; }
+  40% { opacity: 1; transform: translateX(-5%) scale(1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+/* ANIMASI 7: Slide dari Atas */
+.anim-slide-top {
+  animation-name: slideFromTop;
+}
+
+@keyframes slideFromTop {
+  0% { transform: translateY(-100%) scale(0.8); opacity: 0; }
+  40% { opacity: 1; transform: translateY(5%) scale(1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ANIMASI 8: Slide dari Bawah */
+.anim-slide-bottom {
+  animation-name: slideFromBottom;
+}
+
+@keyframes slideFromBottom {
+  0% { transform: translateY(100%) scale(0.8); opacity: 0; }
+  40% { opacity: 1; transform: translateY(-5%) scale(1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ANIMASI 9: Fade dengan Rotasi */
+.anim-fade-rotate {
+  animation-name: fadeRotate;
+}
+
+@keyframes fadeRotate {
+  0% { opacity: 0; transform: rotate(-15deg) scale(0.5); }
+  50% { opacity: 0.8; transform: rotate(5deg) scale(1.1); }
+  100% { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+/* ANIMASI 10: Efek Blur Masuk */
+.anim-blur-in {
+  animation-name: blurIn;
+}
+
+@keyframes blurIn {
+  0% { filter: blur(20px); opacity: 0; transform: scale(1.2); }
+  50% { filter: blur(5px); opacity: 0.7; }
+  100% { filter: blur(0); opacity: 1; transform: scale(1); }
+}
+
+/* ANIMASI 11: Efek Bounce */
+.anim-bounce {
+  animation-name: bounceIn;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  40% { transform: scale(1.1); opacity: 0.9; }
+  60% { transform: scale(0.95); }
+  80% { transform: scale(1.02); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ANIMASI 12: Efek Flip */
+.anim-flip {
+  animation-name: flipIn;
+  transform-style: preserve-3d;
+}
+
+@keyframes flipIn {
+  0% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
+  40% { transform: perspective(400px) rotateY(-10deg); opacity: 0.8; }
+  70% { transform: perspective(400px) rotateY(5deg); }
+  100% { transform: perspective(400px) rotateY(0); opacity: 1; }
+}
+
+/* Daftar semua animasi yang tersedia */
+.animation-list {
+  display: none;
+}
+
+/* ===== OM SWASTYASTU ===== */
+.om-title {
+  position: absolute;
+  top: clamp(70px, 12vh, 100px);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  transition: opacity 0.5s ease;
+}
+
+.om-title.hide { opacity: 0; }
+
+.om-title .om-text {
+  display: inline-block;
+  color: #ffffff;
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: var(--font-xlarge);
+  letter-spacing: clamp(4px, 2vw, 16px);
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(197, 160, 89, 0.3);
+  padding: clamp(4px, 1vh, 8px) clamp(15px, 5vw, 40px);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03) 20%, rgba(197,160,89,0.05) 50%, rgba(255,255,255,0.03) 80%, transparent);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+  border-top: 1px solid rgba(197, 160, 89, 0.2);
+  backdrop-filter: blur(2px);
+}
+
+/* ===== DATETIME ===== */
+.datetime-premium {
+  position: absolute;
+  bottom: var(--date-bottom-pos);
+  right: 0;
+  z-index: 15;
+  text-align: right;
+  color: var(--cream);
+  text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  padding: clamp(8px, 1.5vh, 12px) clamp(12px, 2.5vw, 20px);
+  background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+  border-left: none;
+  border-top: 1px solid rgba(197,160,89,0.2);
+  backdrop-filter: blur(8px);
+  font-family: 'Courier New', monospace;
+  transition: bottom 0.5s ease, opacity 0.5s ease;
+  margin: 0;
+  max-width: 100%;
+  pointer-events: none;
+  border-radius: 30px 0 0 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.datetime-premium.hide { opacity: 0; }
+
+.datetime-premium.datetime-hidden-pos {
+  bottom: var(--date-bottom-pos-hidden);
+}
+
+.datetime-premium .day {
+  font-size: clamp(10px, 2vw, 14px);
+  color: var(--gold-light);
+  text-transform: uppercase;
+  letter-spacing: clamp(1px, 0.8vw, 3px);
+}
+
+.datetime-premium .date {
+  font-size: clamp(12px, 2.5vw, 20px);
+  font-family: 'Georgia', serif;
+}
+
+.datetime-premium .time {
+  font-size: clamp(16px, 3.5vw, 28px);
+  color: var(--gold);
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+}
+
+.datetime-premium .time .seconds {
+  font-size: 0.5em;
+  color: var(--gold-light);
+  background: rgba(0,0,0,0.2);
+  padding: 2px 6px;
+  border: 1px solid rgba(197,160,89,0.3);
+  border-radius: 15px;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar {
+  position: absolute;
+  bottom: var(--running-height);
+  left: 0;
+  width: 100%;
+  height: var(--bottom-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(5px, 1.5vw, 12px);
+  z-index: 30;
+  background: transparent;
+  padding: 0 15px;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
+}
+
+.bottom-bar button,
+.bottom-bar label {
+  width: var(--control-size);
+  height: var(--control-size);
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197,160,89,0.3);
+  color: var(--gold);
+  font-size: clamp(14px, 2.5vw, 18px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.bottom-bar button:hover,
+.bottom-bar label:hover {
+  background: var(--gold);
+  color: var(--dark);
+  transform: scale(1.1);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
+}
+
+.settings-btn {
+  order: 1;
+}
+
+.folder-input input[type="file"] {
+  display: none;
+}
+
+.audio-control button {
+  font-size: 0;
+}
+
+.audio-control button span[data-icon] {
+  font-size: clamp(14px, 2.5vw, 18px);
+}
+
+.audio-control button span#audioBtnText {
+  display: none;
+}
+
+/* ===== RUNNING TEXT ===== */
+.running-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--running-height);
+  z-index: 15;
+  overflow: hidden;
+  background: linear-gradient(to right, transparent, rgba(0,0,0,0.6) 20%, rgba(0,0,0,0.6) 80%, transparent);
+  border-top: 1px solid rgba(197,160,89,0.3);
+  border-bottom: 1px solid rgba(197,160,89,0.3);
+  backdrop-filter: blur(8px);
+  transition: opacity 0.5s ease;
+}
+
+.running-box.hide-by-settings { 
+  opacity: 0; 
+  pointer-events: none;
+}
+
+.running-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.running-track {
+  position: absolute;
+  white-space: nowrap;
+  height: 100%;
+  line-height: var(--running-height);
+  left: 100%;
+  top: 0;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cream);
+  font-size: 0;
+  will-change: transform;
+  animation: scrollRightToLeft linear infinite;
+  animation-duration: 30s;
+  -webkit-font-smoothing: antialiased;
+  z-index: 2;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+
+.running-item {
+  display: inline-block;
+  font-size: clamp(16px, 4vw, 24px);
+  padding: 0 clamp(15px, 5vw, 40px);
+  color: var(--cream);
+  vertical-align: top;
+  line-height: var(--running-height);
+  white-space: nowrap;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 5px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5);
+}
+
+@keyframes scrollRightToLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-200%); }
+}
+
+/* Folder info */
+.folder-info {
+  position: absolute;
+  bottom: calc(var(--running-height) + 5px);
+  left: 15px;
+  color: var(--gold-light);
+  font-size: 12px;
+  white-space: nowrap;
+  transition: opacity 0.5s ease;
+  background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197,160,89,0.2);
+  pointer-events: none;
+  z-index: 16;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.folder-info.hide { opacity: 0; }
+
+/* Loading indicator */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--gold);
+  font-size: 18px;
+  z-index: 100;
+  display: none;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+  padding: 12px 24px;
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197,160,89,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.loading-indicator.show { display: block; }
+.loading-indicator span[data-icon="spinner"] { font-size: 24px; margin-right: 10px; }
+
+/* Empty state */
+.empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--cream);
+  text-align: center;
+  z-index: 5;
+  transition: opacity 0.5s ease;
+  background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+  padding: 30px;
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197,160,89,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.empty-state.hide { opacity: 0; pointer-events: none; }
+.empty-state span[data-icon="folder"] { font-size: 80px; color: var(--gold); margin-bottom: 20px; display: block; text-shadow: 0 0 30px rgba(197, 160, 89, 0.5); }
+.empty-state h2 { font-family: 'Times New Roman', serif; font-size: 32px; color: var(--gold); }
+
+/* ===== SETTINGS PANEL ===== */
+.settings-panel {
+  position: absolute;
+  top: clamp(70px, 15vh, 110px);
+  left: clamp(10px, 5vw, 40px);
+  width: min(90vw, 550px);
+  max-height: 80vh;
+  background: rgba(20, 20, 20, 0.98);
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--gold);
+  padding: clamp(15px, 4vh, 25px);
+  color: var(--cream);
+  z-index: 40;
+  transition: all 0.3s ease;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  overflow-y: auto;
+  opacity: 1 !important;
+  border-radius: 20px;
+}
+
+.settings-panel.hide {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.settings-panel h3 {
+  font-family: 'Times New Roman', serif;
+  font-size: var(--font-large);
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 15px;
+}
+
+.settings-section {
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(197,160,89,0.2);
+  padding-bottom: 15px;
+}
+
+.settings-section h4 {
+  font-size: var(--font-small);
+  color: var(--gold-light);
+  margin-bottom: 12px;
+}
+
+.setting-item { margin-bottom: 15px; }
+.setting-label { display: block; margin-bottom: 5px; font-size: clamp(11px, 2.5vw, 13px); color: var(--gold-light); text-transform: uppercase; }
+.setting-value { float: right; color: var(--cream); }
+
+.setting-slider { 
+  width: 100%; 
+  height: 6px; 
+  background: var(--dark-card); 
+  outline: none; 
+  -webkit-appearance: none; 
+  border-radius: 3px; 
+}
+.setting-slider::-webkit-slider-thumb { 
+  -webkit-appearance: none; 
+  width: 22px; 
+  height: 22px; 
+  background: var(--gold); 
+  cursor: pointer; 
+  border: 2px solid var(--cream); 
+  border-radius: 50%; 
+}
+
+.setting-toggle { display: flex; align-items: center; justify-content: space-between; }
+.toggle-switch { 
+  position: relative; 
+  width: 56px; 
+  height: 28px; 
+  background: var(--dark-card); 
+  border: 2px solid var(--glass-border); 
+  cursor: pointer; 
+  transition: all 0.3s; 
+  border-radius: 14px; 
+}
+.toggle-switch.active { 
+  background: var(--gold); 
+  border-color: var(--gold); 
+}
+.toggle-switch::after { 
+  content: ''; 
+  position: absolute; 
+  top: 2px; 
+  left: 2px; 
+  width: 20px; 
+  height: 20px; 
+  background: var(--cream); 
+  transition: all 0.3s; 
+  border-radius: 50%; 
+}
+.toggle-switch.active::after { 
+  left: 30px; 
+  background: var(--dark); 
+}
+
+.setting-select { 
+  width: 100%; 
+  padding: 14px 12px; 
+  background: #333333;
+  border: 2px solid #555555;
+  color: #FFFFFF;
+  font-family: inherit; 
+  font-size: 14px; 
+  font-weight: 500;
+  cursor: pointer; 
+  outline: none; 
+  border-radius: 12px; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.setting-select:hover {
+  border-color: var(--gold);
+  background: #444444;
+}
+
+.setting-select option {
+  background: #222222;
+  color: #FFFFFF;
+  padding: 12px;
+}
+
+.setting-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+}
+
+.setting-color { 
+  width: 100%; 
+  height: 45px; 
+  background: #333333;
+  border: 2px solid #555555; 
+  cursor: pointer; 
+  padding: 2px; 
+  border-radius: 12px; 
+}
+
+.setting-textarea { 
+  width: 100%; 
+  height: 100px; 
+  background: #333333; 
+  border: 2px solid #555555; 
+  color: #FFFFFF; 
+  padding: 12px; 
+  font-family: inherit; 
+  font-size: 13px; 
+  resize: vertical; 
+  border-radius: 12px; 
+}
+
+.font-preview-box { 
+  margin-top: 10px; 
+  padding: 15px; 
+  background: #333333; 
+  border: 2px solid #555555; 
+  text-align: center; 
+  font-size: 18px; 
+  color: var(--gold); 
+  border-radius: 12px; 
+}
+
+.button-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+.settings-btn-small { 
+  flex: 1; 
+  min-width: 80px; 
+  padding: 12px; 
+  background: #333333; 
+  border: 2px solid #555555; 
+  color: #FFFFFF; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  font-size: clamp(11px, 2.5vw, 13px); 
+  font-weight: 500;
+  border-radius: 30px !important;
+}
+
+.settings-btn-small:hover { 
+  background: var(--gold); 
+  border-color: var(--gold); 
+  color: var(--dark); 
+}
+
+.settings-btn-small:active { transform: scale(0.95); }
+
+.settings-btn-small.save { 
+  background: rgba(197, 160, 89, 0.3); 
+  border-color: var(--gold); 
+  color: #FFFFFF;
+}
+
+.settings-btn-small.save:hover {
+  background: var(--gold);
+  color: var(--dark);
+}
+
+.developer-info {
+  background: #222222;
+  padding: 15px;
+  margin-top: 15px;
+  border: 2px solid #444444;
+  text-align: center;
+  border-radius: 12px;
+}
+
+.developer-info h4 { color: var(--gold); font-size: 16px; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
+.developer-info .developer-name { color: var(--gold-light); font-size: 18px; font-weight: 500; font-family: 'Times New Roman', serif; }
+.developer-info .developer-address { color: var(--cream); font-size: 14px; margin-bottom: 8px; }
+.developer-info .developer-unit { color: var(--gold); font-size: 14px; font-weight: 500; border-top: 1px dashed var(--glass-border); border-bottom: 1px dashed var(--glass-border); padding: 8px 0; margin: 8px 0; }
+.developer-info .developer-copyright { color: var(--gold-light); font-size: 13px; font-family: 'Courier New', monospace; }
+.developer-info .separator { width: 50px; height: 2px; background: var(--gold); margin: 10px auto; }
+
+.hide { opacity: 0 !important; pointer-events: none !important; }
+.hide-by-settings { opacity: 0 !important; pointer-events: none !important; }
+*:not(textarea) { -webkit-user-select: none; user-select: none; }
+
+/* Install button */
+.install-btn {
+  position: absolute;
+  bottom: calc(var(--running-height) + var(--bottom-bar-height) + 10px);
+  right: 10px;
+  width: var(--control-size);
+  height: var(--control-size);
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(197,160,89,0.3);
+  color: var(--gold);
+  font-size: clamp(14px, 2.5vw, 18px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  z-index: 35;
+}
+
+.install-btn:hover {
+  background: var(--gold);
+  color: var(--dark);
+  transform: scale(1.1);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
+}
+
+.install-btn.hide {
+  display: none;
+}
+
+/* Online indicator */
+.online-indicator {
   position: absolute;
   top: 10px;
-  left: 10px;
-  background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2));
   backdrop-filter: blur(8px);
   color: var(--gold-light);
-  padding: 6px 12px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
   border: 1px solid rgba(197,160,89,0.3);
   z-index: 50;
   pointer-events: none;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-
-.drive-status.online { color: #4CAF50; }
-.drive-status.offline { color: #ff9800; }
-.drive-status.error { color: #f44336; }
 </style>
 </head>
 <body>
 
 <div class="stage">
+  <!-- Background Effects Container -->
   <div class="background-effects" id="backgroundEffects"></div>
-
-  <!-- DRIVE STATUS - REAL, BUKAN DEMO -->
-  <div class="drive-status" id="driveStatus">
-    <span data-icon="folder"></span>
-    <span id="driveStatusText">Menyiapkan...</span>
-  </div>
 
   <!-- PWA Install Button -->
   <button class="install-btn hide" id="installBtn" title="Install App">
@@ -82,12 +1041,12 @@
   <div class="online-indicator" id="onlineIndicator">ONLINE</div>
 
   <!-- LOGO CORNERS -->
-  <div class="logo-corner left" id="logoLeft">
+  <div class="logo-corner left" id="logoLeft" style="opacity: 1;">
     <div class="logo-placeholder" id="logoLeftPlaceholder">⚜️</div>
     <img id="logoLeftImg" src="" alt="Logo Kiri" style="display: none;">
   </div>
   
-  <div class="logo-corner right" id="logoRight">
+  <div class="logo-corner right" id="logoRight" style="opacity: 1;">
     <div class="logo-placeholder" id="logoRightPlaceholder">⚜️</div>
     <img id="logoRightImg" src="" alt="Logo Kanan" style="display: none;">
   </div>
@@ -95,12 +1054,8 @@
   <div id="slidesContainer">
     <div class="empty-state" id="emptyState">
       <span data-icon="folder"></span>
-      <h2>GOOGLE DRIVE</h2>
-      <p>Folder ID: 1AU12HTGWX-i_zPw657R5GjV7IFimYM2A</p>
-      <p>Mengakses file...</p>
-      <div class="loading-spinner" style="margin-top: 20px;">
-        <span data-icon="spinner"></span>
-      </div>
+      <h2>SELECT FOLDER</h2>
+      <p>Klik ikon folder di bawah untuk memulai</p>
     </div>
   </div>
   
@@ -124,16 +1079,21 @@
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar" id="bottomBar">
-    <button onclick="window.prevSlide()" title="Previous" id="prevBtn"><span data-icon="prev"></span></button>
-    <button onclick="window.togglePlay()" id="playBtn" title="Play/Pause"><span data-icon="pause"></span></button>
-    <button onclick="window.nextSlide()" title="Next" id="nextBtn"><span data-icon="next"></span></button>
+    <button onclick="prevSlide()" title="Previous" id="prevBtn"><span data-icon="prev"></span></button>
+    <button onclick="togglePlay()" id="playBtn" title="Play/Pause"><span data-icon="pause"></span></button>
+    <button onclick="nextSlide()" title="Next" id="nextBtn"><span data-icon="next"></span></button>
     
     <div class="audio-control" id="audioControl">
-      <button onclick="window.toggleAudio()" id="audioToggleBtn" title="Play/Pause MP3">
+      <button onclick="toggleAudio()" id="audioToggleBtn" title="Play/Pause MP3">
         <span data-icon="music"></span>
         <span id="audioBtnText">Play MP3</span>
       </button>
     </div>
+    
+    <label class="folder-input" id="folderWrapper" title="Select Folder">
+      <span data-icon="folder"></span>
+      <input type="file" id="folderInput" webkitdirectory multiple>
+    </label>
     
     <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen"><span data-icon="fullscreen"></span></button>
     <button class="settings-btn" id="settingsBtn" title="Settings"><span data-icon="settings"></span></button>
@@ -150,33 +1110,224 @@
 
   <!-- FOLDER INFO -->
   <div class="folder-info hide" id="folderInfo">
-    <span data-icon="folder"></span> <span id="folderInfoText">GOOGLE DRIVE</span>
+    <span data-icon="folder"></span> <span id="folderInfoText">KLIK SELECT FOLDER</span>
   </div>
   
   <!-- SETTINGS PANEL -->
   <div class="settings-panel hide" id="settingsPanel">
-    <h3><span data-icon="settings"></span> PENGATURAN</h3>
+    <h3><span data-icon="settings"></span> PENGATURAN OFFLINE</h3>
     
     <div class="settings-section">
-      <h4>☁️ GOOGLE DRIVE</h4>
+      <h4>🌸 BACKGROUND EFFECT</h4>
       <div class="setting-item">
-        <span class="setting-label">Folder ID</span>
-        <input type="text" class="setting-textarea" id="driveFolderId" value="1AU12HTGWX-i_zPw657R5GjV7IFimYM2A" style="height: 40px;">
-        <button class="settings-btn-small" id="loadDriveBtn" style="margin-top:5px;width:100%;">📂 Load dari Google Drive</button>
+        <span class="setting-label">Efek Background</span>
+        <select class="setting-select" id="bgEffectSelect">
+          <option value="none">None (Tidak Ada)</option>
+          <option value="rain" selected>🌧️ Hujan Gerimis</option>
+          <option value="snow">❄️ Salju</option>
+          <option value="sakura">🌸 Bunga Sakura</option>
+          <option value="mixed">🌈 Campuran (Hujan + Salju + Sakura)</option>
+        </select>
       </div>
       <div class="setting-item">
-        <span class="setting-label">Status</span>
-        <span id="driveStatusDetail">Menunggu...</span>
+        <span class="setting-label">Intensitas</span>
+        <span class="setting-value" id="bgIntensityValue">100%</span>
+        <input type="range" class="setting-slider" id="bgIntensitySlider" min="0" max="200" value="100" step="10">
       </div>
     </div>
     
-    <!-- [SISIPKAN SEMUA SETTING LAINNYA DI SINI] -->
-    <!-- Background, Animasi, Auto Hide, dll -->
+    <div class="settings-section">
+      <h4>🖼️ SLIDE ANIMATION</h4>
+      <div class="setting-item">
+        <span class="setting-label">Mode Animasi</span>
+        <select class="setting-select" id="slideModeSelect">
+          <option value="random-all" selected>🎲 Random Semua (12+ Animasi)</option>
+          <option value="cycle-3">🔄 Cycle 3 Animasi Bergantian</option>
+          <option value="cycle-5">🔄 Cycle 5 Animasi Bergantian</option>
+          <option value="cycle-7">🔄 Cycle 7 Animasi Bergantian</option>
+          <option value="fixed">🎯 Satu Animasi Tetap</option>
+        </select>
+      </div>
+      <div class="setting-item" id="fixedAnimationContainer">
+        <span class="setting-label">Pilih Animasi Tetap</span>
+        <select class="setting-select" id="fixedAnimationSelect">
+          <option value="anim-zoom-in">Zoom In Halus</option>
+          <option value="anim-zoom-out">Zoom Out Dramatis</option>
+          <option value="anim-shatter">Pecah Seribu</option>
+          <option value="anim-from-all">Dari Segala Arah</option>
+          <option value="anim-slide-left">Slide dari Kiri</option>
+          <option value="anim-slide-right">Slide dari Kanan</option>
+          <option value="anim-slide-top">Slide dari Atas</option>
+          <option value="anim-slide-bottom">Slide dari Bawah</option>
+          <option value="anim-fade-rotate">Fade + Rotasi</option>
+          <option value="anim-blur-in">Blur Masuk</option>
+          <option value="anim-bounce">Bounce</option>
+          <option value="anim-flip">Flip 3D</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Durasi Animasi</span>
+        <span class="setting-value" id="animationDurationValue">8s</span>
+        <input type="range" class="setting-slider" id="animationDurationSlider" min="3" max="15" value="8" step="1">
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>AUTO HIDE</h4>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Auto Hide Controls</span>
+        <div class="toggle-switch" id="autoHideToggle"></div>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Hide Delay</span>
+        <span class="setting-value" id="hideDelayValue">4s</span>
+        <input type="range" class="setting-slider" id="hideDelaySlider" min="2" max="10" value="4" step="1">
+      </div>
+      <div class="setting-item" style="color: var(--gold-light); font-size: 12px; margin-top: 5px;">
+        <span>⚠️ Yang di-auto hide: Tombol, OM Text, Info Folder</span><br>
+        <span>✅ Running text, Slide, Logo, Tanggal TETAP ON</span>
+        <span>📅 Tanggal akan turun ke posisi tombol saat auto hide aktif</span>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>TANGGAL & WAKTU</h4>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Tampilkan Tanggal</span>
+        <div class="toggle-switch active" id="dateToggle"></div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>VIDEO VOLUME</h4>
+      <div class="setting-item">
+        <span class="setting-label">Volume</span>
+        <span class="setting-value" id="videoVolumeValue">70%</span>
+        <input type="range" class="setting-slider" id="videoVolumeSlider" min="0" max="100" value="70" step="5">
+      </div>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Mute Videos</span>
+        <div class="toggle-switch" id="videoMuteToggle"></div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>EFEK SLIDE</h4>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Ken Burns Effect</span>
+        <div class="toggle-switch active" id="kenBurnsToggle"></div>
+      </div>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Shuffle Mode</span>
+        <div class="toggle-switch" id="shuffleToggle"></div>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Brightness</span>
+        <span class="setting-value" id="brightnessValue">100%</span>
+        <input type="range" class="setting-slider" id="brightnessSlider" min="50" max="150" value="100" step="5">
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>LOGO SETTINGS</h4>
+      <div class="setting-item">
+        <span class="setting-label">Ukuran Logo (Scale)</span>
+        <span class="setting-value" id="logoScaleValue">200%</span>
+        <input type="range" class="setting-slider" id="logoScaleSlider" min="50" max="300" value="200" step="10">
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Ganti Logo Setiap (detik)</span>
+        <span class="setting-value" id="logoIntervalValue">60s</span>
+        <input type="range" class="setting-slider" id="logoIntervalSlider" min="10" max="300" value="60" step="5">
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>TEXT SETTINGS</h4>
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Show Running Text</span>
+        <div class="toggle-switch active" id="runningTextToggle"></div>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Text Content</span>
+        <textarea class="setting-textarea" id="runningTextInput" placeholder="Enter text">OM SWASTYASTU
+WELCOME TO OUR WEDDING
+THANK YOU FOR YOUR BLESSINGS</textarea>
+        <button class="settings-btn-small" id="updateRunningText" style="margin-top:5px;width:100%;">Update</button>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Font Family</span>
+        <select class="setting-select" id="fontFamilySelect">
+          <option value="'Roboto', sans-serif" selected>Roboto</option>
+          <option value="'Segoe UI', sans-serif">Segoe UI</option>
+          <option value="'Georgia', serif">Georgia</option>
+        </select>
+      </div>
+      <div class="font-preview-box" id="fontPreview">Sample Text 123</div>
+      <div class="setting-item">
+        <span class="setting-label">Scroll Speed</span>
+        <span class="setting-value" id="speedValue">30s</span>
+        <input type="range" class="setting-slider" id="speedSlider" min="15" max="120" value="30" step="5">
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Text Size</span>
+        <span class="setting-value" id="fontSizeValue">20px</span>
+        <input type="range" class="setting-slider" id="fontSizeSlider" min="14" max="40" value="20" step="1">
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Text Color</span>
+        <input type="color" class="setting-color" id="textColor" value="#C5A059">
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>LOGO / ICON</h4>
+      <div class="setting-item">
+        <span class="setting-label">Upload Logo Kiri</span>
+        <input type="file" id="logoLeftInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
+        <button class="settings-btn-small" id="clearLogoLeft" style="margin-top:5px;">Hapus</button>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Upload Logo Kanan</span>
+        <input type="file" id="logoRightInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
+        <button class="settings-btn-small" id="clearLogoRight" style="margin-top:5px;">Hapus</button>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>AUDIO MP3</h4>
+      <div class="setting-item">
+        <span class="setting-label">Volume</span>
+        <span class="setting-value" id="bgVolumeValue">70%</span>
+        <input type="range" class="setting-slider" id="bgVolumeSlider" min="0" max="100" value="70" step="5">
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">Playlist</span>
+        <div id="audioPlaylist" style="max-height:80px;overflow-y:auto;background:#333333;padding:8px;border:2px solid #555555;font-size:12px;border-radius:12px;color:#FFFFFF;">No audio files</div>
+      </div>
+      <div class="button-group">
+        <button class="settings-btn-small" id="prevAudioBtn"><span data-icon="prev"></span> Prev</button>
+        <button class="settings-btn-small" id="nextAudioBtn"><span data-icon="next"></span> Next</button>
+      </div>
+    </div>
+    
+    <!-- INFO DEVELOPER -->
+    <div class="developer-info">
+      <h4>📋 INFORMATION</h4>
+      <div class="separator"></div>
+      <div class="developer-name">I Nyoman Arta</div>
+      <div class="developer-address">Buleleng, Bali</div>
+      <div class="developer-unit">Koramil 1609-05/Sukasada</div>
+      <div class="developer-copyright">© 2026 Android TV Display System</div>
+      <div class="pwa-status" style="margin-top:10px; color: var(--gold-light); font-size:12px;">
+        <span id="pwaStatus">⚡ PWA Ready • Dapat diinstall</span>
+      </div>
+    </div>
     
     <div class="button-group">
-      <button class="settings-btn-small save" id="saveSettings">💾 Save</button>
-      <button class="settings-btn-small" id="resetSettings">↺ Reset</button>
-      <button class="settings-btn-small" id="closeSettings">✕ Close</button>
+      <button class="settings-btn-small save" id="saveSettings"><span data-icon="settings"></span> Save</button>
+      <button class="settings-btn-small" id="resetSettings"><span data-icon="settings"></span> Reset</button>
+      <button class="settings-btn-small" id="closeSettings"><span data-icon="settings"></span> Close</button>
     </div>
   </div>
 </div>
@@ -186,294 +1337,6 @@
 <script>
 (function() {
   'use strict';
-  
-  // ===== KONFIGURASI GOOGLE DRIVE =====
-  const DRIVE_FOLDER_ID = '1AU12HTGWX-i_zPw657R5GjV7IFimYM2A';
-  
-  // Anda HARUS membuat API Key sendiri di Google Cloud Console
-  // Ini GRATIS dan mudah dibuat
-  const API_KEY = 'AIzaSyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'; // GANTI DENGAN API KEY ANDA
-  
-  // CORS Proxy - Untuk development, gunakan ini
-  // Untuk production, lebih baik buat proxy sendiri
-  const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-  
-  // Google Drive API endpoints
-  const FILES_ENDPOINT = `https://www.googleapis.com/drive/v3/files`;
-  
-  // Status elements
-  const driveStatus = document.getElementById('driveStatus');
-  const driveStatusText = document.getElementById('driveStatusText');
-  const driveStatusDetail = document.getElementById('driveStatusDetail');
-  const emptyState = document.getElementById('emptyState');
-  const container = document.getElementById('slidesContainer');
-  const loadingIndicator = document.getElementById('loadingIndicator');
-  
-  // ===== CEK KONEKSI INTERNET =====
-  function isOnline() {
-    return navigator.onLine;
-  }
-  
-  // ===== FUNGSI GOOGLE DRIVE - REAL =====
-  async function listFilesInFolder(folderId) {
-    if (!isOnline()) {
-      driveStatusText.textContent = 'OFFLINE';
-      driveStatusDetail.textContent = 'Tidak ada koneksi internet';
-      driveStatus.classList.add('offline');
-      return null;
-    }
-    
-    try {
-      driveStatusText.textContent = 'Mengakses Drive...';
-      driveStatusDetail.textContent = 'Mengambil daftar file...';
-      driveStatus.classList.remove('error', 'offline');
-      driveStatus.classList.add('online');
-      
-      // Query files di folder
-      const query = `'${folderId}' in parents and (mimeType contains 'image/' or mimeType contains 'video/' or mimeType contains 'audio/')`;
-      const url = `${CORS_PROXY}${FILES_ENDPOINT}?q=${encodeURIComponent(query)}&key=${API_KEY}&fields=files(id,name,mimeType,size,webContentLink)&pageSize=100`;
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (!data.files || data.files.length === 0) {
-        driveStatusDetail.textContent = 'Tidak ada file media di folder';
-        return { images: [], videos: [], audio: [] };
-      }
-      
-      // Klasifikasikan file berdasarkan tipe
-      const images = data.files.filter(f => f.mimeType.startsWith('image/'));
-      const videos = data.files.filter(f => f.mimeType.startsWith('video/'));
-      const audio = data.files.filter(f => f.mimeType.startsWith('audio/'));
-      
-      driveStatusDetail.textContent = `Ditemukan: ${images.length} gambar, ${videos.length} video, ${audio.length} audio`;
-      
-      return { images, videos, audio };
-      
-    } catch (error) {
-      console.error('Error accessing Google Drive:', error);
-      driveStatusText.textContent = 'ERROR';
-      driveStatusDetail.textContent = error.message;
-      driveStatus.classList.add('error');
-      driveStatus.classList.remove('online');
-      return null;
-    }
-  }
-  
-  // ===== LOAD MEDIA DARI GOOGLE DRIVE =====
-  async function loadFromGoogleDrive(folderId = DRIVE_FOLDER_ID) {
-    // Reset tampilan
-    emptyState.classList.add('hide');
-    container.innerHTML = "";
-    loadingIndicator.classList.add("show");
-    
-    driveStatusText.textContent = 'Memuat...';
-    
-    // Ambil daftar file
-    const files = await listFilesInFolder(folderId);
-    
-    if (!files) {
-      loadingIndicator.classList.remove("show");
-      emptyState.classList.remove('hide');
-      emptyState.innerHTML = `
-        <span data-icon="folder"></span>
-        <h2>GAGAL AKSES DRIVE</h2>
-        <p>Periksa koneksi internet atau Folder ID</p>
-        <p style="font-size:12px; color:#ff9800;">Error: ${driveStatusDetail.textContent}</p>
-        <button class="settings-btn-small" onclick="location.reload()" style="margin-top:20px;">Coba Lagi</button>
-      `;
-      return;
-    }
-    
-    // Jika tidak ada file
-    if (files.images.length === 0 && files.videos.length === 0) {
-      loadingIndicator.classList.remove("show");
-      emptyState.classList.remove('hide');
-      emptyState.innerHTML = `
-        <span data-icon="folder"></span>
-        <h2>TIDAK ADA FILE MEDIA</h2>
-        <p>Folder tidak mengandung gambar atau video</p>
-      `;
-      return;
-    }
-    
-    driveStatusText.textContent = 'Memuat media...';
-    
-    // Gabungkan semua media (gambar dulu, lalu video)
-    const allMedia = [...files.images, ...files.videos];
-    
-    // Buat slide untuk setiap file
-    for (let i = 0; i < allMedia.length; i++) {
-      const file = allMedia[i];
-      const slide = document.createElement('div');
-      slide.className = 'slide';
-      
-      if (file.mimeType.startsWith('image/')) {
-        // Untuk gambar
-        const img = document.createElement('img');
-        img.className = 'main';
-        
-        // URL download dari Google Drive
-        const imageUrl = `https://drive.google.com/uc?export=view&id=${file.id}`;
-        img.src = imageUrl;
-        img.alt = file.name;
-        
-        img.onerror = function() {
-          console.error('Gagal memuat gambar:', file.name);
-          this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23333"/><text x="10" y="55" fill="%23C5A059" font-family="Arial" font-size="14">Error</text></svg>';
-        };
-        
-        slide.appendChild(img);
-        
-      } else if (file.mimeType.startsWith('video/')) {
-        // Untuk video
-        const video = document.createElement('video');
-        video.className = 'video-main';
-        video.controls = false;
-        video.loop = false;
-        
-        // URL download dari Google Drive
-        const videoUrl = `https://drive.google.com/uc?export=download&id=${file.id}`;
-        video.src = videoUrl;
-        
-        video.onerror = function() {
-          console.error('Gagal memuat video:', file.name);
-        };
-        
-        slide.appendChild(video);
-      }
-      
-      container.appendChild(slide);
-      
-      // Update progress
-      if ((i + 1) % 5 === 0 || i === allMedia.length - 1) {
-        driveStatusDetail.textContent = `Memuat ${i + 1}/${allMedia.length}...`;
-      }
-    }
-    
-    const slides = document.querySelectorAll('.slide');
-    
-    // Update folder info
-    const folderInfo = document.getElementById('folderInfo');
-    const folderInfoText = document.getElementById('folderInfoText');
-    folderInfo.classList.remove('hide');
-    folderInfoText.innerHTML = `📁 Google Drive: ${files.images.length} gambar, ${files.videos.length} video, ${files.audio.length} audio`;
-    
-    loadingIndicator.classList.remove("show");
-    driveStatusText.textContent = 'Siap';
-    
-    // Aktifkan slide pertama
-    if (slides.length > 0) {
-      slides[0].classList.add('active');
-      window.slides = slides;
-      window.currentSlide = 0;
-      window.startSlideshow();
-      
-      // Terapkan animasi
-      if (typeof window.applyAnimationToSlide === 'function') {
-        window.applyAnimationToSlide(slides[0]);
-      }
-    }
-    
-    // Handle audio files
-    if (files.audio.length > 0) {
-      window.audioFiles = files.audio;
-      document.getElementById('audioBtnText').textContent = 'Play MP3';
-      initAudioPlayer();
-      
-      // Update playlist
-      const playlistEl = document.getElementById('audioPlaylist');
-      if (playlistEl) {
-        playlistEl.innerHTML = files.audio.map(f => `<div>🎵 ${f.name}</div>`).join('');
-      }
-    }
-  }
-  
-  // ===== AUDIO PLAYER UNTUK DRIVE =====
-  function initAudioPlayer() {
-    let audioPlayer = document.getElementById('dynamicAudio');
-    if (!audioPlayer) {
-      audioPlayer = document.createElement('audio');
-      audioPlayer.id = 'dynamicAudio';
-      audioPlayer.loop = false;
-      document.getElementById('audioContainer').appendChild(audioPlayer);
-      
-      audioPlayer.addEventListener('play', () => {
-        document.getElementById('audioBtnText').textContent = 'Pause';
-        document.querySelector('#audioToggleBtn span[data-icon]').setAttribute('data-icon', 'volume-up');
-      });
-      
-      audioPlayer.addEventListener('pause', () => {
-        document.getElementById('audioBtnText').textContent = 'Play MP3';
-        document.querySelector('#audioToggleBtn span[data-icon]').setAttribute('data-icon', 'music');
-      });
-      
-      audioPlayer.addEventListener('ended', () => {
-        if (window.audioFiles && window.audioFiles.length > 0) {
-          window.currentAudioIndex = (window.currentAudioIndex + 1) % window.audioFiles.length;
-          playAudioAtIndex(window.currentAudioIndex);
-        }
-      });
-    }
-    return audioPlayer;
-  }
-  
-  function playAudioAtIndex(index) {
-    const audioPlayer = document.getElementById('dynamicAudio') || initAudioPlayer();
-    if (!window.audioFiles || window.audioFiles.length === 0) { 
-      document.getElementById('audioBtnText').textContent = 'No MP3'; 
-      return; 
-    }
-    
-    const audioFile = window.audioFiles[index];
-    const audioUrl = `https://drive.google.com/uc?export=download&id=${audioFile.id}`;
-    
-    audioPlayer.src = audioUrl;
-    audioPlayer.volume = (window.bgVolume || 70) / 100;
-    audioPlayer.play().catch(e => {
-      console.error('Gagal memutar audio:', e);
-      if (window.audioFiles.length > 0) {
-        window.currentAudioIndex = (window.currentAudioIndex + 1) % window.audioFiles.length;
-        playAudioAtIndex(window.currentAudioIndex);
-      }
-    });
-  }
-  
-  // ===== EXPOSE FUNCTIONS =====
-  window.toggleAudio = function() {
-    const audioPlayer = document.getElementById('dynamicAudio') || initAudioPlayer();
-    if (!window.audioFiles || window.audioFiles.length === 0) { 
-      alert('Tidak ada file MP3 di Google Drive'); 
-      return; 
-    }
-    
-    if (audioPlayer.paused) {
-      if (!audioPlayer.src) { 
-        window.currentAudioIndex = 0; 
-        playAudioAtIndex(0); 
-      } else {
-        audioPlayer.play();
-      }
-    } else {
-      audioPlayer.pause();
-    }
-  };
-  
-  window.loadFromGoogleDrive = loadFromGoogleDrive;
-  
-  // ===== SERVICE WORKER REGISTRATION =====
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker registered:', reg.scope))
-        .catch(err => console.log('Service Worker registration failed:', err));
-    });
-  }
   
   // ===== PWA INSTALL =====
   let deferredPrompt;
@@ -485,9 +1348,8 @@
       onlineIndicator.textContent = 'ONLINE';
       onlineIndicator.style.color = '#4CAF50';
     } else {
-      onlineIndicator.textContent = 'OFFLINE';
+      onlineIndicator.textContent = 'OFFLINE • Mode PWA';
       onlineIndicator.style.color = '#C5A059';
-      driveStatusText.textContent = 'OFFLINE';
     }
   }
 
@@ -506,157 +1368,1241 @@
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
       installBtn.classList.add('hide');
     }
     deferredPrompt = null;
   });
 
   window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
     installBtn.classList.add('hide');
     onlineIndicator.textContent = 'INSTALLED';
   });
 
-  // ===== BASIC SLIDE FUNCTIONS =====
-  window.slides = [];
-  window.currentSlide = 0;
-  window.autoPlay = true;
-  window.audioFiles = [];
-  window.currentAudioIndex = 0;
-  window.bgVolume = 70;
+  // ===== REGISTER SERVICE WORKER =====
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker registered:', reg.scope))
+        .catch(err => console.log('Service Worker registration failed:', err));
+    });
+  }
+
+  // ===== BACKGROUND EFFECTS =====
+  let bgEffect = 'rain';
+  let bgIntensity = 100;
+  let effectInterval;
   
-  window.nextSlide = function() {
-    if (!window.slides || window.slides.length === 0) return;
+  const bgEffectsContainer = document.getElementById('backgroundEffects');
+  
+  function createRainEffect() {
+    const container = document.createElement('div');
+    container.className = 'rain-effect';
+    container.id = 'currentEffect';
     
-    // Pause semua video
-    document.querySelectorAll('video').forEach(v => v.pause());
+    const dropCount = Math.floor(50 * (bgIntensity / 100));
+    for (let i = 0; i < dropCount; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'rain-drop';
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+      drop.style.animationDelay = Math.random() * 5 + 's';
+      drop.style.opacity = Math.random() * 0.5 + 0.3;
+      container.appendChild(drop);
+    }
+    return container;
+  }
+  
+  function createSnowEffect() {
+    const container = document.createElement('div');
+    container.className = 'snow-effect';
+    container.id = 'currentEffect';
     
-    window.slides[window.currentSlide]?.classList.remove("active");
-    window.currentSlide = (window.currentSlide + 1) % window.slides.length;
-    window.slides[window.currentSlide]?.classList.add("active");
+    const flakeCount = Math.floor(30 * (bgIntensity / 100));
+    for (let i = 0; i < flakeCount; i++) {
+      const flake = document.createElement('div');
+      flake.className = 'snow-flake';
+      flake.style.left = Math.random() * 100 + '%';
+      flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      flake.style.animationDelay = Math.random() * 5 + 's';
+      flake.style.width = (Math.random() * 10 + 5) + 'px';
+      flake.style.height = flake.style.width;
+      container.appendChild(flake);
+    }
+    return container;
+  }
+  
+  function createSakuraEffect() {
+    const container = document.createElement('div');
+    container.className = 'sakura-effect';
+    container.id = 'currentEffect';
     
-    // Play video jika ada
-    const video = window.slides[window.currentSlide]?.querySelector('video');
-    if (video) {
-      video.play();
+    const petalCount = Math.floor(20 * (bgIntensity / 100));
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'sakura-petal';
+      petal.style.left = Math.random() * 100 + '%';
+      petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
+      petal.style.animationDelay = Math.random() * 5 + 's';
+      petal.style.width = (Math.random() * 15 + 15) + 'px';
+      petal.style.height = petal.style.width;
+      container.appendChild(petal);
+    }
+    return container;
+  }
+  
+  function createMixedEffect() {
+    const container = document.createElement('div');
+    container.className = 'mixed-effect';
+    container.id = 'currentEffect';
+    
+    const dropCount = Math.floor(25 * (bgIntensity / 100));
+    for (let i = 0; i < dropCount; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'rain-drop';
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+      drop.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(drop);
     }
     
-    // Terapkan animasi
-    if (typeof window.applyAnimationToSlide === 'function') {
-      window.applyAnimationToSlide(window.slides[window.currentSlide]);
-    }
-  };
-  
-  window.prevSlide = function() {
-    if (!window.slides || window.slides.length === 0) return;
-    
-    document.querySelectorAll('video').forEach(v => v.pause());
-    
-    window.slides[window.currentSlide]?.classList.remove("active");
-    window.currentSlide = (window.currentSlide - 1 + window.slides.length) % window.slides.length;
-    window.slides[window.currentSlide]?.classList.add("active");
-    
-    const video = window.slides[window.currentSlide]?.querySelector('video');
-    if (video) {
-      video.play();
+    const flakeCount = Math.floor(15 * (bgIntensity / 100));
+    for (let i = 0; i < flakeCount; i++) {
+      const flake = document.createElement('div');
+      flake.className = 'snow-flake';
+      flake.style.left = Math.random() * 100 + '%';
+      flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      flake.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(flake);
     }
     
-    if (typeof window.applyAnimationToSlide === 'function') {
-      window.applyAnimationToSlide(window.slides[window.currentSlide]);
+    const petalCount = Math.floor(10 * (bgIntensity / 100));
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'sakura-petal';
+      petal.style.left = Math.random() * 100 + '%';
+      petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
+      petal.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(petal);
     }
-  };
-  
-  window.togglePlay = function() {
-    window.autoPlay = !window.autoPlay;
-    const playBtn = document.getElementById('playBtn');
-    playBtn.querySelector('span[data-icon]').setAttribute('data-icon', window.autoPlay ? 'pause' : 'play');
     
-    if (window.autoPlay) {
-      window.startSlideshow();
-      const video = window.slides[window.currentSlide]?.querySelector('video');
-      if (video) video.play();
-    } else {
-      if (window.slideTimeout) clearTimeout(window.slideTimeout);
-      document.querySelectorAll('video').forEach(v => v.pause());
+    return container;
+  }
+  
+  function updateBackgroundEffect() {
+    const oldEffect = document.getElementById('currentEffect');
+    if (oldEffect) oldEffect.remove();
+    
+    if (bgEffect === 'none') return;
+    
+    let newEffect;
+    switch(bgEffect) {
+      case 'rain':
+        newEffect = createRainEffect();
+        break;
+      case 'snow':
+        newEffect = createSnowEffect();
+        break;
+      case 'sakura':
+        newEffect = createSakuraEffect();
+        break;
+      case 'mixed':
+        newEffect = createMixedEffect();
+        break;
+      default:
+        return;
     }
-  };
+    
+    bgEffectsContainer.appendChild(newEffect);
+    
+    if (effectInterval) clearInterval(effectInterval);
+    effectInterval = setInterval(() => {
+      if (bgEffect !== 'none') {
+        const old = document.getElementById('currentEffect');
+        if (old) old.remove();
+        
+        let refreshed;
+        switch(bgEffect) {
+          case 'rain': refreshed = createRainEffect(); break;
+          case 'snow': refreshed = createSnowEffect(); break;
+          case 'sakura': refreshed = createSakuraEffect(); break;
+          case 'mixed': refreshed = createMixedEffect(); break;
+        }
+        bgEffectsContainer.appendChild(refreshed);
+      }
+    }, 10000);
+  }
+
+  // ===== VARIABLES =====
+  let slides = [];
+  let currentSlide = 0;
+  let autoPlay = true;
+  let slideTimeout;
+  let durations = [9000, 11000, 10000, 12000];
   
-  window.startSlideshow = function() {
-    if (!window.autoPlay || !window.slides || window.slides.length === 0) return;
-    if (window.slideTimeout) clearTimeout(window.slideTimeout);
-    window.slideTimeout = setTimeout(window.nextSlide, 8000);
-  };
+  let imageFiles = [];
+  let videoFiles = [];
+  let audioFiles = [];
+  let logoFiles = [];
+  let currentMediaIndex = 0;
+  let currentAudioIndex = 0;
   
-  // ===== ANIMASI SLIDE =====
+  let videoVolume = 70;
+  let videoMuted = false;
+  
+  let audioPlayer = null;
+  let bgVolume = 70;
+
+  let runningLines = [];
+  let currentLineIndex = 0;
+  let textSpeed = 30;
+  let fontSize = 20;
+  let letterSpacing = 4;
+  let textColor = '#C5A059';
+  let runningTextEnabled = true;
+  
+  let fontFamily = "'Roboto', sans-serif";
+  let fontWeight = 400;
+  let fontItalic = false;
+  let textTransform = 'uppercase';
+  let textGlow = true;
+  let glowIntensity = 5;
+
+  let kenBurnsEnabled = true;
+  let dateEnabled = true;
+  let shuffleEnabled = false;
+  let brightness = 100;
+  let fadeEnabled = true;
+
+  let autoHideEnabled = false;
+  let hideDelay = 4;
+  let hideTimer;
+
+  // Animasi slide
+  let slideMode = 'random-all'; // Default random semua animasi
+  let fixedAnimation = 'anim-zoom-in';
+  let animationDuration = 8;
+  
+  // Daftar semua animasi yang tersedia (12 animasi)
   const allAnimations = [
-    'anim-zoom-in', 'anim-zoom-out', 'anim-shatter', 'anim-from-all',
-    'anim-slide-left', 'anim-slide-right', 'anim-slide-top', 'anim-slide-bottom',
-    'anim-fade-rotate', 'anim-blur-in', 'anim-bounce', 'anim-flip'
+    'anim-zoom-in',
+    'anim-zoom-out',
+    'anim-shatter',
+    'anim-from-all',
+    'anim-slide-left',
+    'anim-slide-right',
+    'anim-slide-top',
+    'anim-slide-bottom',
+    'anim-fade-rotate',
+    'anim-blur-in',
+    'anim-bounce',
+    'anim-flip'
   ];
   
-  window.applyAnimationToSlide = function(slideElement) {
-    const img = slideElement?.querySelector('.main');
+  // Untuk cycle animations
+  let cycleIndex = 0;
+  let cycleAnimations = [];
+
+  // Logo variables
+  let logoLeftData = null;
+  let logoRightData = null;
+  let logoScale = 200;
+  let logoInterval = 60;
+  let logoRotationTimer = null;
+  let currentLogoIndex = 0;
+
+  // DOM Elements
+  const container = document.getElementById("slidesContainer");
+  const emptyState = document.getElementById("emptyState");
+  const omTitle = document.getElementById("omTitle");
+  const datetime = document.getElementById("datetime");
+  const runningBox = document.getElementById("runningBox");
+  const bottomBar = document.getElementById("bottomBar");
+  const runningTrack = document.getElementById("runningTrack");
+  const fadeLeft = document.getElementById("fadeLeft");
+  const fadeRight = document.getElementById("fadeRight");
+  const folderInfo = document.getElementById("folderInfo");
+  const folderInfoText = document.getElementById("folderInfoText");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  const loadingIndicator = document.getElementById("loadingIndicator");
+  const folderInput = document.getElementById("folderInput");
+  const dayEl = document.getElementById('day');
+  const dateEl = document.getElementById('date');
+  const hoursMinutesEl = document.getElementById('hoursMinutes');
+  const secondsEl = document.getElementById('seconds');
+  const playBtn = document.getElementById('playBtn');
+  const audioToggleBtn = document.getElementById('audioToggleBtn');
+  const audioBtnText = document.getElementById('audioBtnText');
+  const audioContainer = document.getElementById('audioContainer');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const audioPlaylist = document.getElementById('audioPlaylist');
+  const fontPreview = document.getElementById('fontPreview');
+  
+  const logoLeft = document.getElementById('logoLeft');
+  const logoRight = document.getElementById('logoRight');
+  const logoLeftImg = document.getElementById('logoLeftImg');
+  const logoRightImg = document.getElementById('logoRightImg');
+  const logoLeftPlaceholder = document.getElementById('logoLeftPlaceholder');
+  const logoRightPlaceholder = document.getElementById('logoRightPlaceholder');
+  const logoLeftInput = document.getElementById('logoLeftInput');
+  const logoRightInput = document.getElementById('logoRightInput');
+  const clearLogoLeft = document.getElementById('clearLogoLeft');
+  const clearLogoRight = document.getElementById('clearLogoRight');
+
+  // ===== FUNGSI AUTO HIDE =====
+  function hideControls() {
+    if (!autoHideEnabled) return;
+    
+    omTitle.classList.add("hide");
+    folderInfo.classList.add("hide");
+    bottomBar.classList.add("hide");
+    
+    datetime.classList.add("datetime-hidden-pos");
+  }
+
+  function showControls() {
+    if (!autoHideEnabled) return;
+    
+    clearTimeout(hideTimer);
+    
+    omTitle.classList.remove("hide");
+    folderInfo.classList.remove("hide");
+    bottomBar.classList.remove("hide");
+    
+    datetime.classList.remove("datetime-hidden-pos");
+    
+    hideTimer = setTimeout(hideControls, hideDelay * 1000);
+  }
+
+  function resetHideTimer() {
+    if (!autoHideEnabled) return;
+    showControls();
+  }
+
+  document.addEventListener("mousemove", resetHideTimer);
+  document.addEventListener("click", resetHideTimer);
+  document.addEventListener("touchstart", resetHideTimer);
+  document.addEventListener("keydown", resetHideTimer);
+  
+  settingsPanel?.addEventListener("mouseenter", () => {
+    if (autoHideEnabled) clearTimeout(hideTimer);
+  });
+  
+  settingsPanel?.addEventListener("mouseleave", () => {
+    if (autoHideEnabled) resetHideTimer();
+  });
+
+  // ===== FUNGSI ANIMASI SLIDE =====
+  function getNextAnimation() {
+    switch(slideMode) {
+      case 'random-all':
+        // Random dari semua 12 animasi
+        return allAnimations[Math.floor(Math.random() * allAnimations.length)];
+        
+      case 'cycle-3':
+        // Cycle 3 animasi bergantian
+        if (cycleAnimations.length !== 3) {
+          // Ambil 3 animasi random
+          cycleAnimations = [];
+          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+          for (let i = 0; i < 3; i++) {
+            cycleAnimations.push(shuffled[i]);
+          }
+        }
+        const anim3 = cycleAnimations[cycleIndex % 3];
+        cycleIndex++;
+        return anim3;
+        
+      case 'cycle-5':
+        // Cycle 5 animasi bergantian
+        if (cycleAnimations.length !== 5) {
+          cycleAnimations = [];
+          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+          for (let i = 0; i < 5; i++) {
+            cycleAnimations.push(shuffled[i]);
+          }
+        }
+        const anim5 = cycleAnimations[cycleIndex % 5];
+        cycleIndex++;
+        return anim5;
+        
+      case 'cycle-7':
+        // Cycle 7 animasi bergantian
+        if (cycleAnimations.length !== 7) {
+          cycleAnimations = [];
+          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+          for (let i = 0; i < 7; i++) {
+            cycleAnimations.push(shuffled[i]);
+          }
+        }
+        const anim7 = cycleAnimations[cycleIndex % 7];
+        cycleIndex++;
+        return anim7;
+        
+      case 'fixed':
+        return fixedAnimation;
+        
+      default:
+        return allAnimations[Math.floor(Math.random() * allAnimations.length)];
+    }
+  }
+
+  function applyAnimationToSlide(slideElement) {
+    const img = slideElement.querySelector('.main');
     if (!img) return;
     
-    allAnimations.forEach(cls => img.classList.remove(cls));
+    // Hapus semua class animasi
+    allAnimations.forEach(animClass => {
+      img.classList.remove(animClass);
+    });
     
-    // Random animation
-    const randomAnim = allAnimations[Math.floor(Math.random() * allAnimations.length)];
-    img.classList.add(randomAnim);
-    img.style.animationDuration = '8s';
-  };
-  
-  // ===== SETTINGS =====
-  document.getElementById('settingsBtn').addEventListener('click', () => {
-    document.getElementById('settingsPanel').classList.toggle('hide');
-  });
-  
-  document.getElementById('closeSettings').addEventListener('click', () => {
-    document.getElementById('settingsPanel').classList.add('hide');
-  });
-  
-  document.getElementById('loadDriveBtn').addEventListener('click', () => {
-    const folderId = document.getElementById('driveFolderId').value;
-    loadFromGoogleDrive(folderId);
-  });
-  
-  // Fullscreen
-  document.getElementById('fullscreenBtn').addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
+    // Dapatkan animasi berikutnya
+    const animClass = getNextAnimation();
+    
+    // Tambahkan class animasi
+    img.classList.add(animClass);
+    
+    // Set durasi animasi
+    img.style.animationDuration = animationDuration + 's';
+    
+    console.log('Menerapkan animasi:', animClass, 'durasi:', animationDuration + 's');
+  }
+
+  // ===== FUNGSI VALIDASI FILE =====
+  function isValidImageForSlideshow(file) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/webp'];
+    if (allowedTypes.includes(file.type)) return true;
+    const fileName = file.name.toLowerCase();
+    return ['.jpg', '.jpeg', '.png', '.bmp', '.webp'].some(ext => fileName.endsWith(ext));
+  }
+
+  function isValidVideoFile(file) {
+    return file.type.startsWith("video/");
+  }
+
+  function isValidAudioFile(file) {
+    return file.type.startsWith("audio/") && !file.type.includes('m3u');
+  }
+
+  function isValidLogoFile(file) {
+    const fileName = file.name.toLowerCase();
+    return file.type === 'image/x-icon' || file.type === 'image/vnd.microsoft.icon' || 
+           fileName.endsWith('.ico') || isValidImageForSlideshow(file);
+  }
+
+  // ===== FUNGSI LOGO =====
+  function updateLogo(position, dataUrl) {
+    const img = position === 'left' ? logoLeftImg : logoRightImg;
+    const placeholder = position === 'left' ? logoLeftPlaceholder : logoRightPlaceholder;
+    const logoCorner = position === 'left' ? logoLeft : logoRight;
+    
+    if (dataUrl) {
+      img.src = dataUrl;
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+      logoCorner.classList.remove('hide-logo');
     } else {
-      document.exitFullscreen();
+      img.src = '';
+      img.style.display = 'none';
+      placeholder.style.display = 'flex';
+      logoCorner.classList.add('hide-logo');
     }
-  });
-  
-  // Tanggal
+  }
+
+  function handleLogoUpload(input, position) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      if (position === 'left') {
+        logoLeftData = e.target.result;
+        updateLogo('left', logoLeftData);
+      } else {
+        logoRightData = e.target.result;
+        updateLogo('right', logoRightData);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearLogo(position) {
+    if (position === 'left') {
+      logoLeftData = null;
+      logoLeftInput.value = '';
+      updateLogo('left', null);
+    } else {
+      logoRightData = null;
+      logoRightInput.value = '';
+      updateLogo('right', null);
+    }
+  }
+
+  function startLogoRotation() {
+    if (logoRotationTimer) clearInterval(logoRotationTimer);
+    if (logoFiles.length === 0) return;
+    
+    logoRotationTimer = setInterval(() => {
+      if (logoFiles.length > 0) {
+        currentLogoIndex = (currentLogoIndex + 1) % logoFiles.length;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          logoLeftData = e.target.result;
+          updateLogo('left', logoLeftData);
+        };
+        reader.readAsDataURL(logoFiles[currentLogoIndex]);
+        
+        setTimeout(() => {
+          const rightReader = new FileReader();
+          rightReader.onload = function(ev) {
+            logoRightData = ev.target.result;
+            updateLogo('right', logoRightData);
+          };
+          rightReader.readAsDataURL(logoFiles[(currentLogoIndex + 1) % logoFiles.length]);
+        }, 100);
+      }
+    }, logoInterval * 1000);
+  }
+
+  function updateLogoScale(scalePercent) {
+    document.documentElement.style.setProperty('--logo-scale', scalePercent / 100);
+  }
+
+  logoLeftInput.addEventListener('change', () => handleLogoUpload(logoLeftInput, 'left'));
+  logoRightInput.addEventListener('change', () => handleLogoUpload(logoRightInput, 'right'));
+  clearLogoLeft.addEventListener('click', () => clearLogo('left'));
+  clearLogoRight.addEventListener('click', () => clearLogo('right'));
+
+  // ===== TANGGAL =====
   function updateDateTime() {
     const now = new Date();
     const days = ['MINGGU','SENIN','SELASA','RABU','KAMIS','JUMAT','SABTU'];
     const months = ['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
-    document.getElementById('day').textContent = days[now.getDay()];
-    document.getElementById('date').textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-    document.getElementById('hoursMinutes').textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    document.getElementById('seconds').textContent = String(now.getSeconds()).padStart(2,'0');
+    if (dayEl) dayEl.textContent = days[now.getDay()];
+    if (dateEl) dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    if (hoursMinutesEl) hoursMinutesEl.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    if (secondsEl) secondsEl.textContent = String(now.getSeconds()).padStart(2,'0');
   }
   setInterval(updateDateTime, 1000);
   updateDateTime();
-  
-  // Auto load saat halaman dimuat
-  setTimeout(() => {
-    if (isOnline()) {
-      loadFromGoogleDrive();
+
+  function updateAllVideoVolumes() {
+    document.querySelectorAll('video').forEach(v => { v.volume = videoMuted ? 0 : (videoVolume/100); });
+  }
+
+  // ===== FULLSCREEN =====
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
     } else {
-      emptyState.innerHTML = `
-        <span data-icon="folder"></span>
-        <h2>OFFLINE MODE</h2>
-        <p>Tidak ada koneksi internet</p>
-        <p>Gunakan tombol folder untuk upload lokal</p>
-      `;
+      document.exitFullscreen();
+      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
     }
-  }, 1500);
+  }
   
-  console.log('✅ PWA Ready - Google Drive Integration');
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  
+  document.addEventListener('fullscreenchange', function() {
+    if (document.fullscreenElement) {
+      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
+    } else {
+      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
+    }
+  });
+
+  // ===== AUDIO =====
+  function initAudioPlayer() {
+    if (!audioPlayer) {
+      audioPlayer = document.createElement('audio');
+      audioPlayer.id = 'dynamicAudio';
+      audioPlayer.loop = false;
+      audioContainer.appendChild(audioPlayer);
+      audioPlayer.volume = bgVolume/100;
+      audioPlayer.addEventListener('play', () => {
+        audioBtnText.textContent = 'Pause';
+        audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'volume-up');
+      });
+      audioPlayer.addEventListener('pause', () => {
+        audioBtnText.textContent = 'Play MP3';
+        audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'music');
+      });
+      audioPlayer.addEventListener('ended', () => {
+        if (audioFiles.length > 0) {
+          currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
+          playAudioAtIndex(currentAudioIndex);
+        }
+      });
+    }
+    return audioPlayer;
+  }
+
+  function playAudioAtIndex(index) {
+    if (!audioPlayer) audioPlayer = initAudioPlayer();
+    if (audioFiles.length === 0) { 
+      audioBtnText.textContent = 'No MP3'; 
+      return; 
+    }
+    const audioFile = audioFiles[index];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      audioPlayer.src = e.target.result;
+      audioPlayer.volume = bgVolume/100;
+      audioPlayer.play().catch(() => {
+        if (audioFiles.length > 0) {
+          currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
+          playAudioAtIndex(currentAudioIndex);
+        }
+      });
+    };
+    reader.readAsDataURL(audioFile);
+  }
+
+  window.toggleAudio = function() {
+    if (!audioPlayer) audioPlayer = initAudioPlayer();
+    if (audioFiles.length === 0) { 
+      alert('Tidak ada file MP3'); 
+      return; 
+    }
+    if (audioPlayer.paused) {
+      if (!audioPlayer.src) { 
+        currentAudioIndex = 0; 
+        playAudioAtIndex(0); 
+      } else audioPlayer.play();
+    } else audioPlayer.pause();
+  };
+
+  // ===== RUNNING TEXT =====
+  function createRunningItem(text) {
+    const item = document.createElement('div');
+    item.className = 'running-item';
+    let html = '';
+    for (let i = 0; i < text.length; i++) {
+      html += text[i] === ' ' ? '<span>&nbsp;</span>' : `<span>${text[i]}</span>`;
+    }
+    item.innerHTML = html; 
+    return item;
+  }
+
+  function updateRunningTextStyle() {
+    if (!runningTrack) return;
+    let fontStyle = `${fontItalic ? 'italic' : 'normal'} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    runningTrack.style.font = fontStyle;
+    runningTrack.style.letterSpacing = letterSpacing + 'px';
+    runningTrack.style.textTransform = textTransform;
+    runningTrack.style.color = textColor;
+    runningTrack.style.textShadow = textGlow ? `0 0 ${glowIntensity}px ${textColor}` : 'none';
+    
+    if (fontPreview) {
+      fontPreview.style.font = `normal ${fontWeight} 18px ${fontFamily}`;
+      fontPreview.style.color = textColor;
+    }
+    
+    document.querySelectorAll('.running-item, .running-item span').forEach(el => {
+      el.style.lineHeight = (fontSize + 30) + 'px';
+      el.style.fontSize = fontSize + 'px';
+      el.style.color = textColor;
+    });
+    
+    if (fadeLeft && fadeRight) {
+      fadeLeft.classList.toggle('hide', !fadeEnabled);
+      fadeRight.classList.toggle('hide', !fadeEnabled);
+    }
+  }
+
+  function updateRunningTextContent() {
+    if (!runningTrack || !runningTextEnabled) return;
+    if (runningLines.length === 0) runningLines = ['WELCOME'];
+    let combined = '';
+    for (let i = 0; i < 5; i++) {
+      const idx = (currentLineIndex + i) % runningLines.length;
+      if (runningLines[idx].trim()) combined += ` ✦ ${runningLines[idx].trim()} ✦ `;
+    }
+    runningTrack.innerHTML = '';
+    runningTrack.appendChild(createRunningItem(combined));
+    currentLineIndex = (currentLineIndex + 1) % runningLines.length;
+    updateRunningTextStyle();
+  }
+
+  function updateRunningTextSpeed() {
+    if (runningTrack) runningTrack.style.animationDuration = textSpeed + 's';
+  }
+
+  // ===== SLIDESHOW =====
+  window.nextSlide = function() {
+    if (slides.length === 0) return;
+    document.querySelectorAll('video').forEach(v => v.pause());
+    if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
+    
+    if (shuffleEnabled) {
+      do { 
+        currentMediaIndex = Math.floor(Math.random() * slides.length); 
+      } while (currentMediaIndex === currentSlide && slides.length > 1);
+    } else {
+      currentMediaIndex = (currentMediaIndex + 1) % slides.length;
+    }
+    
+    currentSlide = currentMediaIndex;
+    if (slides[currentSlide]) {
+      slides[currentSlide].classList.add("active");
+      applyAnimationToSlide(slides[currentSlide]);
+      
+      const video = slides[currentSlide].querySelector('video');
+      if (video) {
+        video.volume = videoMuted ? 0 : (videoVolume / 100);
+        video.play();
+        if (video.duration) { 
+          clearTimeout(slideTimeout); 
+          slideTimeout = setTimeout(window.nextSlide, video.duration * 1000); 
+        } else startSlideshow();
+      } else startSlideshow();
+    }
+  };
+
+  window.prevSlide = function() {
+    if (slides.length === 0) return;
+    document.querySelectorAll('video').forEach(v => v.pause());
+    if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
+    
+    if (shuffleEnabled) {
+      do { 
+        currentMediaIndex = Math.floor(Math.random() * slides.length); 
+      } while (currentMediaIndex === currentSlide && slides.length > 1);
+    } else {
+      currentMediaIndex = (currentMediaIndex - 1 + slides.length) % slides.length;
+    }
+    
+    currentSlide = currentMediaIndex;
+    if (slides[currentSlide]) {
+      slides[currentSlide].classList.add("active");
+      applyAnimationToSlide(slides[currentSlide]);
+      
+      const video = slides[currentSlide].querySelector('video');
+      if (video) {
+        video.volume = videoMuted ? 0 : (videoVolume / 100);
+        video.play();
+      }
+      startSlideshow();
+    }
+  };
+
+  function startSlideshow() {
+    if (!autoPlay || slides.length === 0) return;
+    clearTimeout(slideTimeout);
+    slideTimeout = setTimeout(window.nextSlide, durations[currentMediaIndex % durations.length]);
+  }
+
+  window.togglePlay = function() {
+    autoPlay = !autoPlay;
+    playBtn.querySelector('span[data-icon]').setAttribute('data-icon', autoPlay ? 'pause' : 'play');
+    if (autoPlay) { 
+      startSlideshow(); 
+      slides[currentSlide]?.querySelector('video')?.play(); 
+    } else { 
+      clearTimeout(slideTimeout); 
+      document.querySelectorAll('video').forEach(v => v.pause()); 
+    }
+  };
+
+  // ===== LOAD MEDIA =====
+  if (folderInput) {
+    folderInput.addEventListener('change', async function(e) {
+      emptyState?.classList.add('hide');
+      container.innerHTML = "";
+      slides = []; 
+      imageFiles = []; 
+      videoFiles = []; 
+      audioFiles = []; 
+      logoFiles = [];
+      loadingIndicator.classList.add("show");
+      
+      const files = Array.from(e.target.files);
+      
+      for (const file of files) {
+        if (isValidImageForSlideshow(file)) {
+          imageFiles.push(file);
+        } else if (isValidVideoFile(file)) {
+          videoFiles.push(file);
+        } else if (isValidAudioFile(file)) {
+          audioFiles.push(file);
+        } else if (isValidLogoFile(file)) {
+          logoFiles.push(file);
+        }
+      }
+      
+      if (audioFiles.length > 0) { 
+        audioBtnText.textContent = 'Play MP3'; 
+        initAudioPlayer();
+        audioPlaylist.innerHTML = audioFiles.map(f => `<div>🎵 ${f.name}</div>`).join('');
+      }
+
+      if (logoFiles.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          logoLeftData = e.target.result;
+          updateLogo('left', logoLeftData);
+          
+          if (logoFiles.length > 1) {
+            const rightReader = new FileReader();
+            rightReader.onload = function(ev) {
+              logoRightData = ev.target.result;
+              updateLogo('right', logoRightData);
+            };
+            rightReader.readAsDataURL(logoFiles[1 % logoFiles.length]);
+          } else {
+            logoRightData = logoLeftData;
+            updateLogo('right', logoRightData);
+          }
+          
+          startLogoRotation();
+        };
+        reader.readAsDataURL(logoFiles[0]);
+      }
+      
+      const media = [...imageFiles, ...videoFiles];
+      if (media.length === 0) {
+        loadingIndicator.classList.remove("show");
+        folderInfo.classList.remove("hide");
+        folderInfoText.innerText = `${media.length} media, ${audioFiles.length} MP3, ${logoFiles.length} logo`;
+        return;
+      }
+      
+      folderInfo.classList.remove("hide");
+      folderInfoText.innerText = `${media.length} media (${imageFiles.length} gambar, ${videoFiles.length} video), ${audioFiles.length} MP3, ${logoFiles.length} logo`;
+
+      for (let i = 0; i < media.length; i++) {
+        const file = media[i];
+        const reader = new FileReader();
+        
+        reader.onload = function(ev) {
+          const slide = document.createElement("div"); 
+          slide.className = "slide";
+          
+          if (file.type.startsWith("image/")) {
+            const img = new Image(); 
+            img.className = "main";
+            if (kenBurnsEnabled) img.style.animation = 'gentleZoom 12s ease-in-out infinite alternate';
+            img.src = ev.target.result;
+            img.onload = function() { 
+              this.classList.add(this.naturalHeight > this.naturalWidth ? 'portrait' : 'landscape'); 
+            };
+            slide.appendChild(img);
+          } else {
+            const video = document.createElement("video"); 
+            video.className = "video-main";
+            video.src = ev.target.result; 
+            video.volume = videoMuted ? 0 : (videoVolume / 100);
+            slide.appendChild(video);
+          }
+          
+          container.appendChild(slide);
+          slides = document.querySelectorAll(".slide");
+          
+          if (i === media.length - 1) {
+            loadingIndicator.classList.remove("show");
+            if (slides.length > 0) { 
+              slides[0].classList.add("active"); 
+              applyAnimationToSlide(slides[0]);
+              startSlideshow(); 
+            }
+          }
+        };
+        
+        reader.readAsDataURL(file);
+        await new Promise(r => setTimeout(r, 10));
+      }
+    });
+  }
+
+  // ===== SETTINGS BINDINGS =====
+  settingsBtn?.addEventListener('click', (e) => { 
+    e.stopPropagation(); 
+    settingsPanel.classList.toggle('hide'); 
+    if (autoHideEnabled && !settingsPanel.classList.contains('hide')) {
+      clearTimeout(hideTimer);
+    }
+  });
+  
+  document.getElementById('closeSettings')?.addEventListener('click', () => { 
+    settingsPanel.classList.add('hide'); 
+    resetHideTimer();
+  });
+
+  // Background Effect
+  const bgEffectSelect = document.getElementById('bgEffectSelect');
+  const bgIntensitySlider = document.getElementById('bgIntensitySlider');
+  const bgIntensityValue = document.getElementById('bgIntensityValue');
+  
+  bgEffectSelect.addEventListener('change', (e) => {
+    bgEffect = e.target.value;
+    updateBackgroundEffect();
+  });
+  
+  bgIntensitySlider.addEventListener('input', (e) => {
+    bgIntensity = parseInt(e.target.value);
+    bgIntensityValue.textContent = bgIntensity + '%';
+    updateBackgroundEffect();
+  });
+
+  // Slide Animation Settings
+  const slideModeSelect = document.getElementById('slideModeSelect');
+  const fixedAnimationContainer = document.getElementById('fixedAnimationContainer');
+  const fixedAnimationSelect = document.getElementById('fixedAnimationSelect');
+  const animationDurationSlider = document.getElementById('animationDurationSlider');
+  const animationDurationValue = document.getElementById('animationDurationValue');
+  
+  // Tampilkan/sembunyikan fixed animation selector
+  slideModeSelect.addEventListener('change', (e) => {
+    slideMode = e.target.value;
+    
+    if (slideMode === 'fixed') {
+      fixedAnimationContainer.style.display = 'block';
+    } else {
+      fixedAnimationContainer.style.display = 'none';
+      // Reset cycle index untuk mode cycle
+      if (slideMode.startsWith('cycle')) {
+        cycleIndex = 0;
+        cycleAnimations = [];
+      }
+    }
+    
+    // Terapkan ke slide aktif
+    if (slides[currentSlide]) {
+      applyAnimationToSlide(slides[currentSlide]);
+    }
+  });
+  
+  fixedAnimationSelect.addEventListener('change', (e) => {
+    fixedAnimation = e.target.value;
+    if (slideMode === 'fixed' && slides[currentSlide]) {
+      applyAnimationToSlide(slides[currentSlide]);
+    }
+  });
+  
+  animationDurationSlider.addEventListener('input', (e) => {
+    animationDuration = parseInt(e.target.value);
+    animationDurationValue.textContent = animationDuration + 's';
+    
+    // Update semua slide yang aktif
+    if (slides[currentSlide]) {
+      const img = slides[currentSlide].querySelector('.main');
+      if (img) img.style.animationDuration = animationDuration + 's';
+    }
+  });
+
+  document.getElementById('videoVolumeSlider')?.addEventListener('input', (e) => { 
+    videoVolume = parseInt(e.target.value); 
+    document.getElementById('videoVolumeValue').textContent = videoVolume + '%'; 
+    updateAllVideoVolumes(); 
+  });
+  
+  document.getElementById('videoMuteToggle')?.addEventListener('click', function() { 
+    videoMuted = !videoMuted; 
+    this.classList.toggle('active', videoMuted); 
+    updateAllVideoVolumes(); 
+  });
+  
+  const autoHideToggle = document.getElementById('autoHideToggle');
+  autoHideToggle.classList.remove('active');
+  autoHideToggle.addEventListener('click', function() {
+    autoHideEnabled = !autoHideEnabled;
+    this.classList.toggle('active', autoHideEnabled);
+    
+    if (autoHideEnabled) {
+      resetHideTimer();
+    } else {
+      clearTimeout(hideTimer);
+      omTitle.classList.remove("hide");
+      folderInfo.classList.remove("hide");
+      bottomBar.classList.remove("hide");
+      datetime.classList.remove("datetime-hidden-pos");
+    }
+  });
+
+  document.getElementById('hideDelaySlider')?.addEventListener('input', (e) => { 
+    hideDelay = parseInt(e.target.value); 
+    document.getElementById('hideDelayValue').textContent = hideDelay + 's'; 
+    if (autoHideEnabled) resetHideTimer();
+  });
+
+  const dateToggle = document.getElementById('dateToggle');
+  if (dateToggle) {
+    dateToggle.classList.add('active');
+    dateToggle.addEventListener('click', function() {
+      dateEnabled = !dateEnabled;
+      this.classList.toggle('active', dateEnabled);
+      datetime.classList.toggle('hide', !dateEnabled);
+    });
+  }
+
+  const kenBurnsToggle = document.getElementById('kenBurnsToggle');
+  if (kenBurnsToggle) {
+    kenBurnsToggle.classList.add('active');
+    kenBurnsToggle.addEventListener('click', function() {
+      kenBurnsEnabled = !kenBurnsEnabled;
+      this.classList.toggle('active', kenBurnsEnabled);
+      document.querySelectorAll('.main').forEach(img => {
+        img.style.animation = kenBurnsEnabled ? 'gentleZoom 12s ease-in-out infinite alternate' : 'none';
+      });
+    });
+  }
+
+  const shuffleToggle = document.getElementById('shuffleToggle');
+  if (shuffleToggle) {
+    shuffleToggle.addEventListener('click', function() {
+      shuffleEnabled = !shuffleEnabled;
+      this.classList.toggle('active', shuffleEnabled);
+    });
+  }
+
+  document.getElementById('brightnessSlider')?.addEventListener('input', (e) => {
+    brightness = parseInt(e.target.value);
+    document.getElementById('brightnessValue').textContent = brightness + '%';
+    document.body.style.filter = `brightness(${brightness / 100})`;
+  });
+
+  const logoScaleSlider = document.getElementById('logoScaleSlider');
+  const logoScaleValue = document.getElementById('logoScaleValue');
+  const logoIntervalSlider = document.getElementById('logoIntervalSlider');
+  const logoIntervalValue = document.getElementById('logoIntervalValue');
+
+  logoScaleSlider.addEventListener('input', (e) => {
+    logoScale = parseInt(e.target.value);
+    logoScaleValue.textContent = logoScale + '%';
+    updateLogoScale(logoScale);
+  });
+
+  logoIntervalSlider.addEventListener('input', (e) => {
+    logoInterval = parseInt(e.target.value);
+    logoIntervalValue.textContent = logoInterval + 's';
+    if (logoFiles.length > 0) {
+      startLogoRotation();
+    }
+  });
+
+  document.getElementById('runningTextToggle')?.addEventListener('click', function() { 
+    runningTextEnabled = !runningTextEnabled; 
+    this.classList.toggle('active', runningTextEnabled); 
+    if (!runningTextEnabled) {
+      runningBox.classList.add('hide-by-settings');
+    } else {
+      runningBox.classList.remove('hide-by-settings');
+    }
+    if (runningTextEnabled) updateRunningTextContent(); 
+  });
+  
+  document.getElementById('updateRunningText')?.addEventListener('click', () => { 
+    const inp = document.getElementById('runningTextInput'); 
+    if (inp) { 
+      runningLines = inp.value.split('\n').filter(l => l.trim()); 
+      currentLineIndex = 0; 
+      updateRunningTextContent(); 
+    } 
+  });
+  
+  document.getElementById('fontFamilySelect')?.addEventListener('change', (e) => { 
+    fontFamily = e.target.value; 
+    updateRunningTextStyle(); 
+  });
+  
+  document.getElementById('speedSlider')?.addEventListener('input', (e) => { 
+    textSpeed = parseInt(e.target.value); 
+    document.getElementById('speedValue').textContent = textSpeed + 's'; 
+    updateRunningTextSpeed(); 
+  });
+  
+  document.getElementById('fontSizeSlider')?.addEventListener('input', (e) => { 
+    fontSize = parseInt(e.target.value); 
+    document.getElementById('fontSizeValue').textContent = fontSize + 'px'; 
+    runningBox.style.height = (fontSize + 40) + 'px'; 
+    updateRunningTextStyle(); 
+  });
+  
+  document.getElementById('textColor')?.addEventListener('input', (e) => { 
+    textColor = e.target.value; 
+    updateRunningTextStyle(); 
+  });
+
+  document.getElementById('bgVolumeSlider')?.addEventListener('input', (e) => { 
+    bgVolume = parseInt(e.target.value); 
+    document.getElementById('bgVolumeValue').textContent = bgVolume + '%'; 
+    if (audioPlayer) audioPlayer.volume = bgVolume / 100; 
+  });
+  
+  document.getElementById('prevAudioBtn')?.addEventListener('click', () => { 
+    if (audioFiles.length) { 
+      currentAudioIndex = (currentAudioIndex - 1 + audioFiles.length) % audioFiles.length; 
+      playAudioAtIndex(currentAudioIndex); 
+    } 
+  });
+  
+  document.getElementById('nextAudioBtn')?.addEventListener('click', () => { 
+    if (audioFiles.length) { 
+      currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length; 
+      playAudioAtIndex(currentAudioIndex); 
+    } 
+  });
+
+  document.getElementById('saveSettings')?.addEventListener('click', () => {
+    try {
+      localStorage.setItem('weddingOffline', JSON.stringify({
+        autoHideEnabled, hideDelay, videoVolume, videoMuted, textSpeed, fontSize, textColor, fadeEnabled,
+        fontFamily, dateEnabled, kenBurnsEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
+        logoScale, logoInterval, bgEffect, bgIntensity, 
+        slideMode, fixedAnimation, animationDuration,
+        runningText: document.getElementById('runningTextInput')?.value,
+        logoLeft: logoLeftData,
+        logoRight: logoRightData
+      }));
+      alert('Settings saved!');
+      settingsPanel.classList.add('hide');
+      resetHideTimer();
+    } catch (e) {}
+  });
+  
+  document.getElementById('resetSettings')?.addEventListener('click', () => { 
+    if (confirm('Reset semua pengaturan?')) {
+      localStorage.clear(); 
+      location.reload(); 
+    }
+  });
+
+  // Load saved settings
+  try {
+    const saved = localStorage.getItem('weddingOffline');
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.autoHideEnabled !== undefined) autoHideEnabled = data.autoHideEnabled;
+      if (data.hideDelay !== undefined) hideDelay = data.hideDelay;
+      if (data.videoVolume !== undefined) videoVolume = data.videoVolume;
+      if (data.videoMuted !== undefined) videoMuted = data.videoMuted;
+      if (data.textSpeed !== undefined) textSpeed = data.textSpeed;
+      if (data.fontSize !== undefined) fontSize = data.fontSize;
+      if (data.textColor !== undefined) textColor = data.textColor;
+      if (data.fadeEnabled !== undefined) fadeEnabled = data.fadeEnabled;
+      if (data.fontFamily !== undefined) fontFamily = data.fontFamily;
+      if (data.dateEnabled !== undefined) dateEnabled = data.dateEnabled;
+      if (data.kenBurnsEnabled !== undefined) kenBurnsEnabled = data.kenBurnsEnabled;
+      if (data.shuffleEnabled !== undefined) shuffleEnabled = data.shuffleEnabled;
+      if (data.brightness !== undefined) brightness = data.brightness;
+      if (data.autoPlay !== undefined) autoPlay = data.autoPlay;
+      if (data.bgVolume !== undefined) bgVolume = data.bgVolume;
+      if (data.logoScale !== undefined) logoScale = data.logoScale;
+      if (data.logoInterval !== undefined) logoInterval = data.logoInterval;
+      if (data.bgEffect !== undefined) bgEffect = data.bgEffect;
+      if (data.bgIntensity !== undefined) bgIntensity = data.bgIntensity;
+      if (data.slideMode !== undefined) slideMode = data.slideMode;
+      if (data.fixedAnimation !== undefined) fixedAnimation = data.fixedAnimation;
+      if (data.animationDuration !== undefined) animationDuration = data.animationDuration;
+      
+      if (data.runningText !== undefined) {
+        document.getElementById('runningTextInput').value = data.runningText;
+        runningLines = data.runningText.split('\n').filter(l => l.trim());
+      }
+      if (data.logoLeft) {
+        logoLeftData = data.logoLeft;
+        updateLogo('left', logoLeftData);
+      }
+      if (data.logoRight) {
+        logoRightData = data.logoRight;
+        updateLogo('right', logoRightData);
+      }
+      
+      document.getElementById('videoVolumeValue').textContent = videoVolume + '%';
+      document.getElementById('videoMuteToggle').classList.toggle('active', videoMuted);
+      document.getElementById('autoHideToggle').classList.toggle('active', autoHideEnabled);
+      document.getElementById('hideDelayValue').textContent = hideDelay + 's';
+      document.getElementById('hideDelaySlider').value = hideDelay;
+      document.getElementById('speedValue').textContent = textSpeed + 's';
+      document.getElementById('speedSlider').value = textSpeed;
+      document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+      document.getElementById('fontSizeSlider').value = fontSize;
+      document.getElementById('textColor').value = textColor;
+      document.getElementById('fontFamilySelect').value = fontFamily;
+      document.getElementById('brightnessValue').textContent = brightness + '%';
+      document.getElementById('brightnessSlider').value = brightness;
+      document.body.style.filter = `brightness(${brightness / 100})`;
+      document.getElementById('bgVolumeValue').textContent = bgVolume + '%';
+      document.getElementById('bgVolumeSlider').value = bgVolume;
+      
+      document.getElementById('bgEffectSelect').value = bgEffect;
+      document.getElementById('bgIntensityValue').textContent = bgIntensity + '%';
+      document.getElementById('bgIntensitySlider').value = bgIntensity;
+      
+      document.getElementById('slideModeSelect').value = slideMode;
+      document.getElementById('fixedAnimationSelect').value = fixedAnimation;
+      document.getElementById('animationDurationValue').textContent = animationDuration + 's';
+      document.getElementById('animationDurationSlider').value = animationDuration;
+      
+      if (slideMode === 'fixed') {
+        fixedAnimationContainer.style.display = 'block';
+      } else {
+        fixedAnimationContainer.style.display = 'none';
+      }
+      
+      document.getElementById('dateToggle').classList.toggle('active', dateEnabled);
+      datetime.classList.toggle('hide', !dateEnabled);
+      
+      document.getElementById('kenBurnsToggle').classList.toggle('active', kenBurnsEnabled);
+      document.querySelectorAll('.main').forEach(img => {
+        img.style.animation = kenBurnsEnabled ? 'gentleZoom 12s ease-in-out infinite alternate' : 'none';
+      });
+      
+      document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
+      
+      logoScaleValue.textContent = logoScale + '%';
+      logoScaleSlider.value = logoScale;
+      updateLogoScale(logoScale);
+      
+      logoIntervalValue.textContent = logoInterval + 's';
+      logoIntervalSlider.value = logoInterval;
+      
+      updateRunningTextStyle();
+      updateRunningTextContent();
+      updateRunningTextSpeed();
+      
+      updateBackgroundEffect();
+      
+      if (autoHideEnabled) {
+        resetHideTimer();
+      }
+    }
+  } catch (e) {}
+
+  // INIT
+  updateBackgroundEffect();
+  
+  const inp = document.getElementById('runningTextInput');
+  if (inp?.value && runningLines.length === 0) runningLines = inp.value.split('\n').filter(l => l.trim()); 
+  if (runningLines.length === 0) runningLines = ['OM SWASTYASTU'];
+  
+  updateRunningTextStyle(); 
+  updateRunningTextContent(); 
+  updateRunningTextSpeed();
+  
+  if (!runningTextEnabled) runningBox.classList.add('hide-by-settings');
+  
+  folderInfo.classList.add('hide');
+  
+  updateLogoScale(logoScale);
+  
+  // Set fixed animation container visibility
+  if (slideMode === 'fixed') {
+    fixedAnimationContainer.style.display = 'block';
+  } else {
+    fixedAnimationContainer.style.display = 'none';
+  }
+  
+  console.log('✅ PWA Ready: The Royal Wedding Display dengan 12+ Animasi Slide');
 })();
 </script>
+
+<noscript>
+  <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: black; color: white; padding: 20px; border: 2px solid gold;">
+    JavaScript is required.
+  </div>
+</noscript>
 </body>
 </html>
