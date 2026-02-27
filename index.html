@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Royal Wedding - PWA OFFLINE + HFS</title>
+<title>The Royal Wedding</title>
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <!-- Theme color untuk browser -->
@@ -360,7 +360,7 @@ body {
   100% { transform: perspective(400px) rotateY(0); opacity: 1; }
 }
 
-/* ===== OM SWASTYASTU ===== */
+/* ===== kosongkan om swastyastu ===== */
 .om-title {
   position: absolute;
   top: clamp(70px, 12vh, 100px);
@@ -951,7 +951,7 @@ body {
   </div>
 
   <div class="om-title" id="omTitle">
-    <div class="om-text">OM SWASTYASTU</div>
+    <div class="om-text"></div>
   </div>
 
   <!-- DATETIME -->
@@ -1156,7 +1156,7 @@ body {
       </div>
       <div class="setting-item">
         <span class="setting-label">Text Content</span>
-        <textarea class="setting-textarea" id="runningTextInput" placeholder="Enter text">OM SWASTYASTU
+        <textarea class="setting-textarea" id="runningTextInput" placeholder="Enter text">
 WELCOME TO OUR WEDDING
 THANK YOU FOR YOUR BLESSINGS</textarea>
         <button class="settings-btn-small" id="updateRunningText" style="margin-top:5px;width:100%;">Update</button>
@@ -2550,7 +2550,7 @@ THANK YOU FOR YOUR BLESSINGS</textarea>
   
   const inp = document.getElementById('runningTextInput');
   if (inp?.value && runningLines.length === 0) runningLines = inp.value.split('\n').filter(l => l.trim()); 
-  if (runningLines.length === 0) runningLines = ['OM SWASTYASTU'];
+  if (runningLines.length === 0) runningLines = [''];
   
   updateRunningTextStyle(); 
   updateRunningTextContent(); 
