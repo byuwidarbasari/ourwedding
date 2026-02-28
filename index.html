@@ -135,7 +135,7 @@ body {
   100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
 
-.sakura-effect {
+.neon-heart-effect {
   position: absolute;
   top: 0;
   left: 0;
@@ -146,23 +146,23 @@ body {
   z-index: 5;
 }
 
-.sakura-petal {
+.neon-heart {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="%23FFB7C5" d="M50 10 Q60 20 70 10 Q80 0 90 10 Q100 20 90 30 Q80 40 70 30 Q60 20 50 30 Q40 40 30 30 Q20 20 30 10 Q40 0 50 10 Z"/><path fill="%23FF99AA" d="M50 30 Q60 40 70 30 Q80 20 70 40 Q60 60 50 40 Q40 60 30 40 Q20 20 30 30 Q40 40 50 30 Z"/></svg>');
+  width: 30px;
+  height: 30px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff3366"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: 0.6;
-  animation: sakura linear infinite;
-  filter: drop-shadow(0 0 3px rgba(255, 183, 197, 0.5));
+  filter: drop-shadow(0 0 10px #ff3366) drop-shadow(0 0 20px #ff3366);
+  opacity: 0.7;
+  animation: floatNeon linear infinite;
 }
 
-@keyframes sakura {
-  0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 0; }
-  20% { opacity: 0.8; }
-  80% { opacity: 0.4; }
-  100% { transform: translateY(100vh) translateX(50px) rotate(720deg); opacity: 0; }
+@keyframes floatNeon {
+  0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.9; }
+  80% { opacity: 0.5; }
+  100% { transform: translateY(-100px) scale(1.5) rotate(360deg); opacity: 0; }
 }
 
 .mixed-effect {
@@ -266,7 +266,7 @@ body {
   transform-origin: center center;
 }
 
-/* ANIMASI SLIDE (lengkap) */
+/* ANIMASI SLIDE - 12 Variasi Halus & Dramatis */
 .anim-zoom-in { animation-name: zoomInSmooth; }
 .anim-zoom-out { animation-name: zoomOutDramatic; }
 .anim-shatter { animation-name: shatterRealistic; }
@@ -279,6 +279,10 @@ body {
 .anim-blur-in { animation-name: blurIn; }
 .anim-bounce { animation-name: bounceIn; }
 .anim-flip { animation-name: flipIn; }
+.anim-perspective { animation-name: perspectiveIn; }
+.anim-elastic { animation-name: elasticBounce; }
+.anim-glitch { animation-name: glitchEffect; }
+.anim-rotate-scale { animation-name: rotateScale; }
 
 @keyframes zoomInSmooth {
   0% { transform: scale(0.7); opacity: 0; filter: blur(10px); }
@@ -358,6 +362,35 @@ body {
   40% { transform: perspective(400px) rotateY(-10deg); opacity: 0.8; }
   70% { transform: perspective(400px) rotateY(5deg); }
   100% { transform: perspective(400px) rotateY(0); opacity: 1; }
+}
+
+@keyframes perspectiveIn {
+  0% { transform: perspective(600px) rotateX(-90deg) scale(0.5); opacity: 0; }
+  50% { transform: perspective(600px) rotateX(10deg) scale(1.1); opacity: 0.8; }
+  100% { transform: perspective(600px) rotateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes elasticBounce {
+  0% { transform: scale(0); opacity: 0; }
+  40% { transform: scale(1.4); opacity: 0.9; }
+  60% { transform: scale(0.9); }
+  80% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glitchEffect {
+  0% { transform: translate(0); filter: blur(0); opacity: 0; }
+  20% { transform: translate(-5px, 3px) skew(5deg); filter: blur(2px); opacity: 0.3; }
+  40% { transform: translate(5px, -3px) skew(-5deg); filter: blur(4px); opacity: 0.6; }
+  60% { transform: translate(-3px, 2px) skew(3deg); filter: blur(2px); opacity: 0.8; }
+  80% { transform: translate(2px, -1px) skew(-2deg); filter: blur(1px); opacity: 0.9; }
+  100% { transform: translate(0) skew(0); filter: blur(0); opacity: 1; }
+}
+
+@keyframes rotateScale {
+  0% { transform: rotate(-180deg) scale(0.2); opacity: 0; }
+  50% { transform: rotate(10deg) scale(1.2); opacity: 0.8; }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
 }
 
 /* ===== kosongkan om swastyastu ===== */
@@ -1024,15 +1057,15 @@ body {
     </div>
     
     <div class="settings-section">
-      <h4>🌸 BACKGROUND EFFECT</h4>
+      <h4>❤️ BACKGROUND EFFECT</h4>
       <div class="setting-item">
         <span class="setting-label">Efek Background</span>
         <select class="setting-select" id="bgEffectSelect">
           <option value="none">None (Tidak Ada)</option>
           <option value="rain" selected>🌧️ Hujan Gerimis</option>
           <option value="snow">❄️ Salju</option>
-          <option value="sakura">🌸 Bunga Sakura</option>
-          <option value="mixed">🌈 Campuran (Hujan + Salju + Sakura)</option>
+          <option value="neon-heart">❤️‍🔥 Hati Neon</option>
+          <option value="mixed">🌈 Campuran (Hujan + Salju + Hati)</option>
         </select>
       </div>
       <div class="setting-item">
@@ -1047,7 +1080,7 @@ body {
       <div class="setting-item">
         <span class="setting-label">Mode Animasi</span>
         <select class="setting-select" id="slideModeSelect">
-          <option value="random-all" selected>🎲 Random Semua (12+ Animasi)</option>
+          <option value="random-all" selected>🎲 Random Semua (16+ Animasi)</option>
           <option value="cycle-3">🔄 Cycle 3 Animasi Bergantian</option>
           <option value="cycle-5">🔄 Cycle 5 Animasi Bergantian</option>
           <option value="cycle-7">🔄 Cycle 7 Animasi Bergantian</option>
@@ -1069,6 +1102,10 @@ body {
           <option value="anim-blur-in">Blur Masuk</option>
           <option value="anim-bounce">Bounce</option>
           <option value="anim-flip">Flip 3D</option>
+          <option value="anim-perspective">Perspective 3D</option>
+          <option value="anim-elastic">Elastic Bounce</option>
+          <option value="anim-glitch">Glitch Effect</option>
+          <option value="anim-rotate-scale">Rotate + Scale</option>
         </select>
       </div>
       <div class="setting-item">
@@ -1164,7 +1201,7 @@ Doa restu yang telah diberikan,
 menjadi pelengkap kebahagiaan dan anugerah terindah yang melengkapi ikatan suci ini.
 Dengan penuh rasa syukur,
 Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa baik yang dipanjatkan.
-        </textarea>
+</textarea>
         <button class="settings-btn-small" id="updateRunningText" style="margin-top:5px;width:100%;">Update</button>
       </div>
       <div class="setting-item">
@@ -1345,21 +1382,22 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
     return container;
   }
   
-  function createSakuraEffect() {
+  function createNeonHeartEffect() {
     const container = document.createElement('div');
-    container.className = 'sakura-effect';
+    container.className = 'neon-heart-effect';
     container.id = 'currentEffect';
     
-    const petalCount = Math.floor(20 * (bgIntensity / 100));
-    for (let i = 0; i < petalCount; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'sakura-petal';
-      petal.style.left = Math.random() * 100 + '%';
-      petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
-      petal.style.animationDelay = Math.random() * 5 + 's';
-      petal.style.width = (Math.random() * 15 + 15) + 'px';
-      petal.style.height = petal.style.width;
-      container.appendChild(petal);
+    const heartCount = Math.floor(25 * (bgIntensity / 100));
+    for (let i = 0; i < heartCount; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'neon-heart';
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      heart.style.width = (Math.random() * 25 + 15) + 'px';
+      heart.style.height = heart.style.width;
+      heart.style.filter = `drop-shadow(0 0 ${Math.random() * 15 + 5}px #ff3366) drop-shadow(0 0 ${Math.random() * 25 + 10}px #ff3366)`;
+      container.appendChild(heart);
     }
     return container;
   }
@@ -1369,7 +1407,7 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
     container.className = 'mixed-effect';
     container.id = 'currentEffect';
     
-    const dropCount = Math.floor(25 * (bgIntensity / 100));
+    const dropCount = Math.floor(20 * (bgIntensity / 100));
     for (let i = 0; i < dropCount; i++) {
       const drop = document.createElement('div');
       drop.className = 'rain-drop';
@@ -1389,14 +1427,14 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
       container.appendChild(flake);
     }
     
-    const petalCount = Math.floor(10 * (bgIntensity / 100));
-    for (let i = 0; i < petalCount; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'sakura-petal';
-      petal.style.left = Math.random() * 100 + '%';
-      petal.style.animationDuration = (Math.random() * 4 + 3) + 's';
-      petal.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(petal);
+    const heartCount = Math.floor(10 * (bgIntensity / 100));
+    for (let i = 0; i < heartCount; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'neon-heart';
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(heart);
     }
     
     return container;
@@ -1416,8 +1454,8 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
       case 'snow':
         newEffect = createSnowEffect();
         break;
-      case 'sakura':
-        newEffect = createSakuraEffect();
+      case 'neon-heart':
+        newEffect = createNeonHeartEffect();
         break;
       case 'mixed':
         newEffect = createMixedEffect();
@@ -1438,7 +1476,7 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
         switch(bgEffect) {
           case 'rain': refreshed = createRainEffect(); break;
           case 'snow': refreshed = createSnowEffect(); break;
-          case 'sakura': refreshed = createSakuraEffect(); break;
+          case 'neon-heart': refreshed = createNeonHeartEffect(); break;
           case 'mixed': refreshed = createMixedEffect(); break;
         }
         bgEffectsContainer.appendChild(refreshed);
@@ -1496,11 +1534,12 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
   let fixedAnimation = 'anim-zoom-in';
   let animationDuration = 8;
   
-  // Daftar semua animasi
+  // Daftar semua animasi (16+ animasi)
   const allAnimations = [
     'anim-zoom-in', 'anim-zoom-out', 'anim-shatter', 'anim-from-all',
     'anim-slide-left', 'anim-slide-right', 'anim-slide-top', 'anim-slide-bottom',
-    'anim-fade-rotate', 'anim-blur-in', 'anim-bounce', 'anim-flip'
+    'anim-fade-rotate', 'anim-blur-in', 'anim-bounce', 'anim-flip',
+    'anim-perspective', 'anim-elastic', 'anim-glitch', 'anim-rotate-scale'
   ];
   
   // Untuk cycle animations
@@ -2571,7 +2610,7 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
   if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
   else fixedAnimationContainer.style.display = 'none';
   
-  console.log('✅ PWA Ready dengan Mode Lokal + HFS');
+  console.log('✅ PWA Ready dengan Mode Lokal + HFS + Love Neon + Animasi 16+');
 })();
 </script>
 
