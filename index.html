@@ -1673,12 +1673,26 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
   }
 
   function applyAnimationToSlide(slideElement) {
+    if (!slideElement) return;
+    
     const img = slideElement.querySelector('.main');
     if (!img) return;
-    allAnimations.forEach(animClass => img.classList.remove(animClass));
+    
+    // Hapus semua class animasi yang ada
+    allAnimations.forEach(animClass => {
+      img.classList.remove(animClass);
+    });
+    
+    // Terapkan animasi baru
     const animClass = getNextAnimation();
     img.classList.add(animClass);
+    
+    // Set durasi animasi
     img.style.animationDuration = animationDuration + 's';
+    img.style.animationIterationCount = '1';
+    img.style.animationFillMode = 'forwards';
+    
+    console.log('Animasi diterapkan:', animClass, 'durasi:', animationDuration + 's');
   }
 
   // ===== FUNGSI HFS (BARU) =====
@@ -1750,6 +1764,8 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
       
       if (slides.length > 0) {
         slides[0].classList.add('active');
+        // Terapkan animasi ke slide pertama
+        applyAnimationToSlide(slides[0]);
         startSlideshow();
         folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file (${hfsIp}:${hfsPort})`;
       }
@@ -2077,6 +2093,8 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
     currentSlide = currentMediaIndex;
     if (slides[currentSlide]) {
       slides[currentSlide].classList.add("active");
+      
+      // Terapkan animasi ke slide baru
       applyAnimationToSlide(slides[currentSlide]);
       
       const video = slides[currentSlide].querySelector('video');
@@ -2107,6 +2125,8 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
     currentSlide = currentMediaIndex;
     if (slides[currentSlide]) {
       slides[currentSlide].classList.add("active");
+      
+      // Terapkan animasi ke slide baru
       applyAnimationToSlide(slides[currentSlide]);
       
       const video = slides[currentSlide].querySelector('video');
@@ -2221,7 +2241,7 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
             slide.appendChild(img);
           } else {
             const video = document.createElement("video"); 
-            video.className = "video-main";
+            video.className = "video-main main";
             video.src = ev.target.result; 
             video.volume = videoMuted ? 0 : (videoVolume / 100);
             slide.appendChild(video);
@@ -2234,6 +2254,7 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
             loadingIndicator.classList.remove("show");
             if (slides.length > 0) { 
               slides[0].classList.add("active"); 
+              // Terapkan animasi ke slide pertama
               applyAnimationToSlide(slides[0]);
               startSlideshow(); 
             }
@@ -2609,6 +2630,13 @@ Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa ba
   
   if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
   else fixedAnimationContainer.style.display = 'none';
+  
+  // Terapkan animasi ke slide pertama jika sudah ada
+  setTimeout(() => {
+    if (slides.length > 0 && slides[currentSlide]) {
+      applyAnimationToSlide(slides[currentSlide]);
+    }
+  }, 500);
   
   console.log('✅ PWA Ready dengan Mode Lokal + HFS + Love Neon + Animasi 16+');
 })();
