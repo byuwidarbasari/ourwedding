@@ -47,7 +47,7 @@
 
 body {
   background: var(--dark);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   overflow: hidden;
   touch-action: pan-y pinch-zoom;
 }
@@ -266,131 +266,507 @@ body {
   transform-origin: center center;
 }
 
-/* ANIMASI SLIDE - 12 Variasi Halus & Dramatis */
-.anim-zoom-in { animation-name: zoomInSmooth; }
-.anim-zoom-out { animation-name: zoomOutDramatic; }
-.anim-shatter { animation-name: shatterRealistic; }
-.anim-from-all { animation-name: fromAllDirectionsSmooth; }
-.anim-slide-left { animation-name: slideFromLeft; }
-.anim-slide-right { animation-name: slideFromRight; }
-.anim-slide-top { animation-name: slideFromTop; }
-.anim-slide-bottom { animation-name: slideFromBottom; }
-.anim-fade-rotate { animation-name: fadeRotate; }
-.anim-blur-in { animation-name: blurIn; }
-.anim-bounce { animation-name: bounceIn; }
-.anim-flip { animation-name: flipIn; }
-.anim-perspective { animation-name: perspectiveIn; }
-.anim-elastic { animation-name: elasticBounce; }
-.anim-glitch { animation-name: glitchEffect; }
-.anim-rotate-scale { animation-name: rotateScale; }
+/* ===== SEMUA ANIMASI POWERPOINT 2007 ===== */
+/* ENTRANCE ANIMATIONS - BASIC */
+.ppt-appear { animation-name: appear; }
+.ppt-fade { animation-name: fadeIn; }
+.ppt-fly-in { animation-name: flyIn; }
+.ppt-float-in { animation-name: floatIn; }
+.ppt-split { animation-name: split; }
+.ppt-wipe { animation-name: wipe; }
+.ppt-shape-circle { animation-name: shapeCircle; }
+.ppt-shape-plus { animation-name: shapePlus; }
+.ppt-random-bars { animation-name: randomBars; }
 
-@keyframes zoomInSmooth {
-  0% { transform: scale(0.7); opacity: 0; filter: blur(10px); }
-  30% { opacity: 1; filter: blur(0); }
-  100% { transform: scale(1); }
+/* ENTRANCE - SUBTLE */
+.ppt-expand { animation-name: expand; }
+.ppt-swell { animation-name: swell; }
+.ppt-bounce { animation-name: bounceEntrance; }
+.ppt-rise-up { animation-name: riseUp; }
+.ppt-slide-up { animation-name: slideUpEntrance; }
+.ppt-slide-down { animation-name: slideDownEntrance; }
+.ppt-slide-left { animation-name: slideLeftEntrance; }
+.ppt-slide-right { animation-name: slideRightEntrance; }
+
+/* ENTRANCE - MODERATE */
+.ppt-zoom { animation-name: zoomEntrance; }
+.ppt-rotate { animation-name: rotateEntrance; }
+.ppt-grow-turn { animation-name: growTurn; }
+
+/* ENTRANCE - EXCITING */
+.ppt-pinwheel { animation-name: pinwheel; }
+.ppt-pulse { animation-name: pulseEntrance; }
+.ppt-color-pulse { animation-name: colorPulse; }
+.ppt-teeter { animation-name: teeter; }
+.ppt-center-rotate { animation-name: centerRotate; }
+.ppt-contract { animation-name: contract; }
+
+/* EMPHASIS ANIMATIONS */
+.ppt-pulse-emphasis { animation-name: pulseEmphasis; animation-iteration-count: infinite; }
+.ppt-color-wave { animation-name: colorWave; animation-iteration-count: infinite; }
+.ppt-sway { animation-name: sway; animation-iteration-count: infinite; }
+.ppt-spin { animation-name: spinEmphasis; animation-iteration-count: infinite; }
+.ppt-grow-shrink { animation-name: growShrink; animation-iteration-count: infinite; }
+.ppt-darken { animation-name: darken; animation-iteration-count: infinite; }
+.ppt-lighten { animation-name: lighten; animation-iteration-count: infinite; }
+.ppt-teeter-emphasis { animation-name: teeterEmphasis; animation-iteration-count: infinite; }
+.ppt-vertical-grow { animation-name: verticalGrow; animation-iteration-count: infinite; }
+.ppt-horizontal-grow { animation-name: horizontalGrow; animation-iteration-count: infinite; }
+.ppt-flash-bulb { animation-name: flashBulb; animation-iteration-count: infinite; }
+.ppt-shimmer { animation-name: shimmer; animation-iteration-count: infinite; }
+.ppt-blend { animation-name: blend; animation-iteration-count: infinite; }
+.ppt-wave { animation-name: wave; animation-iteration-count: infinite; }
+
+/* EXIT ANIMATIONS */
+.ppt-exit-fade { animation-name: fadeOut; }
+.ppt-exit-fly-out { animation-name: flyOut; }
+.ppt-exit-float-out { animation-name: floatOut; }
+.ppt-exit-split { animation-name: splitOut; }
+.ppt-exit-wipe { animation-name: wipeOut; }
+.ppt-exit-shape-circle { animation-name: shapeCircleOut; }
+.ppt-exit-shape-plus { animation-name: shapePlusOut; }
+.ppt-exit-random-bars { animation-name: randomBarsOut; }
+.ppt-exit-shrink { animation-name: shrink; }
+.ppt-exit-swivel { animation-name: swivel; }
+.ppt-exit-slide-up { animation-name: slideUpExit; }
+.ppt-exit-slide-down { animation-name: slideDownExit; }
+.ppt-exit-slide-left { animation-name: slideLeftExit; }
+.ppt-exit-slide-right { animation-name: slideRightExit; }
+.ppt-exit-zoom-out { animation-name: zoomOutExit; }
+.ppt-exit-rotate-out { animation-name: rotateOut; }
+
+/* MOTION PATHS */
+.ppt-move-straight { animation-name: moveStraight; }
+.ppt-move-arc { animation-name: moveArc; }
+.ppt-move-curve { animation-name: moveCurve; }
+.ppt-move-loop { animation-name: moveLoop; }
+.ppt-move-spiral { animation-name: moveSpiral; }
+.ppt-move-wave { animation-name: moveWave; }
+.ppt-move-bounce { animation-name: moveBounce; }
+.ppt-move-heart { animation-name: moveHeart; }
+.ppt-move-star { animation-name: moveStar; }
+.ppt-move-custom { animation-name: moveCustom; }
+
+/* ===== KEYFRAMES POWERPOINT 2007 ===== */
+@keyframes appear {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-@keyframes zoomOutDramatic {
-  0% { transform: scale(1.8); opacity: 0; }
-  40% { opacity: 1; transform: scale(1.1); }
-  100% { transform: scale(1); }
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-@keyframes shatterRealistic {
-  0% { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%); opacity: 0; transform: scale(2); }
-  20% { clip-path: polygon(30% 30%, 70% 20%, 80% 50%, 70% 80%, 30% 80%, 20% 50%, 30% 30%, 50% 50%); opacity: 0.3; }
-  40% { clip-path: polygon(20% 20%, 80% 10%, 90% 40%, 85% 70%, 60% 90%, 15% 70%, 10% 40%, 20% 20%); opacity: 0.6; }
-  60% { clip-path: polygon(10% 10%, 90% 5%, 95% 30%, 92% 60%, 70% 95%, 8% 80%, 5% 30%, 10% 10%); opacity: 0.8; }
-  80% { clip-path: polygon(5% 5%, 95% 2%, 98% 20%, 96% 50%, 85% 98%, 3% 90%, 2% 20%, 5% 5%); opacity: 0.9; }
-  100% { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%); opacity: 1; transform: scale(1); }
+@keyframes flyIn {
+  0% { transform: translate(-100%, -100%) scale(0.5); opacity: 0; }
+  60% { transform: translate(10%, 10%) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
 }
 
-@keyframes fromAllDirectionsSmooth {
-  0% { clip-path: inset(50% 50% 50% 50%); opacity: 0; transform: scale(3) rotate(-10deg); }
-  25% { clip-path: inset(30% 30% 30% 30%); opacity: 0.3; transform: scale(2) rotate(-5deg); }
-  50% { clip-path: inset(15% 15% 15% 15%); opacity: 0.6; transform: scale(1.5) rotate(0deg); }
-  75% { clip-path: inset(5% 5% 5% 5%); opacity: 0.8; transform: scale(1.2) rotate(2deg); }
-  100% { clip-path: inset(0% 0% 0% 0%); opacity: 1; transform: scale(1) rotate(0deg); }
+@keyframes floatIn {
+  0% { transform: translateY(50px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes slideFromLeft {
-  0% { transform: translateX(-100%) scale(0.8); opacity: 0; }
-  40% { opacity: 1; transform: translateX(5%) scale(1); }
-  100% { transform: translateX(0) scale(1); }
+@keyframes split {
+  0% { clip-path: inset(0 50% 0 50%); opacity: 0; }
+  60% { clip-path: inset(0 5% 0 5%); }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; }
 }
 
-@keyframes slideFromRight {
-  0% { transform: translateX(100%) scale(0.8); opacity: 0; }
-  40% { opacity: 1; transform: translateX(-5%) scale(1); }
-  100% { transform: translateX(0) scale(1); }
+@keyframes wipe {
+  0% { clip-path: inset(0 0 100% 0); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes slideFromTop {
-  0% { transform: translateY(-100%) scale(0.8); opacity: 0; }
-  40% { opacity: 1; transform: translateY(5%) scale(1); }
-  100% { transform: translateY(0) scale(1); }
+@keyframes shapeCircle {
+  0% { clip-path: circle(0% at 50% 50%); opacity: 0; }
+  100% { clip-path: circle(100% at 50% 50%); opacity: 1; }
 }
 
-@keyframes slideFromBottom {
-  0% { transform: translateY(100%) scale(0.8); opacity: 0; }
-  40% { opacity: 1; transform: translateY(-5%) scale(1); }
-  100% { transform: translateY(0) scale(1); }
+@keyframes shapePlus {
+  0% { clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%, 0% 50%, 0% 50%, 100% 50%, 100% 50%); opacity: 0; }
+  100% { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%); opacity: 1; }
 }
 
-@keyframes fadeRotate {
-  0% { opacity: 0; transform: rotate(-15deg) scale(0.5); }
-  50% { opacity: 0.8; transform: rotate(5deg) scale(1.1); }
-  100% { opacity: 1; transform: rotate(0) scale(1); }
+@keyframes randomBars {
+  0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+  25% { clip-path: inset(0 0 100% 0); }
+  50% { clip-path: inset(100% 0 0 0); }
+  75% { clip-path: inset(0 0 0 100%); }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; }
 }
 
-@keyframes blurIn {
-  0% { filter: blur(20px); opacity: 0; transform: scale(1.2); }
-  50% { filter: blur(5px); opacity: 0.7; }
-  100% { filter: blur(0); opacity: 1; transform: scale(1); }
-}
-
-@keyframes bounceIn {
-  0% { transform: scale(0.3); opacity: 0; }
-  40% { transform: scale(1.1); opacity: 0.9; }
-  60% { transform: scale(0.95); }
-  80% { transform: scale(1.02); }
+@keyframes expand {
+  0% { transform: scale(0.1); opacity: 0; }
+  60% { transform: scale(1.1); }
   100% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes flipIn {
-  0% { transform: perspective(400px) rotateY(90deg); opacity: 0; }
-  40% { transform: perspective(400px) rotateY(-10deg); opacity: 0.8; }
-  70% { transform: perspective(400px) rotateY(5deg); }
-  100% { transform: perspective(400px) rotateY(0); opacity: 1; }
-}
-
-@keyframes perspectiveIn {
-  0% { transform: perspective(600px) rotateX(-90deg) scale(0.5); opacity: 0; }
-  50% { transform: perspective(600px) rotateX(10deg) scale(1.1); opacity: 0.8; }
-  100% { transform: perspective(600px) rotateX(0) scale(1); opacity: 1; }
-}
-
-@keyframes elasticBounce {
-  0% { transform: scale(0); opacity: 0; }
-  40% { transform: scale(1.4); opacity: 0.9; }
-  60% { transform: scale(0.9); }
-  80% { transform: scale(1.05); }
+@keyframes swell {
+  0% { transform: scale(0.3); filter: blur(5px); opacity: 0; }
+  50% { transform: scale(1.2); filter: blur(0); }
   100% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes glitchEffect {
-  0% { transform: translate(0); filter: blur(0); opacity: 0; }
-  20% { transform: translate(-5px, 3px) skew(5deg); filter: blur(2px); opacity: 0.3; }
-  40% { transform: translate(5px, -3px) skew(-5deg); filter: blur(4px); opacity: 0.6; }
-  60% { transform: translate(-3px, 2px) skew(3deg); filter: blur(2px); opacity: 0.8; }
-  80% { transform: translate(2px, -1px) skew(-2deg); filter: blur(1px); opacity: 0.9; }
-  100% { transform: translate(0) skew(0); filter: blur(0); opacity: 1; }
+@keyframes bounceEntrance {
+  0% { transform: translateY(-1000px); opacity: 0; }
+  40% { transform: translateY(20px); opacity: 0.8; }
+  60% { transform: translateY(-10px); }
+  80% { transform: translateY(5px); }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes rotateScale {
-  0% { transform: rotate(-180deg) scale(0.2); opacity: 0; }
-  50% { transform: rotate(10deg) scale(1.2); opacity: 0.8; }
+@keyframes riseUp {
+  0% { transform: translateY(100px) scale(0.8); opacity: 0; }
+  70% { transform: translateY(-5px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes slideUpEntrance {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes slideDownEntrance {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes slideLeftEntrance {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes slideRightEntrance {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes zoomEntrance {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes rotateEntrance {
+  0% { transform: rotate(-360deg) scale(0.5); opacity: 0; }
+  80% { transform: rotate(5deg) scale(1.1); }
   100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes growTurn {
+  0% { transform: rotate(-180deg) scale(0.1); opacity: 0; }
+  80% { transform: rotate(10deg) scale(1.1); }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes pinwheel {
+  0% { transform: rotate(-720deg) scale(0.1); opacity: 0; }
+  80% { transform: rotate(15deg) scale(1.1); }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes pulseEntrance {
+  0% { transform: scale(0.3); opacity: 0; }
+  30% { transform: scale(1.2); opacity: 0.5; }
+  60% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes colorPulse {
+  0% { filter: brightness(0) hue-rotate(0deg); opacity: 0; }
+  30% { filter: brightness(2) hue-rotate(90deg); opacity: 0.5; }
+  60% { filter: brightness(1) hue-rotate(0deg); opacity: 0.9; }
+  100% { filter: brightness(1) hue-rotate(0deg); opacity: 1; }
+}
+
+@keyframes teeter {
+  0% { transform: rotate(0deg) scale(0.5); opacity: 0; }
+  20% { transform: rotate(15deg) scale(0.8); opacity: 0.3; }
+  40% { transform: rotate(-15deg) scale(1.1); opacity: 0.6; }
+  60% { transform: rotate(8deg) scale(1.1); opacity: 0.8; }
+  80% { transform: rotate(-4deg) scale(1.05); opacity: 0.9; }
+  100% { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+
+@keyframes centerRotate {
+  0% { transform: rotate(0deg) scale(0.1); opacity: 0; }
+  60% { transform: rotate(360deg) scale(1.2); opacity: 0.8; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+
+@keyframes contract {
+  0% { transform: scale(2); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* EMPHASIS ANIMATIONS */
+@keyframes pulseEmphasis {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes colorWave {
+  0% { filter: hue-rotate(0deg); }
+  25% { filter: hue-rotate(90deg); }
+  50% { filter: hue-rotate(180deg); }
+  75% { filter: hue-rotate(270deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes sway {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes spinEmphasis {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes growShrink {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+@keyframes darken {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(0.3); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes lighten {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(2); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes teeterEmphasis {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(10deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes verticalGrow {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes horizontalGrow {
+  0% { transform: scaleX(1); }
+  50% { transform: scaleX(1.5); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes flashBulb {
+  0% { filter: brightness(1) contrast(1); }
+  25% { filter: brightness(3) contrast(2); }
+  50% { filter: brightness(1) contrast(1); }
+  75% { filter: brightness(3) contrast(2); }
+  100% { filter: brightness(1) contrast(1); }
+}
+
+@keyframes shimmer {
+  0% { filter: brightness(1) blur(0px); }
+  25% { filter: brightness(1.5) blur(1px); }
+  50% { filter: brightness(1) blur(0px); }
+  75% { filter: brightness(1.5) blur(1px); }
+  100% { filter: brightness(1) blur(0px); }
+}
+
+@keyframes blend {
+  0% { opacity: 1; mix-blend-mode: normal; }
+  25% { opacity: 0.7; mix-blend-mode: overlay; }
+  50% { opacity: 1; mix-blend-mode: normal; }
+  75% { opacity: 0.7; mix-blend-mode: soft-light; }
+  100% { opacity: 1; mix-blend-mode: normal; }
+}
+
+@keyframes wave {
+  0% { transform: skewX(0deg); }
+  20% { transform: skewX(10deg); }
+  40% { transform: skewX(-10deg); }
+  60% { transform: skewX(5deg); }
+  80% { transform: skewX(-5deg); }
+  100% { transform: skewX(0deg); }
+}
+
+/* EXIT ANIMATIONS */
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes flyOut {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  70% { transform: translate(100px, -100px) scale(1.5); opacity: 0.5; }
+  100% { transform: translate(200px, -200px) scale(0); opacity: 0; }
+}
+
+@keyframes floatOut {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+
+@keyframes splitOut {
+  0% { clip-path: inset(0 0 0 0); opacity: 1; }
+  100% { clip-path: inset(0 50% 0 50%); opacity: 0; }
+}
+
+@keyframes wipeOut {
+  0% { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(100% 0 0 0); }
+}
+
+@keyframes shapeCircleOut {
+  0% { clip-path: circle(100% at 50% 50%); opacity: 1; }
+  100% { clip-path: circle(0% at 50% 50%); opacity: 0; }
+}
+
+@keyframes shapePlusOut {
+  0% { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%); opacity: 1; }
+  100% { clip-path: polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%, 0% 50%, 0% 50%, 100% 50%, 100% 50%); opacity: 0; }
+}
+
+@keyframes randomBarsOut {
+  0% { clip-path: inset(0 0 0 0); opacity: 1; }
+  25% { clip-path: inset(0 0 100% 0); opacity: 0.75; }
+  50% { clip-path: inset(100% 0 0 0); opacity: 0.5; }
+  75% { clip-path: inset(0 0 0 100%); opacity: 0.25; }
+  100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+@keyframes shrink {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes swivel {
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: rotate(90deg) scale(0); opacity: 0; }
+}
+
+@keyframes slideUpExit {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes slideDownExit {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes slideLeftExit {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes slideRightExit {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes zoomOutExit {
+  0% { transform: scale(1); }
+  100% { transform: scale(0); }
+}
+
+@keyframes rotateOut {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(180deg) scale(0); }
+}
+
+/* MOTION PATHS */
+@keyframes moveStraight {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(100px, 100px); }
+}
+
+@keyframes moveArc {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(50px, -50px); }
+  100% { transform: translate(100px, 0); }
+}
+
+@keyframes moveCurve {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(30px, -20px); }
+  50% { transform: translate(60px, 0); }
+  75% { transform: translate(90px, 20px); }
+  100% { transform: translate(120px, 0); }
+}
+
+@keyframes moveLoop {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(50px, -50px); }
+  50% { transform: translate(100px, 0); }
+  75% { transform: translate(50px, 50px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes moveSpiral {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(40px, -40px) rotate(120deg); }
+  66% { transform: translate(80px, 0) rotate(240deg); }
+  100% { transform: translate(120px, 40px) rotate(360deg); }
+}
+
+@keyframes moveWave {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(20px, -30px); }
+  40% { transform: translate(40px, 0); }
+  60% { transform: translate(60px, 30px); }
+  80% { transform: translate(80px, 0); }
+  100% { transform: translate(100px, -30px); }
+}
+
+@keyframes moveBounce {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(20px, -40px); }
+  30% { transform: translate(40px, 0); }
+  45% { transform: translate(60px, -30px); }
+  60% { transform: translate(80px, 0); }
+  75% { transform: translate(100px, -20px); }
+  90% { transform: translate(120px, 0); }
+  100% { transform: translate(140px, -10px); }
+}
+
+@keyframes moveHeart {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(20px, -40px); }
+  40% { transform: translate(40px, 0); }
+  60% { transform: translate(60px, -40px); }
+  80% { transform: translate(80px, 0); }
+  100% { transform: translate(100px, -20px); }
+}
+
+@keyframes moveStar {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(20px, -40px); }
+  40% { transform: translate(40px, -20px); }
+  60% { transform: translate(60px, -40px); }
+  80% { transform: translate(80px, -20px); }
+  100% { transform: translate(100px, -40px); }
+}
+
+@keyframes moveCustom {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(50px, -30px) rotate(45deg); }
+  50% { transform: translate(100px, 0) scale(1.2); }
+  75% { transform: translate(150px, 30px) rotate(-45deg); }
+  100% { transform: translate(200px, 0) scale(1); }
 }
 
 /* ===== kosongkan om swastyastu ===== */
@@ -478,7 +854,7 @@ body {
   border-radius: 15px;
 }
 
-/* ===== BOTTOM BAR - TAMBAH TOMBOL HFS ===== */
+/* ===== BOTTOM BAR ===== */
 .bottom-bar {
   position: absolute;
   bottom: var(--running-height);
@@ -530,10 +906,7 @@ body {
 
 .settings-btn { order: 1; }
 
-/* Tombol HFS baru */
-.hfs-btn {
-  order: 0;
-}
+.hfs-btn { order: 0; }
 
 .folder-input input[type="file"] { display: none; }
 .audio-control button { font-size: 0; }
@@ -572,7 +945,7 @@ body {
   line-height: var(--running-height);
   left: 100%;
   top: 0;
-  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-weight: 300;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -997,7 +1370,7 @@ body {
     </div>
   </div>
 
-  <!-- BOTTOM BAR - TAMBAH TOMBOL HFS -->
+  <!-- BOTTOM BAR -->
   <div class="bottom-bar" id="bottomBar">
     <button onclick="prevSlide()" title="Previous" id="prevBtn"><span data-icon="prev"></span></button>
     <button onclick="togglePlay()" id="playBtn" title="Play/Pause"><span data-icon="pause"></span></button>
@@ -1010,7 +1383,6 @@ body {
       </button>
     </div>
     
-    <!-- Tombol HFS BARU -->
     <button class="hfs-btn" id="hfsBtn" title="Load dari HFS (HTTP File Server)" onclick="loadFromHFS()">
       <span data-icon="hfs">🌐</span>
     </button>
@@ -1038,7 +1410,7 @@ body {
     <span data-icon="folder"></span> <span id="folderInfoText">KLIK SELECT FOLDER</span>
   </div>
   
-  <!-- SETTINGS PANEL (lengkap seperti sebelumnya) -->
+  <!-- SETTINGS PANEL -->
   <div class="settings-panel hide" id="settingsPanel">
     <h3><span data-icon="settings"></span> PENGATURAN OFFLINE</h3>
     
@@ -1076,11 +1448,11 @@ body {
     </div>
     
     <div class="settings-section">
-      <h4>🖼️ SLIDE ANIMATION</h4>
+      <h4>🖼️ SLIDE ANIMATION (PowerPoint 2007 Complete)</h4>
       <div class="setting-item">
         <span class="setting-label">Mode Animasi</span>
         <select class="setting-select" id="slideModeSelect">
-          <option value="random-all" selected>🎲 Random Semua (16+ Animasi)</option>
+          <option value="random-all" selected>🎲 Random Semua (50+ Animasi)</option>
           <option value="cycle-3">🔄 Cycle 3 Animasi Bergantian</option>
           <option value="cycle-5">🔄 Cycle 5 Animasi Bergantian</option>
           <option value="cycle-7">🔄 Cycle 7 Animasi Bergantian</option>
@@ -1088,24 +1460,88 @@ body {
         </select>
       </div>
       <div class="setting-item" id="fixedAnimationContainer">
-        <span class="setting-label">Pilih Animasi Tetap</span>
-        <select class="setting-select" id="fixedAnimationSelect">
-          <option value="anim-zoom-in">Zoom In Halus</option>
-          <option value="anim-zoom-out">Zoom Out Dramatis</option>
-          <option value="anim-shatter">Pecah Seribu</option>
-          <option value="anim-from-all">Dari Segala Arah</option>
-          <option value="anim-slide-left">Slide dari Kiri</option>
-          <option value="anim-slide-right">Slide dari Kanan</option>
-          <option value="anim-slide-top">Slide dari Atas</option>
-          <option value="anim-slide-bottom">Slide dari Bawah</option>
-          <option value="anim-fade-rotate">Fade + Rotasi</option>
-          <option value="anim-blur-in">Blur Masuk</option>
-          <option value="anim-bounce">Bounce</option>
-          <option value="anim-flip">Flip 3D</option>
-          <option value="anim-perspective">Perspective 3D</option>
-          <option value="anim-elastic">Elastic Bounce</option>
-          <option value="anim-glitch">Glitch Effect</option>
-          <option value="anim-rotate-scale">Rotate + Scale</option>
+        <span class="setting-label">Pilih Animasi PowerPoint 2007</span>
+        <select class="setting-select" id="fixedAnimationSelect" size="8">
+          <optgroup label="ENTRANCE - BASIC">
+            <option value="ppt-appear">Appear</option>
+            <option value="ppt-fade">Fade</option>
+            <option value="ppt-fly-in">Fly In</option>
+            <option value="ppt-float-in">Float In</option>
+            <option value="ppt-split">Split</option>
+            <option value="ppt-wipe">Wipe</option>
+            <option value="ppt-shape-circle">Shape Circle</option>
+            <option value="ppt-shape-plus">Shape Plus</option>
+            <option value="ppt-random-bars">Random Bars</option>
+          </optgroup>
+          <optgroup label="ENTRANCE - SUBTLE">
+            <option value="ppt-expand">Expand</option>
+            <option value="ppt-swell">Swell</option>
+            <option value="ppt-bounce">Bounce</option>
+            <option value="ppt-rise-up">Rise Up</option>
+            <option value="ppt-slide-up">Slide Up</option>
+            <option value="ppt-slide-down">Slide Down</option>
+            <option value="ppt-slide-left">Slide Left</option>
+            <option value="ppt-slide-right">Slide Right</option>
+          </optgroup>
+          <optgroup label="ENTRANCE - MODERATE">
+            <option value="ppt-zoom">Zoom</option>
+            <option value="ppt-rotate">Rotate</option>
+            <option value="ppt-grow-turn">Grow & Turn</option>
+          </optgroup>
+          <optgroup label="ENTRANCE - EXCITING">
+            <option value="ppt-pinwheel">Pinwheel</option>
+            <option value="ppt-pulse">Pulse</option>
+            <option value="ppt-color-pulse">Color Pulse</option>
+            <option value="ppt-teeter">Teeter</option>
+            <option value="ppt-center-rotate">Center Rotate</option>
+            <option value="ppt-contract">Contract</option>
+          </optgroup>
+          <optgroup label="EMPHASIS">
+            <option value="ppt-pulse-emphasis">Pulse</option>
+            <option value="ppt-color-wave">Color Wave</option>
+            <option value="ppt-sway">Sway</option>
+            <option value="ppt-spin">Spin</option>
+            <option value="ppt-grow-shrink">Grow/Shrink</option>
+            <option value="ppt-darken">Darken</option>
+            <option value="ppt-lighten">Lighten</option>
+            <option value="ppt-teeter-emphasis">Teeter</option>
+            <option value="ppt-vertical-grow">Vertical Grow</option>
+            <option value="ppt-horizontal-grow">Horizontal Grow</option>
+            <option value="ppt-flash-bulb">Flash Bulb</option>
+            <option value="ppt-shimmer">Shimmer</option>
+            <option value="ppt-blend">Blend</option>
+            <option value="ppt-wave">Wave</option>
+          </optgroup>
+          <optgroup label="EXIT">
+            <option value="ppt-exit-fade">Fade Out</option>
+            <option value="ppt-exit-fly-out">Fly Out</option>
+            <option value="ppt-exit-float-out">Float Out</option>
+            <option value="ppt-exit-split">Split Out</option>
+            <option value="ppt-exit-wipe">Wipe Out</option>
+            <option value="ppt-exit-shape-circle">Shape Circle Out</option>
+            <option value="ppt-exit-shape-plus">Shape Plus Out</option>
+            <option value="ppt-exit-random-bars">Random Bars Out</option>
+            <option value="ppt-exit-shrink">Shrink</option>
+            <option value="ppt-exit-swivel">Swivel</option>
+            <option value="ppt-exit-slide-up">Slide Up</option>
+            <option value="ppt-exit-slide-down">Slide Down</option>
+            <option value="ppt-exit-slide-left">Slide Left</option>
+            <option value="ppt-exit-slide-right">Slide Right</option>
+            <option value="ppt-exit-zoom-out">Zoom Out</option>
+            <option value="ppt-exit-rotate-out">Rotate Out</option>
+          </optgroup>
+          <optgroup label="MOTION PATHS">
+            <option value="ppt-move-straight">Straight</option>
+            <option value="ppt-move-arc">Arc</option>
+            <option value="ppt-move-curve">Curve</option>
+            <option value="ppt-move-loop">Loop</option>
+            <option value="ppt-move-spiral">Spiral</option>
+            <option value="ppt-move-wave">Wave</option>
+            <option value="ppt-move-bounce">Bounce</option>
+            <option value="ppt-move-heart">Heart</option>
+            <option value="ppt-move-star">Star</option>
+            <option value="ppt-move-custom">Custom</option>
+          </optgroup>
         </select>
       </div>
       <div class="setting-item">
@@ -1125,11 +1561,6 @@ body {
         <span class="setting-label">Hide Delay</span>
         <span class="setting-value" id="hideDelayValue">4s</span>
         <input type="range" class="setting-slider" id="hideDelaySlider" min="2" max="10" value="4" step="1">
-      </div>
-      <div class="setting-item" style="color: var(--gold-light); font-size: 12px; margin-top: 5px;">
-        <span>⚠️ Yang di-auto hide: Tombol, OM Text, Info Folder</span><br>
-        <span>✅ Running text, Slide, Logo, Tanggal TETAP ON</span>
-        <span>📅 Tanggal akan turun ke posisi tombol saat auto hide aktif</span>
       </div>
     </div>
     
@@ -1157,10 +1588,6 @@ body {
     <div class="settings-section">
       <h4>EFEK SLIDE</h4>
       <div class="setting-item setting-toggle">
-        <span class="setting-label">Ken Burns Effect</span>
-        <div class="toggle-switch active" id="kenBurnsToggle"></div>
-      </div>
-      <div class="setting-item setting-toggle">
         <span class="setting-label">Shuffle Mode</span>
         <div class="toggle-switch" id="shuffleToggle"></div>
       </div>
@@ -1186,7 +1613,7 @@ body {
     </div>
     
     <div class="settings-section">
-      <h4>TEXT SETTINGS</h4>
+      <h4>RUNNING TEXT</h4>
       <div class="setting-item setting-toggle">
         <span class="setting-label">Show Running Text</span>
         <div class="toggle-switch active" id="runningTextToggle"></div>
@@ -1196,16 +1623,19 @@ body {
         <textarea class="setting-textarea" id="runningTextInput" placeholder="Enter text">
 *OM Swastyastu*
 Merupakan suatu kehormatan dan kebahagiaan yang tak terhingga bagi kami,
-atas kehadiran Bapak/Ibu/Saudara/i sekalian dalam momen sakral pernikahan kami,
-Doa restu yang telah diberikan menjadi pelengkap kebahagiaan dan anugerah terindah yang melengkapi ikatan suci ini,
-Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doanya.
+atas kehadiran Bapak/Ibu/Saudara/i sekalian dalam momen sakral pernikahan kami.
+Doa restu yang telah diberikan,
+menjadi pelengkap kebahagiaan dan anugerah terindah yang melengkapi ikatan suci ini.
+Dengan penuh rasa syukur,
+Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala doa baik yang dipanjatkan.
 </textarea>
         <button class="settings-btn-small" id="updateRunningText" style="margin-top:5px;width:100%;">Update</button>
       </div>
       <div class="setting-item">
         <span class="setting-label">Font Family</span>
         <select class="setting-select" id="fontFamilySelect">
-          <option value="'Roboto', sans-serif" selected>Roboto</option>
+          <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" selected>System Default</option>
+          <option value="'Roboto', sans-serif">Roboto</option>
           <option value="'Segoe UI', sans-serif">Segoe UI</option>
           <option value="'Georgia', serif">Georgia</option>
         </select>
@@ -1510,14 +1940,14 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
   let textColor = '#C5A059';
   let runningTextEnabled = true;
   
-  let fontFamily = "'Roboto', sans-serif";
+  let fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
   let fontWeight = 400;
   let fontItalic = false;
   let textTransform = 'uppercase';
   let textGlow = true;
   let glowIntensity = 5;
 
-  let kenBurnsEnabled = true;
+  let kenBurnsEnabled = false;
   let dateEnabled = true;
   let shuffleEnabled = false;
   let brightness = 100;
@@ -1527,17 +1957,31 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
   let hideDelay = 4;
   let hideTimer;
 
-  // Animasi slide
+  // Animasi slide PowerPoint 2007
   let slideMode = 'random-all';
-  let fixedAnimation = 'anim-zoom-in';
+  let fixedAnimation = 'ppt-fade';
   let animationDuration = 8;
   
-  // Daftar semua animasi (16+ animasi)
+  // Daftar semua animasi PowerPoint 2007
   const allAnimations = [
-    'anim-zoom-in', 'anim-zoom-out', 'anim-shatter', 'anim-from-all',
-    'anim-slide-left', 'anim-slide-right', 'anim-slide-top', 'anim-slide-bottom',
-    'anim-fade-rotate', 'anim-blur-in', 'anim-bounce', 'anim-flip',
-    'anim-perspective', 'anim-elastic', 'anim-glitch', 'anim-rotate-scale'
+    // ENTRANCE BASIC
+    'ppt-appear', 'ppt-fade', 'ppt-fly-in', 'ppt-float-in', 'ppt-split', 'ppt-wipe', 'ppt-shape-circle', 'ppt-shape-plus', 'ppt-random-bars',
+    // ENTRANCE SUBTLE
+    'ppt-expand', 'ppt-swell', 'ppt-bounce', 'ppt-rise-up', 'ppt-slide-up', 'ppt-slide-down', 'ppt-slide-left', 'ppt-slide-right',
+    // ENTRANCE MODERATE
+    'ppt-zoom', 'ppt-rotate', 'ppt-grow-turn',
+    // ENTRANCE EXCITING
+    'ppt-pinwheel', 'ppt-pulse', 'ppt-color-pulse', 'ppt-teeter', 'ppt-center-rotate', 'ppt-contract',
+    // EMPHASIS
+    'ppt-pulse-emphasis', 'ppt-color-wave', 'ppt-sway', 'ppt-spin', 'ppt-grow-shrink', 'ppt-darken', 'ppt-lighten', 'ppt-teeter-emphasis', 
+    'ppt-vertical-grow', 'ppt-horizontal-grow', 'ppt-flash-bulb', 'ppt-shimmer', 'ppt-blend', 'ppt-wave',
+    // EXIT
+    'ppt-exit-fade', 'ppt-exit-fly-out', 'ppt-exit-float-out', 'ppt-exit-split', 'ppt-exit-wipe', 'ppt-exit-shape-circle', 
+    'ppt-exit-shape-plus', 'ppt-exit-random-bars', 'ppt-exit-shrink', 'ppt-exit-swivel', 'ppt-exit-slide-up', 'ppt-exit-slide-down', 
+    'ppt-exit-slide-left', 'ppt-exit-slide-right', 'ppt-exit-zoom-out', 'ppt-exit-rotate-out',
+    // MOTION PATHS
+    'ppt-move-straight', 'ppt-move-arc', 'ppt-move-curve', 'ppt-move-loop', 'ppt-move-spiral', 'ppt-move-wave', 
+    'ppt-move-bounce', 'ppt-move-heart', 'ppt-move-star', 'ppt-move-custom'
   ];
   
   // Untuk cycle animations
@@ -1690,10 +2134,10 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     img.style.animationIterationCount = '1';
     img.style.animationFillMode = 'forwards';
     
-    console.log('Animasi diterapkan:', animClass, 'durasi:', animationDuration + 's');
+    console.log('Animasi PowerPoint 2007 diterapkan:', animClass, 'durasi:', animationDuration + 's');
   }
 
-  // ===== FUNGSI HFS (BARU) =====
+  // ===== FUNGSI HFS =====
   window.loadFromHFS = async function() {
     const hfsIp = hfsIpInput.value || '192.168.1.5';
     const hfsPort = hfsPortInput.value || '80';
@@ -1706,7 +2150,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     folderInfoText.innerHTML = `🌐 Menghubungi HFS di ${hfsIp}:${hfsPort}...`;
     
     try {
-      // Coba akses daftar file dari HFS
       const response = await fetch(hfsUrl + '/?json');
       
       if (!response.ok) {
@@ -1721,14 +2164,12 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
         return;
       }
       
-      // Filter file gambar dan video
       const mediaItems = data.items.filter(item => 
         item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|mp4|avi|mov|mkv)$/i)
       );
       
       folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file ditemukan`;
       
-      // Buat slide untuk setiap file
       for (let i = 0; i < mediaItems.length; i++) {
         const item = mediaItems[i];
         const slide = document.createElement('div');
@@ -1762,7 +2203,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
       
       if (slides.length > 0) {
         slides[0].classList.add('active');
-        // Terapkan animasi ke slide pertama
         applyAnimationToSlide(slides[0]);
         startSlideshow();
         folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file (${hfsIp}:${hfsPort})`;
@@ -1788,7 +2228,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     }
   };
 
-  // ===== TEST KONEKSI HFS =====
   document.getElementById('testHfsBtn').addEventListener('click', async () => {
     const hfsIp = hfsIpInput.value || '192.168.1.5';
     const hfsPort = hfsPortInput.value || '80';
@@ -2092,7 +2531,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     if (slides[currentSlide]) {
       slides[currentSlide].classList.add("active");
       
-      // Terapkan animasi ke slide baru
       applyAnimationToSlide(slides[currentSlide]);
       
       const video = slides[currentSlide].querySelector('video');
@@ -2124,7 +2562,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     if (slides[currentSlide]) {
       slides[currentSlide].classList.add("active");
       
-      // Terapkan animasi ke slide baru
       applyAnimationToSlide(slides[currentSlide]);
       
       const video = slides[currentSlide].querySelector('video');
@@ -2231,7 +2668,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
           if (file.type.startsWith("image/")) {
             const img = new Image(); 
             img.className = "main";
-            if (kenBurnsEnabled) img.style.animation = 'gentleZoom 12s ease-in-out infinite alternate';
             img.src = ev.target.result;
             img.onload = function() { 
               this.classList.add(this.naturalHeight > this.naturalWidth ? 'portrait' : 'landscape'); 
@@ -2252,7 +2688,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
             loadingIndicator.classList.remove("show");
             if (slides.length > 0) { 
               slides[0].classList.add("active"); 
-              // Terapkan animasi ke slide pertama
               applyAnimationToSlide(slides[0]);
               startSlideshow(); 
             }
@@ -2377,18 +2812,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     });
   }
 
-  const kenBurnsToggle = document.getElementById('kenBurnsToggle');
-  if (kenBurnsToggle) {
-    kenBurnsToggle.classList.add('active');
-    kenBurnsToggle.addEventListener('click', function() {
-      kenBurnsEnabled = !kenBurnsEnabled;
-      this.classList.toggle('active', kenBurnsEnabled);
-      document.querySelectorAll('.main').forEach(img => {
-        img.style.animation = kenBurnsEnabled ? 'gentleZoom 12s ease-in-out infinite alternate' : 'none';
-      });
-    });
-  }
-
   const shuffleToggle = document.getElementById('shuffleToggle');
   if (shuffleToggle) {
     shuffleToggle.addEventListener('click', function() {
@@ -2489,7 +2912,7 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
     try {
       localStorage.setItem('weddingOffline', JSON.stringify({
         autoHideEnabled, hideDelay, videoVolume, videoMuted, textSpeed, fontSize, textColor, fadeEnabled,
-        fontFamily, dateEnabled, kenBurnsEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
+        fontFamily, dateEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
         logoScale, logoInterval, bgEffect, bgIntensity, 
         slideMode, fixedAnimation, animationDuration,
         hfsIp: hfsIpInput.value,
@@ -2526,7 +2949,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
       if (data.fadeEnabled !== undefined) fadeEnabled = data.fadeEnabled;
       if (data.fontFamily !== undefined) fontFamily = data.fontFamily;
       if (data.dateEnabled !== undefined) dateEnabled = data.dateEnabled;
-      if (data.kenBurnsEnabled !== undefined) kenBurnsEnabled = data.kenBurnsEnabled;
       if (data.shuffleEnabled !== undefined) shuffleEnabled = data.shuffleEnabled;
       if (data.brightness !== undefined) brightness = data.brightness;
       if (data.autoPlay !== undefined) autoPlay = data.autoPlay;
@@ -2586,11 +3008,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
       document.getElementById('dateToggle').classList.toggle('active', dateEnabled);
       datetime.classList.toggle('hide', !dateEnabled);
       
-      document.getElementById('kenBurnsToggle').classList.toggle('active', kenBurnsEnabled);
-      document.querySelectorAll('.main').forEach(img => {
-        img.style.animation = kenBurnsEnabled ? 'gentleZoom 12s ease-in-out infinite alternate' : 'none';
-      });
-      
       document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
       
       logoScaleValue.textContent = logoScale + '%';
@@ -2629,14 +3046,13 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
   if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
   else fixedAnimationContainer.style.display = 'none';
   
-  // Terapkan animasi ke slide pertama jika sudah ada
   setTimeout(() => {
     if (slides.length > 0 && slides[currentSlide]) {
       applyAnimationToSlide(slides[currentSlide]);
     }
   }, 500);
   
-  console.log('✅ PWA Ready dengan Mode Lokal + HFS + Love Neon + Animasi 16+');
+  console.log('✅ PWA Ready dengan 50+ Animasi PowerPoint 2007');
 })();
 </script>
 
