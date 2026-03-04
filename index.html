@@ -1755,7 +1755,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     
    <!-- INFO DEVELOPER -->
 <div class="developer-info">
-  <h4>📋 INFORMATION</h4>
+  <h4>Pengembang Aplikasi</h4>
   <div class="separator"></div>
   <div class="developer-name">Serka I Nyoman Arta</div>
   <div class="developer-address">Buleleng, Bali</div>
@@ -3201,7 +3201,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
 
     document.getElementById('saveSettings')?.addEventListener('click', () => {
       try {
-        localStorage.setItem('koramilOffline', JSON.stringify({
+        localStorage.setItem('slideOffline', JSON.stringify({
           autoHideEnabled, hideDelay, videoVolume, videoMuted, textSpeed, fontSize, textColor, fadeEnabled,
           fontFamily, dateEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
           logoScale, bgEffect, bgIntensity, 
@@ -3228,7 +3228,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
 
     // Load saved settings
     try {
-      const saved = localStorage.getItem('koramilOffline');
+      const saved = localStorage.getItem('slideOffline');
       if (saved) {
         const data = JSON.parse(saved);
         if (data.autoHideEnabled !== undefined) autoHideEnabled = data.autoHideEnabled;
