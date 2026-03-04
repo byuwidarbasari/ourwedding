@@ -1825,179 +1825,47 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
   // ===== KONFIGURASI VERSI APLIKASI =====
   const APP_VERSION = '1.0.0'; // UBAH ANGKA INI SETIAP KALI UPDATE!
   
-  // ===== FUNGSI SPLASH SCREEN =====
-  async function showSplashThenMain() {
-    // GANTI DENGAN URL GITHUB ANDA YANG BENAR!
-    const splashUrl = 'https://raw.githubusercontent.com/revo-github/repo-name/main/splash.html'; 
-    const localSplash = 'splash.html';
-    
+  // ===== FUNGSI UNTUK MENDAPATKAN BASE PATH =====
+  function getBasePath() {
+    const path = window.location.pathname;
+    // Jika di root, return '/'
+    if (path === '/' || path.endsWith('index.html')) {
+      return path.substring(0, path.lastIndexOf('/') + 1);
+    }
+    return '/';
+  }
+  
+  // ===== FUNGSI SPLASH SCREEN YANG TIDAK MENGGANGGU =====
+  async function showSplashIfExists() {
+    // Coba cek apakah file splash.html ada
     try {
-      // Coba fetch dari GitHub dulu (online)
-      if (navigator.onLine) {
-        const response = await fetch(splashUrl);
-        if (response.ok) {
-          const splashHtml = await response.text();
-          document.write(splashHtml);
-          document.close();
-          // Setelah splash tampil, redirect ke halaman utama setelah beberapa detik
-          setTimeout(() => {
-            window.location.href = window.location.href; // reload ke halaman utama
-          }, 3000);
-          return; // Hentikan eksekusi script utama
-        }
-      }
+      const basePath = getBasePath();
+      // Coba fetch dari lokasi yang benar
+      const splashUrl = window.location.origin + basePath + 'splash.html';
       
-      // Jika online gagal atau offline, coba ambil dari file lokal
-      const localResponse = await fetch(localSplash);
-      if (localResponse.ok) {
-        const splashHtml = await localResponse.text();
-        document.write(splashHtml);
-        document.close();
-        setTimeout(() => {
-          window.location.href = window.location.href;
-        }, 3000);
-        return;
+      console.log('Mencari splash di:', splashUrl);
+      
+      const response = await fetch(splashUrl, { method: 'HEAD' }); // Hanya cek HEAD, tidak ambil konten
+      
+      if (response.ok) {
+        console.log('✅ Splash ditemukan, menampilkan...');
+        // Redirect ke splash.html
+        window.location.href = splashUrl;
+        return true; // Keluar, tidak lanjut ke aplikasi utama
+      } else {
+        console.log('ℹ️ Splash tidak ditemukan (404), langsung ke aplikasi utama');
+        return false;
       }
     } catch (error) {
-      console.log('Splash tidak ditemukan, melanjutkan ke halaman utama.');
+      console.log('ℹ️ Gagal cek splash, langsung ke aplikasi utama:', error.message);
+      return false;
     }
-    
-    // Jika splash tidak ada, jalankan aplikasi utama
-    initMainApp();
   }
 
-  // ===== FUNGSI UPDATE CHECK =====
-  async function checkForUpdates() {
-    if (!navigator.onLine) {
-      console.log('📴 Offline mode - menggunakan versi ' + localStorage.getItem('appVersion'));
-      updateOnlineIndicator('offline');
-      return;
-    }
-    
-    try {
-      updateOnlineIndicator('checking');
-      
-      // Ambil URL Apps Script dari input
-      const appsScriptUrl = document.getElementById('appsScriptUrl')?.value;
-      if (!appsScriptUrl) {
-        console.log('❌ URL Apps Script tidak ditemukan');
-        return;
-      }
-      
-      // Cek versi ke server
-      const response = await fetch(appsScriptUrl + '?action=version&t=' + Date.now());
-      const data = await response.json();
-      
-      const serverVersion = data.version;
-      const currentVersion = localStorage.getItem('appVersion') || APP_VERSION;
-      
-      console.log(`📱 Versi lokal: ${currentVersion}, Server: ${serverVersion}`);
-      
-      if (serverVersion && serverVersion !== currentVersion) {
-        // Tampilkan notifikasi update
-        showUpdateNotification(serverVersion);
-        updateOnlineIndicator('update-available');
-      } else {
-        updateOnlineIndicator('online');
-      }
-      
-    } catch (error) {
-      console.log('❌ Gagal cek update:', error);
-      updateOnlineIndicator(navigator.onLine ? 'online' : 'offline');
-    }
-  }
-  
-  // ===== FUNGSI UPDATE ONLINE INDICATOR =====
-  function updateOnlineIndicator(status) {
-    const indicator = document.getElementById('onlineIndicator');
-    if (!indicator) return;
-    
-    const currentVersion = localStorage.getItem('appVersion') || APP_VERSION;
-    
-    switch(status) {
-      case 'online':
-        indicator.innerHTML = '✅ ONLINE v' + currentVersion;
-        indicator.style.color = '#4CAF50';
-        break;
-      case 'offline':
-        indicator.innerHTML = '📴 OFFLINE v' + currentVersion;
-        indicator.style.color = '#C5A059';
-        break;
-      case 'checking':
-        indicator.innerHTML = '🔄 CHECKING UPDATE...';
-        indicator.style.color = '#FFA500';
-        break;
-      case 'update-available':
-        indicator.innerHTML = '🔄 UPDATE TERSEDIA';
-        indicator.style.color = '#FF6B6B';
-        break;
-      default:
-        indicator.innerHTML = '⚪ ' + status;
-    }
-  }
-  
-  // ===== FUNGSI TAMPILKAN NOTIFIKASI UPDATE =====
-  function showUpdateNotification(newVersion) {
-    // Cek apakah notifikasi sudah ada
-    if (document.getElementById('updateNotification')) return;
-    
-    const notif = document.createElement('div');
-    notif.id = 'updateNotification';
-    
-    notif.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center;">
-        <span style="font-size: 24px;">🔄</span>
-        <span>Update tersedia! v${newVersion}</span>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="pwaUpdateNow()" style="background: #0A0A0A; color: #C5A059; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-weight: bold;">UPDATE</button>
-          <button onclick="pwaUpdateLater()" style="background: transparent; color: #0A0A0A; border: 1px solid #0A0A0A; padding: 8px 15px; border-radius: 25px; cursor: pointer;">NANTI</button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(notif);
-    
-    // Auto hide setelah 30 detik
-    setTimeout(() => {
-      const notif = document.getElementById('updateNotification');
-      if (notif) notif.remove();
-    }, 30000);
-  }
-  
-  // ===== FUNGSI UPDATE SEKARANG =====
-  window.pwaUpdateNow = function() {
-    // Hapus notifikasi
-    const notif = document.getElementById('updateNotification');
-    if (notif) notif.remove();
-    
-    // Bersihkan cache lama
-    if ('caches' in window) {
-      caches.keys().then(function(names) {
-        for (let name of names) {
-          if (name.includes('slide-show-cache')) {
-            caches.delete(name);
-          }
-        }
-      });
-    }
-    
-    // Update status
-    localStorage.setItem('appVersion', 'updating...');
-    updateOnlineIndicator('checking');
-    
-    // Reload paksa ambil versi baru
-    window.location.reload(true);
-  };
-  
-  // ===== FUNGSI TUNDA UPDATE =====
-  window.pwaUpdateLater = function() {
-    const notif = document.getElementById('updateNotification');
-    if (notif) notif.remove();
-    updateOnlineIndicator('online');
-  };
-  
   // ===== FUNGSI UTAMA APLIKASI =====
   function initMainApp() {
+    console.log('✅ Memulai aplikasi utama...');
+    
     // Simpan versi saat pertama kali install
     if (!localStorage.getItem('appVersion')) {
       localStorage.setItem('appVersion', APP_VERSION);
@@ -2017,9 +1885,9 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
 
     function updateOnlineStatus() {
       if (navigator.onLine) {
-        updateOnlineIndicator('online');
+        onlineIndicator.innerHTML = '✅ ONLINE v' + localStorage.getItem('appVersion');
       } else {
-        updateOnlineIndicator('offline');
+        onlineIndicator.innerHTML = '📴 OFFLINE v' + localStorage.getItem('appVersion');
       }
     }
 
@@ -2069,9 +1937,13 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     // ===== REGISTER SERVICE WORKER =====
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
+        // Gunakan path yang benar
+        const basePath = getBasePath();
+        const swPath = basePath + 'sw.js';
+        
+        navigator.serviceWorker.register(swPath)
           .then(reg => {
-            console.log('Service Worker registered:', reg.scope);
+            console.log('✅ Service Worker registered:', reg.scope);
             
             // Cek versi service worker
             if (navigator.serviceWorker.controller) {
@@ -2084,7 +1956,10 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
               navigator.serviceWorker.controller.postMessage({type: 'GET_VERSION'}, [channel.port2]);
             }
           })
-          .catch(err => console.log('Service Worker registration failed:', err));
+          .catch(err => {
+            console.log('ℹ️ Service Worker tidak tersedia (lanjut tanpa SW):', err.message);
+            // Tetap lanjutkan aplikasi meskipun SW gagal
+          });
       });
     }
 
@@ -3549,21 +3424,21 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
       loadFromGoogleDrive(false);
     }, 1000);
     
-    // Cek update pertama kali
-    setTimeout(checkForUpdates, 5000);
-    
-    // Cek update setiap 10 menit
-    setInterval(() => {
-      if (navigator.onLine) {
-        checkForUpdates();
-      }
-    }, 600000);
-    
     console.log('✅ Aplikasi siap dengan Google Drive (auto-load)');
   }
 
-  // ===== JALANKAN SPLASH DAHULU =====
-  showSplashThenMain();
+  // ===== JALANKAN FUNGSI UTAMA DENGAN CEK SPLASH =====
+  (async function() {
+    // Cek apakah splash ada
+    const splashExists = await showSplashIfExists();
+    
+    // Jika splash tidak ada, langsung jalankan aplikasi utama
+    if (!splashExists) {
+      initMainApp();
+    }
+    // Jika splash ada, aplikasi akan redirect ke splash.html
+    // dan tidak menjalankan initMainApp()
+  })();
 })();
 </script>
 
