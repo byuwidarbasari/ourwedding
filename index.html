@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Royal Wedding</title>
+<title>SLIDE SHOW</title>
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <!-- Theme color untuk browser -->
@@ -52,20 +52,46 @@ body {
   touch-action: pan-y pinch-zoom;
 }
 
+/* Fullscreen otomatis */
+html:-webkit-full-screen {
+  background: black;
+  width: 100%;
+  height: 100%;
+}
+
+html:fullscreen {
+  background: black;
+  width: 100%;
+  height: 100%;
+}
+
 /* Fallback icon system */
-[data-icon="prev"]:before { content: "◀◀"; }
-[data-icon="play"]:before { content: "▶"; }
-[data-icon="pause"]:before { content: "⏸"; }
-[data-icon="next"]:before { content: "▶▶"; }
-[data-icon="settings"]:before { content: "⚙"; }
-[data-icon="folder"]:before { content: "🪷"; }
+[data-icon="prev"]:before { content: "⏪"; }
+[data-icon="play"]:before { content: "▶️"; }
+[data-icon="pause"]:before { content: "⏯️"; }
+[data-icon="next"]:before { content: "⏩"; }
+[data-icon="settings"]:before { content: "🛠️"; }
+[data-icon="folder"]:before { content: "📁"; }
 [data-icon="music"]:before { content: "🔇"; }
 [data-icon="volume-up"]:before { content: "🔊"; }
 [data-icon="volume-mute"]:before { content: "🔇"; }
-[data-icon="spinner"]:before { content: "⟳"; animation: spin 1s infinite linear; display: inline-block; }
-[data-icon="fullscreen"]:before { content: "⛶"; }
-[data-icon="fullscreen-exit"]:before { content: "✕"; }
+[data-icon="spinner"]:before { content: "🔄"; animation: spin 1s infinite linear; display: inline-block; }
+[data-icon="fullscreen"]:before { content: "🖵"; }
+[data-icon="fullscreen-exit"]:before { content: "🖥️"; }
 [data-icon="hfs"]:before { content: "🌐"; }
+[data-icon="google-drive"]:before { content: "♻️"; font-size: 18px;}
+[data-icon="google-drive"]:after { 
+  content: "DRIVE"; 
+  font-size: 6px; 
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  white-space: nowrap;
+}
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* ===== BACKGROUND EFFECTS ===== */
@@ -769,8 +795,8 @@ body {
   100% { transform: translate(200px, 0) scale(1); }
 }
 
-/* ===== kosongkan om swastyastu ===== */
-.om-title {
+/* ===== JUDUL SLIDE ===== */
+.slide-title {
   position: absolute;
   top: clamp(70px, 12vh, 100px);
   left: 0;
@@ -782,9 +808,9 @@ body {
   transition: opacity 0.5s ease;
 }
 
-.om-title.hide { opacity: 0; }
+.slide-title.hide { opacity: 0; }
 
-.om-title .om-text {
+.slide-title .title-text {
   display: inline-block;
   color: #ffffff;
   font-family: 'Times New Roman', Georgia, serif;
@@ -873,7 +899,8 @@ body {
 }
 
 .bottom-bar button,
-.bottom-bar label {
+.bottom-bar label,
+.bottom-bar a.drive-button {
   width: var(--control-size);
   height: var(--control-size);
   border-radius: 50% !important;
@@ -893,10 +920,13 @@ body {
   line-height: 1;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   flex-shrink: 0;
+  text-decoration: none;
+  position: relative;
 }
 
 .bottom-bar button:hover,
-.bottom-bar label:hover {
+.bottom-bar label:hover,
+.bottom-bar a.drive-button:hover {
   background: var(--gold);
   color: var(--dark);
   transform: scale(1.1);
@@ -1316,6 +1346,23 @@ body {
   pointer-events: none;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+/* Folder ID Input */
+.folder-id-input {
+  width: 100%;
+  padding: 12px;
+  background: #333333;
+  border: 2px solid #555555;
+  color: #FFFFFF;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.folder-id-input:focus {
+  border-color: var(--gold);
+  outline: none;
+}
 </style>
 </head>
 <body>
@@ -1326,13 +1373,13 @@ body {
 
   <!-- PWA Install Button -->
   <button class="install-btn hide" id="installBtn" title="Install App">
-    <span data-icon="download">📲</span>
+    <span data-icon="download">📲Install</span>
   </button>
 
   <!-- Online/Offline Indicator -->
   <div class="online-indicator" id="onlineIndicator">ONLINE</div>
 
-  <!-- LOGO CORNERS -->
+  <!-- LOGO CORNERS (Tidak Bergantian) -->
   <div class="logo-corner left" id="logoLeft" style="opacity: 1;">
     <div class="logo-placeholder" id="logoLeftPlaceholder"></div>
     <img id="logoLeftImg" src="" alt="Logo Kiri" style="display: none;">
@@ -1346,9 +1393,8 @@ body {
   <div id="slidesContainer">
     <div class="empty-state" id="emptyState">
       <span data-icon="folder"></span>
-      <h2>The Royal Wedding</h2>
-      <p>Slide Show dengan Animasi dan running txt</p>
-      <p style="margin-top: 20px; font-size: 14px; color: var(--gold-light);"></p>
+      <h2>SLIDE SHOW</h2>
+      <p>Silakan pilih folder atau masukkan ID Folder Google Drive</p>
     </div>
   </div>
   
@@ -1356,8 +1402,9 @@ body {
     <div><span data-icon="spinner"></span> LOADING MEDIA</div>
   </div>
 
-  <div class="om-title" id="omTitle">
-    <div class="om-text"></div>
+  <!-- JUDUL SLIDE -->
+  <div class="slide-title" id="slideTitle">
+    <div class="title-text"></div>
   </div>
 
   <!-- DATETIME -->
@@ -1370,7 +1417,7 @@ body {
     </div>
   </div>
 
-  <!-- BOTTOM BAR -->
+  <!-- BOTTOM BAR dengan tombol Google Drive di samping folder lokal -->
   <div class="bottom-bar" id="bottomBar">
     <button onclick="prevSlide()" title="Previous" id="prevBtn"><span data-icon="prev"></span></button>
     <button onclick="togglePlay()" id="playBtn" title="Play/Pause"><span data-icon="pause"></span></button>
@@ -1383,11 +1430,14 @@ body {
       </button>
     </div>
     
+    <!-- TOMBOL FOLDER MEDIA DRIVE (Google Drive) - Simple icon -->
+    <a class="drive-button" id="googleDriveBtn" href="https://drive.google.com/drive/folders/1I5wVeLcrSS2sjlaRLCftwd9JPfbNri0l?usp=sharing" target="_blank" title="Buka Folder Media Google Drive" data-icon="google-drive"></a>
+
     <button class="hfs-btn" id="hfsBtn" title="Load dari HFS (HTTP File Server)" onclick="loadFromHFS()">
       <span data-icon="hfs">🌐</span>
     </button>
     
-    <label class="folder-input" id="folderWrapper" title="Select Folder">
+    <label class="folder-input" id="folderWrapper" title="Pilih Folder Lokal (Gambar/Video/MP3/Logo)">
       <span data-icon="folder"></span>
       <input type="file" id="folderInput" webkitdirectory multiple>
     </label>
@@ -1413,6 +1463,25 @@ body {
   <!-- SETTINGS PANEL -->
   <div class="settings-panel hide" id="settingsPanel">
     <h3><span data-icon="settings"></span> PENGATURAN OFFLINE</h3>
+    
+    <div class="settings-section">
+      <h4>♻ GOOGLE DRIVE (AUTO LOAD)</h4>
+      <div class="setting-item">
+        <span class="setting-label">ID Folder Google Drive</span>
+        <input type="text" class="folder-id-input" id="googleDriveFolderId" value="1I5wVeLcrSS2sjlaRLCftwd9JPfbNri0l" placeholder="ID Folder">
+        <small style="color: var(--gold-light); display: block; margin-top: 5px;">
+          ID folder sudah diisi otomatis
+        </small>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">URL Apps Script</span>
+        <input type="text" class="folder-id-input" id="appsScriptUrl" value="https://script.google.com/macros/s/AKfycbySXxNK0xSKz7u3WNmVvj_yBiPhkW3U0a5jXRWAPp9DNEGHTfSw0iau1P64kJeoDTHM/exec" placeholder="URL Apps Script">
+        <small style="color: var(--gold-light); display: block; margin-top: 5px;">
+          URL sudah diisi otomatis
+        </small>
+      </div>
+      <button class="settings-btn-small" id="loadDriveBtn" style="width:100%;">♻️ Load dari Google Drive</button>
+    </div>
     
     <div class="settings-section">
       <h4>🌐 HFS (HTTP FILE SERVER)</h4>
@@ -1448,7 +1517,7 @@ body {
     </div>
     
     <div class="settings-section">
-      <h4>🖼️ SLIDE ANIMATION (PowerPoint 2007 Complete)</h4>
+      <h4>🖼️ SLIDE ANIMATION</h4>
       <div class="setting-item">
         <span class="setting-label">Mode Animasi</span>
         <select class="setting-select" id="slideModeSelect">
@@ -1605,11 +1674,21 @@ body {
         <span class="setting-value" id="logoScaleValue">200%</span>
         <input type="range" class="setting-slider" id="logoScaleSlider" min="50" max="300" value="200" step="10">
       </div>
+    </div>
+    
+    <div class="settings-section">
+      <h4>FOLDER LOGO (Tidak Tampil di Slide)</h4>
       <div class="setting-item">
-        <span class="setting-label">Ganti Logo Setiap (detik)</span>
-        <span class="setting-value" id="logoIntervalValue">60s</span>
-        <input type="range" class="setting-slider" id="logoIntervalSlider" min="10" max="300" value="60" step="5">
+        <span class="setting-label">Upload Logo Kiri</span>
+        <input type="file" id="logoLeftInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
+        <button class="settings-btn-small" id="clearLogoLeft" style="margin-top:5px;">Hapus</button>
       </div>
+      <div class="setting-item">
+        <span class="setting-label">Upload Logo Kanan</span>
+        <input type="file" id="logoRightInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
+        <button class="settings-btn-small" id="clearLogoRight" style="margin-top:5px;">Hapus</button>
+      </div>
+      <small style="color: var(--gold-light);">Logo hanya tampil di pojok, tidak di slide utama.</small>
     </div>
     
     <div class="settings-section">
@@ -1621,11 +1700,7 @@ body {
       <div class="setting-item">
         <span class="setting-label">Text Content</span>
         <textarea class="setting-textarea" id="runningTextInput" placeholder="Enter text">
-*OM Swastyastu*
-Merupakan suatu kehormatan dan kebahagiaan yang tak terhingga bagi kami,
-atas kehadiran Bapak/Ibu/Saudara/i sekalian dalam momen pernikahan kami.
-Doa restunya menjadi pelengkap kebahagiaan dan anugerah terindah yang melengkapi ikatan suci ini.
-Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas kehadiran dan segala Doanya.
+Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Koramil 1609-05/Sukasada Hadir untuk Masyarakat Pengabdian Tanpa Batas untuk Bangsa dan Negara Sinergi TNI dan Masyarakat Mewujudkan Wilayah Aman dan Kondusif.
 </textarea>
         <button class="settings-btn-small" id="updateRunningText" style="margin-top:5px;width:100%;">Update</button>
       </div>
@@ -1652,20 +1727,6 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
       <div class="setting-item">
         <span class="setting-label">Text Color</span>
         <input type="color" class="setting-color" id="textColor" value="#C5A059">
-      </div>
-    </div>
-    
-    <div class="settings-section">
-      <h4>LOGO / ICON</h4>
-      <div class="setting-item">
-        <span class="setting-label">Upload Logo Kiri</span>
-        <input type="file" id="logoLeftInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
-        <button class="settings-btn-small" id="clearLogoLeft" style="margin-top:5px;">Hapus</button>
-      </div>
-      <div class="setting-item">
-        <span class="setting-label">Upload Logo Kanan</span>
-        <input type="file" id="logoRightInput" accept="image/gif,image/x-icon,image/png,image/jpeg">
-        <button class="settings-btn-small" id="clearLogoRight" style="margin-top:5px;">Hapus</button>
       </div>
     </div>
     
@@ -1713,488 +1774,557 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
 (function() {
   'use strict';
   
-  // ===== PWA INSTALL =====
-  let deferredPrompt;
-  const installBtn = document.getElementById('installBtn');
-  const onlineIndicator = document.getElementById('onlineIndicator');
-
-  function updateOnlineStatus() {
-    if (navigator.onLine) {
-      onlineIndicator.textContent = 'ONLINE';
-      onlineIndicator.style.color = '#4CAF50';
-    } else {
-      onlineIndicator.textContent = 'OFFLINE • Mode PWA';
-      onlineIndicator.style.color = '#C5A059';
-    }
-  }
-
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
-  updateOnlineStatus();
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.classList.remove('hide');
-  });
-
-  installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
-      installBtn.classList.add('hide');
-    }
-    deferredPrompt = null;
-  });
-
-  window.addEventListener('appinstalled', () => {
-    console.log('PWA was installed');
-    installBtn.classList.add('hide');
-    onlineIndicator.textContent = 'INSTALLED';
-  });
-
-  // ===== REGISTER SERVICE WORKER =====
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker registered:', reg.scope))
-        .catch(err => console.log('Service Worker registration failed:', err));
-    });
-  }
-
-  // ===== BACKGROUND EFFECTS =====
-  let bgEffect = 'rain';
-  let bgIntensity = 100;
-  let effectInterval;
-  
-  const bgEffectsContainer = document.getElementById('backgroundEffects');
-  
-  function createRainEffect() {
-    const container = document.createElement('div');
-    container.className = 'rain-effect';
-    container.id = 'currentEffect';
-    
-    const dropCount = Math.floor(50 * (bgIntensity / 100));
-    for (let i = 0; i < dropCount; i++) {
-      const drop = document.createElement('div');
-      drop.className = 'rain-drop';
-      drop.style.left = Math.random() * 100 + '%';
-      drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
-      drop.style.animationDelay = Math.random() * 5 + 's';
-      drop.style.opacity = Math.random() * 0.5 + 0.3;
-      container.appendChild(drop);
-    }
-    return container;
-  }
-  
-  function createSnowEffect() {
-    const container = document.createElement('div');
-    container.className = 'snow-effect';
-    container.id = 'currentEffect';
-    
-    const flakeCount = Math.floor(30 * (bgIntensity / 100));
-    for (let i = 0; i < flakeCount; i++) {
-      const flake = document.createElement('div');
-      flake.className = 'snow-flake';
-      flake.style.left = Math.random() * 100 + '%';
-      flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-      flake.style.animationDelay = Math.random() * 5 + 's';
-      flake.style.width = (Math.random() * 10 + 5) + 'px';
-      flake.style.height = flake.style.width;
-      container.appendChild(flake);
-    }
-    return container;
-  }
-  
-  function createNeonHeartEffect() {
-    const container = document.createElement('div');
-    container.className = 'neon-heart-effect';
-    container.id = 'currentEffect';
-    
-    const heartCount = Math.floor(25 * (bgIntensity / 100));
-    for (let i = 0; i < heartCount; i++) {
-      const heart = document.createElement('div');
-      heart.className = 'neon-heart';
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
-      heart.style.animationDelay = Math.random() * 5 + 's';
-      heart.style.width = (Math.random() * 25 + 15) + 'px';
-      heart.style.height = heart.style.width;
-      heart.style.filter = `drop-shadow(0 0 ${Math.random() * 15 + 5}px #ff3366) drop-shadow(0 0 ${Math.random() * 25 + 10}px #ff3366)`;
-      container.appendChild(heart);
-    }
-    return container;
-  }
-  
-  function createMixedEffect() {
-    const container = document.createElement('div');
-    container.className = 'mixed-effect';
-    container.id = 'currentEffect';
-    
-    const dropCount = Math.floor(20 * (bgIntensity / 100));
-    for (let i = 0; i < dropCount; i++) {
-      const drop = document.createElement('div');
-      drop.className = 'rain-drop';
-      drop.style.left = Math.random() * 100 + '%';
-      drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
-      drop.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(drop);
-    }
-    
-    const flakeCount = Math.floor(15 * (bgIntensity / 100));
-    for (let i = 0; i < flakeCount; i++) {
-      const flake = document.createElement('div');
-      flake.className = 'snow-flake';
-      flake.style.left = Math.random() * 100 + '%';
-      flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-      flake.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(flake);
-    }
-    
-    const heartCount = Math.floor(10 * (bgIntensity / 100));
-    for (let i = 0; i < heartCount; i++) {
-      const heart = document.createElement('div');
-      heart.className = 'neon-heart';
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
-      heart.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(heart);
-    }
-    
-    return container;
-  }
-  
-  function updateBackgroundEffect() {
-    const oldEffect = document.getElementById('currentEffect');
-    if (oldEffect) oldEffect.remove();
-    
-    if (bgEffect === 'none') return;
-    
-    let newEffect;
-    switch(bgEffect) {
-      case 'rain':
-        newEffect = createRainEffect();
-        break;
-      case 'snow':
-        newEffect = createSnowEffect();
-        break;
-      case 'neon-heart':
-        newEffect = createNeonHeartEffect();
-        break;
-      case 'mixed':
-        newEffect = createMixedEffect();
-        break;
-      default:
-        return;
-    }
-    
-    bgEffectsContainer.appendChild(newEffect);
-    
-    if (effectInterval) clearInterval(effectInterval);
-    effectInterval = setInterval(() => {
-      if (bgEffect !== 'none') {
-        const old = document.getElementById('currentEffect');
-        if (old) old.remove();
-        
-        let refreshed;
-        switch(bgEffect) {
-          case 'rain': refreshed = createRainEffect(); break;
-          case 'snow': refreshed = createSnowEffect(); break;
-          case 'neon-heart': refreshed = createNeonHeartEffect(); break;
-          case 'mixed': refreshed = createMixedEffect(); break;
-        }
-        bgEffectsContainer.appendChild(refreshed);
-      }
-    }, 10000);
-  }
-
-  // ===== VARIABLES =====
-  let slides = [];
-  let currentSlide = 0;
-  let autoPlay = true;
-  let slideTimeout;
-  let durations = [9000, 11000, 10000, 12000];
-  
-  let imageFiles = [];
-  let videoFiles = [];
-  let audioFiles = [];
-  let logoFiles = [];
-  let currentMediaIndex = 0;
-  let currentAudioIndex = 0;
-  
-  let videoVolume = 70;
-  let videoMuted = false;
-  
-  let audioPlayer = null;
-  let bgVolume = 70;
-
-  let runningLines = [];
-  let currentLineIndex = 0;
-  let textSpeed = 30;
-  let fontSize = 20;
-  let letterSpacing = 4;
-  let textColor = '#C5A059';
-  let runningTextEnabled = true;
-  
-  let fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-  let fontWeight = 400;
-  let fontItalic = false;
-  let textTransform = 'uppercase';
-  let textGlow = true;
-  let glowIntensity = 5;
-
-  let kenBurnsEnabled = false;
-  let dateEnabled = true;
-  let shuffleEnabled = false;
-  let brightness = 100;
-  let fadeEnabled = true;
-
-  let autoHideEnabled = false;
-  let hideDelay = 4;
-  let hideTimer;
-
-  // Animasi slide PowerPoint 2007
-  let slideMode = 'random-all';
-  let fixedAnimation = 'ppt-fade';
-  let animationDuration = 8;
-  
-  // Daftar semua animasi PowerPoint 2007
-  const allAnimations = [
-    // ENTRANCE BASIC
-    'ppt-appear', 'ppt-fade', 'ppt-fly-in', 'ppt-float-in', 'ppt-split', 'ppt-wipe', 'ppt-shape-circle', 'ppt-shape-plus', 'ppt-random-bars',
-    // ENTRANCE SUBTLE
-    'ppt-expand', 'ppt-swell', 'ppt-bounce', 'ppt-rise-up', 'ppt-slide-up', 'ppt-slide-down', 'ppt-slide-left', 'ppt-slide-right',
-    // ENTRANCE MODERATE
-    'ppt-zoom', 'ppt-rotate', 'ppt-grow-turn',
-    // ENTRANCE EXCITING
-    'ppt-pinwheel', 'ppt-pulse', 'ppt-color-pulse', 'ppt-teeter', 'ppt-center-rotate', 'ppt-contract',
-    // EMPHASIS
-    'ppt-pulse-emphasis', 'ppt-color-wave', 'ppt-sway', 'ppt-spin', 'ppt-grow-shrink', 'ppt-darken', 'ppt-lighten', 'ppt-teeter-emphasis', 
-    'ppt-vertical-grow', 'ppt-horizontal-grow', 'ppt-flash-bulb', 'ppt-shimmer', 'ppt-blend', 'ppt-wave',
-    // EXIT
-    'ppt-exit-fade', 'ppt-exit-fly-out', 'ppt-exit-float-out', 'ppt-exit-split', 'ppt-exit-wipe', 'ppt-exit-shape-circle', 
-    'ppt-exit-shape-plus', 'ppt-exit-random-bars', 'ppt-exit-shrink', 'ppt-exit-swivel', 'ppt-exit-slide-up', 'ppt-exit-slide-down', 
-    'ppt-exit-slide-left', 'ppt-exit-slide-right', 'ppt-exit-zoom-out', 'ppt-exit-rotate-out',
-    // MOTION PATHS
-    'ppt-move-straight', 'ppt-move-arc', 'ppt-move-curve', 'ppt-move-loop', 'ppt-move-spiral', 'ppt-move-wave', 
-    'ppt-move-bounce', 'ppt-move-heart', 'ppt-move-star', 'ppt-move-custom'
-  ];
-  
-  // Untuk cycle animations
-  let cycleIndex = 0;
-  let cycleAnimations = [];
-
-  // Logo variables
-  let logoLeftData = null;
-  let logoRightData = null;
-  let logoScale = 200;
-  let logoInterval = 60;
-  let logoRotationTimer = null;
-  let currentLogoIndex = 0;
-
-  // DOM Elements
-  const container = document.getElementById("slidesContainer");
-  const emptyState = document.getElementById("emptyState");
-  const omTitle = document.getElementById("omTitle");
-  const datetime = document.getElementById("datetime");
-  const runningBox = document.getElementById("runningBox");
-  const bottomBar = document.getElementById("bottomBar");
-  const runningTrack = document.getElementById("runningTrack");
-  const fadeLeft = document.getElementById("fadeLeft");
-  const fadeRight = document.getElementById("fadeRight");
-  const folderInfo = document.getElementById("folderInfo");
-  const folderInfoText = document.getElementById("folderInfoText");
-  const settingsBtn = document.getElementById("settingsBtn");
-  const fullscreenBtn = document.getElementById("fullscreenBtn");
-  const loadingIndicator = document.getElementById("loadingIndicator");
-  const folderInput = document.getElementById("folderInput");
-  const dayEl = document.getElementById('day');
-  const dateEl = document.getElementById('date');
-  const hoursMinutesEl = document.getElementById('hoursMinutes');
-  const secondsEl = document.getElementById('seconds');
-  const playBtn = document.getElementById('playBtn');
-  const audioToggleBtn = document.getElementById('audioToggleBtn');
-  const audioBtnText = document.getElementById('audioBtnText');
-  const audioContainer = document.getElementById('audioContainer');
-  const settingsPanel = document.getElementById('settingsPanel');
-  const audioPlaylist = document.getElementById('audioPlaylist');
-  const fontPreview = document.getElementById('fontPreview');
-  const hfsIpInput = document.getElementById('hfsIpInput');
-  const hfsPortInput = document.getElementById('hfsPortInput');
-  
-  const logoLeft = document.getElementById('logoLeft');
-  const logoRight = document.getElementById('logoRight');
-  const logoLeftImg = document.getElementById('logoLeftImg');
-  const logoRightImg = document.getElementById('logoRightImg');
-  const logoLeftPlaceholder = document.getElementById('logoLeftPlaceholder');
-  const logoRightPlaceholder = document.getElementById('logoRightPlaceholder');
-  const logoLeftInput = document.getElementById('logoLeftInput');
-  const logoRightInput = document.getElementById('logoRightInput');
-  const clearLogoLeft = document.getElementById('clearLogoLeft');
-  const clearLogoRight = document.getElementById('clearLogoRight');
-
-  // ===== FUNGSI AUTO HIDE =====
-  function hideControls() {
-    if (!autoHideEnabled) return;
-    
-    omTitle.classList.add("hide");
-    folderInfo.classList.add("hide");
-    bottomBar.classList.add("hide");
-    datetime.classList.add("datetime-hidden-pos");
-  }
-
-  function showControls() {
-    if (!autoHideEnabled) return;
-    clearTimeout(hideTimer);
-    omTitle.classList.remove("hide");
-    folderInfo.classList.remove("hide");
-    bottomBar.classList.remove("hide");
-    datetime.classList.remove("datetime-hidden-pos");
-    hideTimer = setTimeout(hideControls, hideDelay * 1000);
-  }
-
-  function resetHideTimer() {
-    if (!autoHideEnabled) return;
-    showControls();
-  }
-
-  document.addEventListener("mousemove", resetHideTimer);
-  document.addEventListener("click", resetHideTimer);
-  document.addEventListener("touchstart", resetHideTimer);
-  document.addEventListener("keydown", resetHideTimer);
-  
-  settingsPanel?.addEventListener("mouseenter", () => {
-    if (autoHideEnabled) clearTimeout(hideTimer);
-  });
-  
-  settingsPanel?.addEventListener("mouseleave", () => {
-    if (autoHideEnabled) resetHideTimer();
-  });
-
-  // ===== FUNGSI ANIMASI SLIDE =====
-  function getNextAnimation() {
-    switch(slideMode) {
-      case 'random-all':
-        return allAnimations[Math.floor(Math.random() * allAnimations.length)];
-      case 'cycle-3':
-        if (cycleAnimations.length !== 3) {
-          cycleAnimations = [];
-          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 3; i++) cycleAnimations.push(shuffled[i]);
-        }
-        const anim3 = cycleAnimations[cycleIndex % 3];
-        cycleIndex++;
-        return anim3;
-      case 'cycle-5':
-        if (cycleAnimations.length !== 5) {
-          cycleAnimations = [];
-          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 5; i++) cycleAnimations.push(shuffled[i]);
-        }
-        const anim5 = cycleAnimations[cycleIndex % 5];
-        cycleIndex++;
-        return anim5;
-      case 'cycle-7':
-        if (cycleAnimations.length !== 7) {
-          cycleAnimations = [];
-          const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
-          for (let i = 0; i < 7; i++) cycleAnimations.push(shuffled[i]);
-        }
-        const anim7 = cycleAnimations[cycleIndex % 7];
-        cycleIndex++;
-        return anim7;
-      case 'fixed':
-        return fixedAnimation;
-      default:
-        return allAnimations[Math.floor(Math.random() * allAnimations.length)];
-    }
-  }
-
-  function applyAnimationToSlide(slideElement) {
-    if (!slideElement) return;
-    
-    const img = slideElement.querySelector('.main');
-    if (!img) return;
-    
-    // Hapus semua class animasi yang ada
-    allAnimations.forEach(animClass => {
-      img.classList.remove(animClass);
-    });
-    
-    // Terapkan animasi baru
-    const animClass = getNextAnimation();
-    img.classList.add(animClass);
-    
-    // Set durasi animasi
-    img.style.animationDuration = animationDuration + 's';
-    img.style.animationIterationCount = '1';
-    img.style.animationFillMode = 'forwards';
-    
-    console.log('Animasi PowerPoint 2007 diterapkan:', animClass, 'durasi:', animationDuration + 's');
-  }
-
-  // ===== FUNGSI HFS =====
-  window.loadFromHFS = async function() {
-    const hfsIp = hfsIpInput.value || '192.168.1.5';
-    const hfsPort = hfsPortInput.value || '80';
-    const hfsUrl = `http://${hfsIp}:${hfsPort}`;
-    
-    emptyState.classList.add('hide');
-    container.innerHTML = "";
-    loadingIndicator.classList.add("show");
-    folderInfo.classList.remove('hide');
-    folderInfoText.innerHTML = `🌐 Menghubungi HFS di ${hfsIp}:${hfsPort}...`;
+  // ===== FUNGSI SPLASH SCREEN =====
+  async function showSplashThenMain() {
+    // GANTI DENGAN URL GITHUB ANDA YANG BENAR!
+    const splashUrl = 'https://raw.githubusercontent.com/revo-github/repo-name/main/splash.html'; 
+    const localSplash = 'splash.html';
     
     try {
-      const response = await fetch(hfsUrl + '/?json');
-      
-      if (!response.ok) {
-        throw new Error(`Tidak bisa terhubung ke HFS (${response.status})`);
+      // Coba fetch dari GitHub dulu (online)
+      if (navigator.onLine) {
+        const response = await fetch(splashUrl);
+        if (response.ok) {
+          const splashHtml = await response.text();
+          document.write(splashHtml);
+          document.close();
+          // Setelah splash tampil, redirect ke halaman utama setelah beberapa detik
+          setTimeout(() => {
+            window.location.href = window.location.href; // reload ke halaman utama
+          }, 3000);
+          return; // Hentikan eksekusi script utama
+        }
       }
       
-      const data = await response.json();
+      // Jika online gagal atau offline, coba ambil dari file lokal
+      const localResponse = await fetch(localSplash);
+      if (localResponse.ok) {
+        const splashHtml = await localResponse.text();
+        document.write(splashHtml);
+        document.close();
+        setTimeout(() => {
+          window.location.href = window.location.href;
+        }, 3000);
+        return;
+      }
+    } catch (error) {
+      console.log('Splash tidak ditemukan, melanjutkan ke halaman utama.');
+    }
+    
+    // Jika splash tidak ada, jalankan aplikasi utama
+    initMainApp();
+  }
+
+  // ===== FUNGSI UTAMA APLIKASI =====
+  function initMainApp() {
+    // ===== KONFIGURASI GOOGLE DRIVE =====
+    const CONFIG = {
+      APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbySXxNK0xSKz7u3WNmVvj_yBiPhkW3U0a5jXRWAPp9DNEGHTfSw0iau1P64kJeoDTHM/exec',
+      GOOGLE_DRIVE_FOLDER_ID: '1I5wVeLcrSS2sjlaRLCftwd9JPfbNri0l'
+    };
+    
+    // ===== PWA INSTALL =====
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    const onlineIndicator = document.getElementById('onlineIndicator');
+
+    function updateOnlineStatus() {
+      if (navigator.onLine) {
+        onlineIndicator.textContent = 'ONLINE';
+        onlineIndicator.style.color = '#4CAF50';
+      } else {
+        onlineIndicator.textContent = 'OFFLINE • Mode PWA';
+        onlineIndicator.style.color = '#C5A059';
+      }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove('hide');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+        installBtn.classList.add('hide');
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA was installed');
+      installBtn.classList.add('hide');
+      onlineIndicator.textContent = 'INSTALLED';
+    });
+
+    // ===== AUTO FULLSCREEN SAAT LOAD =====
+    function enterFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log('Fullscreen gagal:', err);
+        });
+      }
+    }
+    
+    window.addEventListener('load', enterFullScreen);
+    document.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        enterFullScreen();
+      }
+    }, { once: true });
+
+    // ===== REGISTER SERVICE WORKER =====
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+
+    // ===== BACKGROUND EFFECTS =====
+    let bgEffect = 'rain';
+    let bgIntensity = 100;
+    let effectInterval;
+    
+    const bgEffectsContainer = document.getElementById('backgroundEffects');
+    
+    function createRainEffect() {
+      const container = document.createElement('div');
+      container.className = 'rain-effect';
+      container.id = 'currentEffect';
       
-      if (!data.items || data.items.length === 0) {
-        folderInfoText.innerHTML = '🌐 Tidak ada file di HFS';
+      const dropCount = Math.floor(50 * (bgIntensity / 100));
+      for (let i = 0; i < dropCount; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+        drop.style.animationDelay = Math.random() * 5 + 's';
+        drop.style.opacity = Math.random() * 0.5 + 0.3;
+        container.appendChild(drop);
+      }
+      return container;
+    }
+    
+    function createSnowEffect() {
+      const container = document.createElement('div');
+      container.className = 'snow-effect';
+      container.id = 'currentEffect';
+      
+      const flakeCount = Math.floor(30 * (bgIntensity / 100));
+      for (let i = 0; i < flakeCount; i++) {
+        const flake = document.createElement('div');
+        flake.className = 'snow-flake';
+        flake.style.left = Math.random() * 100 + '%';
+        flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        flake.style.animationDelay = Math.random() * 5 + 's';
+        flake.style.width = (Math.random() * 10 + 5) + 'px';
+        flake.style.height = flake.style.width;
+        container.appendChild(flake);
+      }
+      return container;
+    }
+    
+    function createNeonHeartEffect() {
+      const container = document.createElement('div');
+      container.className = 'neon-heart-effect';
+      container.id = 'currentEffect';
+      
+      const heartCount = Math.floor(25 * (bgIntensity / 100));
+      for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'neon-heart';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
+        heart.style.animationDelay = Math.random() * 5 + 's';
+        heart.style.width = (Math.random() * 25 + 15) + 'px';
+        heart.style.height = heart.style.width;
+        heart.style.filter = `drop-shadow(0 0 ${Math.random() * 15 + 5}px #ff3366) drop-shadow(0 0 ${Math.random() * 25 + 10}px #ff3366)`;
+        container.appendChild(heart);
+      }
+      return container;
+    }
+    
+    function createMixedEffect() {
+      const container = document.createElement('div');
+      container.className = 'mixed-effect';
+      container.id = 'currentEffect';
+      
+      const dropCount = Math.floor(20 * (bgIntensity / 100));
+      for (let i = 0; i < dropCount; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+        drop.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(drop);
+      }
+      
+      const flakeCount = Math.floor(15 * (bgIntensity / 100));
+      for (let i = 0; i < flakeCount; i++) {
+        const flake = document.createElement('div');
+        flake.className = 'snow-flake';
+        flake.style.left = Math.random() * 100 + '%';
+        flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        flake.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(flake);
+      }
+      
+      const heartCount = Math.floor(10 * (bgIntensity / 100));
+      for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'neon-heart';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (Math.random() * 5 + 3) + 's';
+        heart.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(heart);
+      }
+      
+      return container;
+    }
+    
+    function updateBackgroundEffect() {
+      const oldEffect = document.getElementById('currentEffect');
+      if (oldEffect) oldEffect.remove();
+      
+      if (bgEffect === 'none') return;
+      
+      let newEffect;
+      switch(bgEffect) {
+        case 'rain':
+          newEffect = createRainEffect();
+          break;
+        case 'snow':
+          newEffect = createSnowEffect();
+          break;
+        case 'neon-heart':
+          newEffect = createNeonHeartEffect();
+          break;
+        case 'mixed':
+          newEffect = createMixedEffect();
+          break;
+        default:
+          return;
+      }
+      
+      bgEffectsContainer.appendChild(newEffect);
+      
+      if (effectInterval) clearInterval(effectInterval);
+      effectInterval = setInterval(() => {
+        if (bgEffect !== 'none') {
+          const old = document.getElementById('currentEffect');
+          if (old) old.remove();
+          
+          let refreshed;
+          switch(bgEffect) {
+            case 'rain': refreshed = createRainEffect(); break;
+            case 'snow': refreshed = createSnowEffect(); break;
+            case 'neon-heart': refreshed = createNeonHeartEffect(); break;
+            case 'mixed': refreshed = createMixedEffect(); break;
+          }
+          bgEffectsContainer.appendChild(refreshed);
+        }
+      }, 10000);
+    }
+
+    // ===== VARIABLES =====
+    let slides = [];
+    let currentSlide = 0;
+    let autoPlay = true;
+    let slideTimeout;
+    let durations = [9000, 11000, 10000, 12000];
+    
+    // File storage untuk multi-folder
+    let allMediaFiles = []; // Array of {type, url, name, source}
+    let imageFiles = [];
+    let videoFiles = [];
+    let audioFiles = [];
+    let logoFiles = [];
+    let currentMediaIndex = 0;
+    let currentAudioIndex = 0;
+    
+    let videoVolume = 70;
+    let videoMuted = false;
+    
+    let audioPlayer = null;
+    let bgVolume = 70;
+
+    let runningLines = [];
+    let currentLineIndex = 0;
+    let textSpeed = 30;
+    let fontSize = 20;
+    let letterSpacing = 4;
+    let textColor = '#C5A059';
+    let runningTextEnabled = true;
+    
+    let fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    let fontWeight = 400;
+    let fontItalic = false;
+    let textTransform = 'uppercase';
+    let textGlow = true;
+    let glowIntensity = 5;
+
+    let kenBurnsEnabled = false;
+    let dateEnabled = true;
+    let shuffleEnabled = false;
+    let brightness = 100;
+    let fadeEnabled = true;
+
+    let autoHideEnabled = false;
+    let hideDelay = 4;
+    let hideTimer;
+
+    // Animasi slide PowerPoint 2007
+    let slideMode = 'random-all';
+    let fixedAnimation = 'ppt-fade';
+    let animationDuration = 8;
+    
+    // Daftar semua animasi PowerPoint 2007
+    const allAnimations = [
+      // ENTRANCE BASIC
+      'ppt-appear', 'ppt-fade', 'ppt-fly-in', 'ppt-float-in', 'ppt-split', 'ppt-wipe', 'ppt-shape-circle', 'ppt-shape-plus', 'ppt-random-bars',
+      // ENTRANCE SUBTLE
+      'ppt-expand', 'ppt-swell', 'ppt-bounce', 'ppt-rise-up', 'ppt-slide-up', 'ppt-slide-down', 'ppt-slide-left', 'ppt-slide-right',
+      // ENTRANCE MODERATE
+      'ppt-zoom', 'ppt-rotate', 'ppt-grow-turn',
+      // ENTRANCE EXCITING
+      'ppt-pinwheel', 'ppt-pulse', 'ppt-color-pulse', 'ppt-teeter', 'ppt-center-rotate', 'ppt-contract',
+      // EMPHASIS
+      'ppt-pulse-emphasis', 'ppt-color-wave', 'ppt-sway', 'ppt-spin', 'ppt-grow-shrink', 'ppt-darken', 'ppt-lighten', 'ppt-teeter-emphasis', 
+      'ppt-vertical-grow', 'ppt-horizontal-grow', 'ppt-flash-bulb', 'ppt-shimmer', 'ppt-blend', 'ppt-wave',
+      // EXIT
+      'ppt-exit-fade', 'ppt-exit-fly-out', 'ppt-exit-float-out', 'ppt-exit-split', 'ppt-exit-wipe', 'ppt-exit-shape-circle', 
+      'ppt-exit-shape-plus', 'ppt-exit-random-bars', 'ppt-exit-shrink', 'ppt-exit-swivel', 'ppt-exit-slide-up', 'ppt-exit-slide-down', 
+      'ppt-exit-slide-left', 'ppt-exit-slide-right', 'ppt-exit-zoom-out', 'ppt-exit-rotate-out',
+      // MOTION PATHS
+      'ppt-move-straight', 'ppt-move-arc', 'ppt-move-curve', 'ppt-move-loop', 'ppt-move-spiral', 'ppt-move-wave', 
+      'ppt-move-bounce', 'ppt-move-heart', 'ppt-move-star', 'ppt-move-custom'
+    ];
+    
+    // Untuk cycle animations
+    let cycleIndex = 0;
+    let cycleAnimations = [];
+
+    // Logo variables (tidak bergantian)
+    let logoLeftData = null;
+    let logoRightData = null;
+    let logoScale = 200;
+
+    // Auto Update
+    let autoUpdateInterval = null;
+    let lastFileVersion = '';
+
+    // DOM Elements
+    const container = document.getElementById("slidesContainer");
+    const emptyState = document.getElementById("emptyState");
+    const slideTitle = document.getElementById("slideTitle");
+    const datetime = document.getElementById("datetime");
+    const runningBox = document.getElementById("runningBox");
+    const bottomBar = document.getElementById("bottomBar");
+    const runningTrack = document.getElementById("runningTrack");
+    const fadeLeft = document.getElementById("fadeLeft");
+    const fadeRight = document.getElementById("fadeRight");
+    const folderInfo = document.getElementById("folderInfo");
+    const folderInfoText = document.getElementById("folderInfoText");
+    const settingsBtn = document.getElementById("settingsBtn");
+    const fullscreenBtn = document.getElementById("fullscreenBtn");
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    const folderInput = document.getElementById("folderInput");
+    const dayEl = document.getElementById('day');
+    const dateEl = document.getElementById('date');
+    const hoursMinutesEl = document.getElementById('hoursMinutes');
+    const secondsEl = document.getElementById('seconds');
+    const playBtn = document.getElementById('playBtn');
+    const audioToggleBtn = document.getElementById('audioToggleBtn');
+    const audioBtnText = document.getElementById('audioBtnText');
+    const audioContainer = document.getElementById('audioContainer');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const audioPlaylist = document.getElementById('audioPlaylist');
+    const fontPreview = document.getElementById('fontPreview');
+    const hfsIpInput = document.getElementById('hfsIpInput');
+    const hfsPortInput = document.getElementById('hfsPortInput');
+    const googleDriveFolderId = document.getElementById('googleDriveFolderId');
+    const appsScriptUrl = document.getElementById('appsScriptUrl');
+    const loadDriveBtn = document.getElementById('loadDriveBtn');
+    
+    const logoLeft = document.getElementById('logoLeft');
+    const logoRight = document.getElementById('logoRight');
+    const logoLeftImg = document.getElementById('logoLeftImg');
+    const logoRightImg = document.getElementById('logoRightImg');
+    const logoLeftPlaceholder = document.getElementById('logoLeftPlaceholder');
+    const logoRightPlaceholder = document.getElementById('logoRightPlaceholder');
+    const logoLeftInput = document.getElementById('logoLeftInput');
+    const logoRightInput = document.getElementById('logoRightInput');
+    const clearLogoLeft = document.getElementById('clearLogoLeft');
+    const clearLogoRight = document.getElementById('clearLogoRight');
+
+    // ===== FUNGSI AUTO HIDE =====
+    function hideControls() {
+      if (!autoHideEnabled) return;
+      
+      slideTitle.classList.add("hide");
+      folderInfo.classList.add("hide");
+      bottomBar.classList.add("hide");
+      datetime.classList.add("datetime-hidden-pos");
+    }
+
+    function showControls() {
+      if (!autoHideEnabled) return;
+      clearTimeout(hideTimer);
+      slideTitle.classList.remove("hide");
+      folderInfo.classList.remove("hide");
+      bottomBar.classList.remove("hide");
+      datetime.classList.remove("datetime-hidden-pos");
+      hideTimer = setTimeout(hideControls, hideDelay * 1000);
+    }
+
+    function resetHideTimer() {
+      if (!autoHideEnabled) return;
+      showControls();
+    }
+
+    document.addEventListener("mousemove", resetHideTimer);
+    document.addEventListener("click", resetHideTimer);
+    document.addEventListener("touchstart", resetHideTimer);
+    document.addEventListener("keydown", resetHideTimer);
+    
+    settingsPanel?.addEventListener("mouseenter", () => {
+      if (autoHideEnabled) clearTimeout(hideTimer);
+    });
+    
+    settingsPanel?.addEventListener("mouseleave", () => {
+      if (autoHideEnabled) resetHideTimer();
+    });
+
+    // ===== FUNGSI ANIMASI SLIDE =====
+    function getNextAnimation() {
+      switch(slideMode) {
+        case 'random-all':
+          return allAnimations[Math.floor(Math.random() * allAnimations.length)];
+        case 'cycle-3':
+          if (cycleAnimations.length !== 3) {
+            cycleAnimations = [];
+            const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+            for (let i = 0; i < 3; i++) cycleAnimations.push(shuffled[i]);
+          }
+          const anim3 = cycleAnimations[cycleIndex % 3];
+          cycleIndex++;
+          return anim3;
+        case 'cycle-5':
+          if (cycleAnimations.length !== 5) {
+            cycleAnimations = [];
+            const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+            for (let i = 0; i < 5; i++) cycleAnimations.push(shuffled[i]);
+          }
+          const anim5 = cycleAnimations[cycleIndex % 5];
+          cycleIndex++;
+          return anim5;
+        case 'cycle-7':
+          if (cycleAnimations.length !== 7) {
+            cycleAnimations = [];
+            const shuffled = [...allAnimations].sort(() => 0.5 - Math.random());
+            for (let i = 0; i < 7; i++) cycleAnimations.push(shuffled[i]);
+          }
+          const anim7 = cycleAnimations[cycleIndex % 7];
+          cycleIndex++;
+          return anim7;
+        case 'fixed':
+          return fixedAnimation;
+        default:
+          return allAnimations[Math.floor(Math.random() * allAnimations.length)];
+      }
+    }
+
+    function applyAnimationToSlide(slideElement) {
+      if (!slideElement) return;
+      
+      const img = slideElement.querySelector('.main');
+      if (!img) return;
+      
+      allAnimations.forEach(animClass => {
+        img.classList.remove(animClass);
+      });
+      
+      const animClass = getNextAnimation();
+      img.classList.add(animClass);
+      
+      img.style.animationDuration = animationDuration + 's';
+      img.style.animationIterationCount = '1';
+      img.style.animationFillMode = 'forwards';
+    }
+
+    // ===== FUNGSI AUTO UPDATE =====
+    function startAutoUpdate() {
+      if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+      
+      autoUpdateInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`${CONFIG.APPS_SCRIPT_URL}?folderId=${CONFIG.GOOGLE_DRIVE_FOLDER_ID}`);
+          const data = await response.json();
+          
+          const currentVersion = data.files ? data.files.map(f => f.id).join(',') : '';
+          
+          if (lastFileVersion && lastFileVersion !== currentVersion) {
+            console.log('🔄 File updated, reloading slides...');
+            location.reload();
+          }
+        } catch (e) {
+          console.log('Auto update check failed:', e);
+        }
+      }, 30000);
+    }
+
+    // ===== FUNGSI RENDER SEMUA SLIDE DARI allMediaFiles =====
+    function renderAllSlides() {
+      container.innerHTML = "";
+      slides = [];
+      
+      if (allMediaFiles.length === 0) {
+        emptyState.classList.remove('hide');
+        folderInfo.classList.add('hide');
         loadingIndicator.classList.remove("show");
         return;
       }
       
-      const mediaItems = data.items.filter(item => 
-        item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|mp4|avi|mov|mkv)$/i)
-      );
+      emptyState.classList.add('hide');
+      folderInfo.classList.remove('hide');
+      folderInfoText.innerText = `♻️ & 📁 Total ${allMediaFiles.length} media (${imageFiles.length} gambar, ${videoFiles.length} video), ${audioFiles.length} MP3, ${logoFiles.length} logo`;
       
-      folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file ditemukan`;
-      
-      for (let i = 0; i < mediaItems.length; i++) {
-        const item = mediaItems[i];
+      // Buat slide untuk setiap file media
+      allMediaFiles.forEach((file, index) => {
         const slide = document.createElement('div');
         slide.className = 'slide';
         
-        const fileUrl = hfsUrl + '/' + item.name;
-        
-        if (item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)) {
-          const img = document.createElement('img');
+        if (file.type === 'image') {
+          const img = new Image();
           img.className = 'main';
-          img.src = fileUrl;
+          img.src = file.url;
+          img.onload = function() {
+            this.classList.add(this.naturalHeight > this.naturalWidth ? 'portrait' : 'landscape');
+          };
           img.onerror = () => {
-            console.log('Gagal load:', item.name);
             img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="%23333"/><text x="20" y="110" fill="%23C5A059">Error</text></svg>';
           };
           slide.appendChild(img);
-        } else {
+        } else if (file.type === 'video') {
           const video = document.createElement('video');
-          video.className = 'main';
-          video.src = fileUrl;
-          video.controls = false;
-          video.onerror = () => console.log('Gagal load video:', item.name);
+          video.className = 'video-main main';
+          video.src = file.url;
+          video.volume = videoMuted ? 0 : (videoVolume / 100);
           slide.appendChild(video);
         }
         
         container.appendChild(slide);
-      }
+      });
       
       slides = document.querySelectorAll('.slide');
       loadingIndicator.classList.remove("show");
@@ -2202,855 +2332,972 @@ Dengan penuh rasa syukur Kami ucapkan terima kasih yang sebesar-besarnya atas ke
       if (slides.length > 0) {
         slides[0].classList.add('active');
         applyAnimationToSlide(slides[0]);
+        
+        const firstVideo = slides[0].querySelector('video');
+        if (firstVideo) firstVideo.play();
+        
         startSlideshow();
-        folderInfoText.innerHTML = `🌐 HFS: ${mediaItems.length} file (${hfsIp}:${hfsPort})`;
       }
-      
-    } catch (error) {
-      console.error('HFS error:', error);
-      folderInfoText.innerHTML = `🌐 Error: ${error.message}`;
-      loadingIndicator.classList.remove("show");
-      
-      emptyState.classList.remove('hide');
-      emptyState.innerHTML = `
-        <span data-icon="hfs">🌐</span>
-        <h2>GAGAL TERHUBUNG KE HFS</h2>
-        <p>${error.message}</p>
-        <p style="margin-top: 20px;">IP: ${hfsIp}:${hfsPort}</p>
-        <p style="font-size:12px; color: var(--gold-light);">Pastikan:</p>
-        <p style="font-size:12px;">1. HFS berjalan di laptop</p>
-        <p style="font-size:12px;">2. IP address sudah benar</p>
-        <p style="font-size:12px;">3. Firewall mengizinkan koneksi</p>
-        <button onclick="loadFromHFS()" class="settings-btn-small" style="margin-top:20px;">Coba Lagi</button>
-      `;
     }
-  };
 
-  document.getElementById('testHfsBtn').addEventListener('click', async () => {
-    const hfsIp = hfsIpInput.value || '192.168.1.5';
-    const hfsPort = hfsPortInput.value || '80';
-    const hfsUrl = `http://${hfsIp}:${hfsPort}`;
-    
-    try {
+    // ===== FUNGSI LOAD DARI GOOGLE DRIVE =====
+    async function loadFromGoogleDrive(silent = false) {
+      if (!silent) {
+        loadingIndicator.classList.add("show");
+      }
       folderInfo.classList.remove('hide');
-      folderInfoText.innerHTML = `🌐 Testing koneksi ke ${hfsIp}:${hfsPort}...`;
-      
-      const response = await fetch(hfsUrl + '/?json');
-      
-      if (response.ok) {
+      folderInfoText.innerHTML = `♻️ Menghubungi Google Drive...`;
+
+      try {
+        const response = await fetch(`${CONFIG.APPS_SCRIPT_URL}?folderId=${CONFIG.GOOGLE_DRIVE_FOLDER_ID}`);
+        
+        if (!response.ok) {
+          throw new Error(`Gagal mengakses (${response.status})`);
+        }
+
         const data = await response.json();
-        const fileCount = data.items ? data.items.length : 0;
-        folderInfoText.innerHTML = `🌐 ✅ Terhubung! ${fileCount} file tersedia`;
-        alert(`✅ Berhasil terhubung ke HFS!\nFile tersedia: ${fileCount}`);
-      } else {
-        throw new Error(`HTTP ${response.status}`);
-      }
-    } catch (error) {
-      folderInfoText.innerHTML = `🌐 ❌ Gagal: ${error.message}`;
-      alert(`❌ Gagal terhubung ke HFS!\nPastikan:\n1. HFS berjalan\n2. IP: ${hfsIp}:${hfsPort} benar\n3. Firewall tidak memblokir`);
-    }
-  });
-
-  // ===== FUNGSI VALIDASI FILE =====
-  function isValidImageForSlideshow(file) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/webp'];
-    if (allowedTypes.includes(file.type)) return true;
-    const fileName = file.name.toLowerCase();
-    return ['.jpg', '.jpeg', '.png', '.bmp', '.webp'].some(ext => fileName.endsWith(ext));
-  }
-
-  function isValidVideoFile(file) {
-    return file.type.startsWith("video/");
-  }
-
-  function isValidAudioFile(file) {
-    return file.type.startsWith("audio/") && !file.type.includes('m3u');
-  }
-
-  function isValidLogoFile(file) {
-    const fileName = file.name.toLowerCase();
-    return file.type === 'image/x-icon' || file.type === 'image/vnd.microsoft.icon' || 
-           fileName.endsWith('.ico') || isValidImageForSlideshow(file);
-  }
-
-  // ===== FUNGSI LOGO =====
-  function updateLogo(position, dataUrl) {
-    const img = position === 'left' ? logoLeftImg : logoRightImg;
-    const placeholder = position === 'left' ? logoLeftPlaceholder : logoRightPlaceholder;
-    const logoCorner = position === 'left' ? logoLeft : logoRight;
-    
-    if (dataUrl) {
-      img.src = dataUrl;
-      img.style.display = 'block';
-      placeholder.style.display = 'none';
-      logoCorner.classList.remove('hide-logo');
-    } else {
-      img.src = '';
-      img.style.display = 'none';
-      placeholder.style.display = 'flex';
-      logoCorner.classList.add('hide-logo');
-    }
-  }
-
-  function handleLogoUpload(input, position) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      if (position === 'left') {
-        logoLeftData = e.target.result;
-        updateLogo('left', logoLeftData);
-      } else {
-        logoRightData = e.target.result;
-        updateLogo('right', logoRightData);
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function clearLogo(position) {
-    if (position === 'left') {
-      logoLeftData = null;
-      logoLeftInput.value = '';
-      updateLogo('left', null);
-    } else {
-      logoRightData = null;
-      logoRightInput.value = '';
-      updateLogo('right', null);
-    }
-  }
-
-  function startLogoRotation() {
-    if (logoRotationTimer) clearInterval(logoRotationTimer);
-    if (logoFiles.length === 0) return;
-    
-    logoRotationTimer = setInterval(() => {
-      if (logoFiles.length > 0) {
-        currentLogoIndex = (currentLogoIndex + 1) % logoFiles.length;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          logoLeftData = e.target.result;
-          updateLogo('left', logoLeftData);
-        };
-        reader.readAsDataURL(logoFiles[currentLogoIndex]);
         
-        setTimeout(() => {
-          const rightReader = new FileReader();
-          rightReader.onload = function(ev) {
-            logoRightData = ev.target.result;
-            updateLogo('right', logoRightData);
-          };
-          rightReader.readAsDataURL(logoFiles[(currentLogoIndex + 1) % logoFiles.length]);
-        }, 100);
-      }
-    }, logoInterval * 1000);
-  }
-
-  function updateLogoScale(scalePercent) {
-    document.documentElement.style.setProperty('--logo-scale', scalePercent / 100);
-  }
-
-  logoLeftInput.addEventListener('change', () => handleLogoUpload(logoLeftInput, 'left'));
-  logoRightInput.addEventListener('change', () => handleLogoUpload(logoRightInput, 'right'));
-  clearLogoLeft.addEventListener('click', () => clearLogo('left'));
-  clearLogoRight.addEventListener('click', () => clearLogo('right'));
-
-  // ===== TANGGAL =====
-  function updateDateTime() {
-    const now = new Date();
-    const days = ['MINGGU','SENIN','SELASA','RABU','KAMIS','JUMAT','SABTU'];
-    const months = ['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
-    if (dayEl) dayEl.textContent = days[now.getDay()];
-    if (dateEl) dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-    if (hoursMinutesEl) hoursMinutesEl.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    if (secondsEl) secondsEl.textContent = String(now.getSeconds()).padStart(2,'0');
-  }
-  setInterval(updateDateTime, 1000);
-  updateDateTime();
-
-  function updateAllVideoVolumes() {
-    document.querySelectorAll('video').forEach(v => { v.volume = videoMuted ? 0 : (videoVolume/100); });
-  }
-
-  // ===== FULLSCREEN =====
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
-    } else {
-      document.exitFullscreen();
-      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
-    }
-  }
-  
-  fullscreenBtn.addEventListener('click', toggleFullscreen);
-  
-  document.addEventListener('fullscreenchange', function() {
-    if (document.fullscreenElement) {
-      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
-    } else {
-      fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
-    }
-  });
-
-  // ===== AUDIO =====
-  function initAudioPlayer() {
-    if (!audioPlayer) {
-      audioPlayer = document.createElement('audio');
-      audioPlayer.id = 'dynamicAudio';
-      audioPlayer.loop = false;
-      audioContainer.appendChild(audioPlayer);
-      audioPlayer.volume = bgVolume/100;
-      audioPlayer.addEventListener('play', () => {
-        audioBtnText.textContent = 'Pause';
-        audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'volume-up');
-      });
-      audioPlayer.addEventListener('pause', () => {
-        audioBtnText.textContent = 'Play MP3';
-        audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'music');
-      });
-      audioPlayer.addEventListener('ended', () => {
-        if (audioFiles.length > 0) {
-          currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
-          playAudioAtIndex(currentAudioIndex);
+        if (data.error) {
+          throw new Error(data.error);
         }
-      });
-    }
-    return audioPlayer;
-  }
-
-  function playAudioAtIndex(index) {
-    if (!audioPlayer) audioPlayer = initAudioPlayer();
-    if (audioFiles.length === 0) { 
-      audioBtnText.textContent = 'No MP3'; 
-      return; 
-    }
-    const audioFile = audioFiles[index];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      audioPlayer.src = e.target.result;
-      audioPlayer.volume = bgVolume/100;
-      audioPlayer.play().catch(() => {
-        if (audioFiles.length > 0) {
-          currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
-          playAudioAtIndex(currentAudioIndex);
+        
+        if (!data.files || data.files.length === 0) {
+          folderInfoText.innerHTML = '♻️ Tidak ada file gambar/video di Google Drive';
+          if (!silent) loadingIndicator.classList.remove("show");
+          return;
         }
-      });
-    };
-    reader.readAsDataURL(audioFile);
-  }
 
-  window.toggleAudio = function() {
-    if (!audioPlayer) audioPlayer = initAudioPlayer();
-    if (audioFiles.length === 0) { 
-      alert('Tidak ada file MP3'); 
-      return; 
-    }
-    if (audioPlayer.paused) {
-      if (!audioPlayer.src) { 
-        currentAudioIndex = 0; 
-        playAudioAtIndex(0); 
-      } else audioPlayer.play();
-    } else audioPlayer.pause();
-  };
+        // Reset array lokal untuk menyimpan file baru
+        const driveImages = [];
+        const driveVideos = [];
+        
+        data.files.forEach(file => {
+          if (file.mimeType.startsWith('image/')) {
+            driveImages.push({
+              type: 'image',
+              url: `https://drive.google.com/thumbnail?id=${file.id}&sz=w1000`,
+              name: file.name,
+              source: 'drive'
+            });
+          } else if (file.mimeType.startsWith('video/')) {
+            driveVideos.push({
+              type: 'video',
+              url: `https://drive.google.com/uc?export=download&id=${file.id}`,
+              name: file.name,
+              source: 'drive'
+            });
+          }
+        });
 
-  // ===== RUNNING TEXT =====
-  function createRunningItem(text) {
-    const item = document.createElement('div');
-    item.className = 'running-item';
-    let html = '';
-    for (let i = 0; i < text.length; i++) {
-      html += text[i] === ' ' ? '<span>&nbsp;</span>' : `<span>${text[i]}</span>`;
-    }
-    item.innerHTML = html; 
-    return item;
-  }
+        // Gabungkan dengan file lokal yang sudah ada
+        const existingImages = allMediaFiles.filter(f => f.source === 'local' && f.type === 'image');
+        const existingVideos = allMediaFiles.filter(f => f.source === 'local' && f.type === 'video');
+        
+        // Update array master
+        allMediaFiles = [
+          ...existingImages,
+          ...existingVideos,
+          ...driveImages,
+          ...driveVideos
+        ];
+        
+        // Update imageFiles dan videoFiles untuk keperluan lain
+        imageFiles = allMediaFiles.filter(f => f.type === 'image');
+        videoFiles = allMediaFiles.filter(f => f.type === 'video');
+        
+        folderInfoText.innerHTML = `♻️ Google Drive: ${driveImages.length + driveVideos.length} file ditambahkan. Total: ${allMediaFiles.length} media`;
+        
+        if (!silent) {
+          renderAllSlides();
+          lastFileVersion = data.files.map(f => f.id).join(',');
+          startAutoUpdate();
+        }
 
-  function updateRunningTextStyle() {
-    if (!runningTrack) return;
-    let fontStyle = `${fontItalic ? 'italic' : 'normal'} ${fontWeight} ${fontSize}px ${fontFamily}`;
-    runningTrack.style.font = fontStyle;
-    runningTrack.style.letterSpacing = letterSpacing + 'px';
-    runningTrack.style.textTransform = textTransform;
-    runningTrack.style.color = textColor;
-    runningTrack.style.textShadow = textGlow ? `0 0 ${glowIntensity}px ${textColor}` : 'none';
-    
-    if (fontPreview) {
-      fontPreview.style.font = `normal ${fontWeight} 18px ${fontFamily}`;
-      fontPreview.style.color = textColor;
-    }
-    
-    document.querySelectorAll('.running-item, .running-item span').forEach(el => {
-      el.style.lineHeight = (fontSize + 30) + 'px';
-      el.style.fontSize = fontSize + 'px';
-      el.style.color = textColor;
-    });
-    
-    if (fadeLeft && fadeRight) {
-      fadeLeft.classList.toggle('hide', !fadeEnabled);
-      fadeRight.classList.toggle('hide', !fadeEnabled);
-    }
-  }
-
-  function updateRunningTextContent() {
-    if (!runningTrack || !runningTextEnabled) return;
-    if (runningLines.length === 0) runningLines = ['WELCOME'];
-    let combined = '';
-    for (let i = 0; i < 5; i++) {
-      const idx = (currentLineIndex + i) % runningLines.length;
-      if (runningLines[idx].trim()) combined += ` ✦ ${runningLines[idx].trim()} ✦ `;
-    }
-    runningTrack.innerHTML = '';
-    runningTrack.appendChild(createRunningItem(combined));
-    currentLineIndex = (currentLineIndex + 1) % runningLines.length;
-    updateRunningTextStyle();
-  }
-
-  function updateRunningTextSpeed() {
-    if (runningTrack) runningTrack.style.animationDuration = textSpeed + 's';
-  }
-
-  // ===== SLIDESHOW =====
-  window.nextSlide = function() {
-    if (slides.length === 0) return;
-    document.querySelectorAll('video').forEach(v => v.pause());
-    if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
-    
-    if (shuffleEnabled) {
-      do { 
-        currentMediaIndex = Math.floor(Math.random() * slides.length); 
-      } while (currentMediaIndex === currentSlide && slides.length > 1);
-    } else {
-      currentMediaIndex = (currentMediaIndex + 1) % slides.length;
-    }
-    
-    currentSlide = currentMediaIndex;
-    if (slides[currentSlide]) {
-      slides[currentSlide].classList.add("active");
-      
-      applyAnimationToSlide(slides[currentSlide]);
-      
-      const video = slides[currentSlide].querySelector('video');
-      if (video) {
-        video.volume = videoMuted ? 0 : (videoVolume / 100);
-        video.play();
-        if (video.duration) { 
-          clearTimeout(slideTimeout); 
-          slideTimeout = setTimeout(window.nextSlide, video.duration * 1000); 
-        } else startSlideshow();
-      } else startSlideshow();
-    }
-  };
-
-  window.prevSlide = function() {
-    if (slides.length === 0) return;
-    document.querySelectorAll('video').forEach(v => v.pause());
-    if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
-    
-    if (shuffleEnabled) {
-      do { 
-        currentMediaIndex = Math.floor(Math.random() * slides.length); 
-      } while (currentMediaIndex === currentSlide && slides.length > 1);
-    } else {
-      currentMediaIndex = (currentMediaIndex - 1 + slides.length) % slides.length;
-    }
-    
-    currentSlide = currentMediaIndex;
-    if (slides[currentSlide]) {
-      slides[currentSlide].classList.add("active");
-      
-      applyAnimationToSlide(slides[currentSlide]);
-      
-      const video = slides[currentSlide].querySelector('video');
-      if (video) {
-        video.volume = videoMuted ? 0 : (videoVolume / 100);
-        video.play();
+      } catch (error) {
+        console.error('Google Drive error:', error);
+        if (!silent) {
+          folderInfoText.innerHTML = `♻️ Error Drive: ${error.message}`;
+          loadingIndicator.classList.remove("show");
+        }
       }
-      startSlideshow();
     }
-  };
 
-  function startSlideshow() {
-    if (!autoPlay || slides.length === 0) return;
-    clearTimeout(slideTimeout);
-    slideTimeout = setTimeout(window.nextSlide, durations[currentMediaIndex % durations.length]);
-  }
-
-  window.togglePlay = function() {
-    autoPlay = !autoPlay;
-    playBtn.querySelector('span[data-icon]').setAttribute('data-icon', autoPlay ? 'pause' : 'play');
-    if (autoPlay) { 
-      startSlideshow(); 
-      slides[currentSlide]?.querySelector('video')?.play(); 
-    } else { 
-      clearTimeout(slideTimeout); 
-      document.querySelectorAll('video').forEach(v => v.pause()); 
+    if (loadDriveBtn) {
+      loadDriveBtn.addEventListener('click', () => loadFromGoogleDrive(false));
     }
-  };
 
-  // ===== LOAD MEDIA (LOKAL) =====
-  if (folderInput) {
-    folderInput.addEventListener('change', async function(e) {
-      emptyState?.classList.add('hide');
-      container.innerHTML = "";
-      slides = []; 
-      imageFiles = []; 
-      videoFiles = []; 
-      audioFiles = []; 
-      logoFiles = [];
+    // ===== FUNGSI HFS =====
+    window.loadFromHFS = async function() {
+      const hfsIp = hfsIpInput.value || '192.168.1.5';
+      const hfsPort = hfsPortInput.value || '80';
+      const hfsUrl = `http://${hfsIp}:${hfsPort}`;
+      
+      emptyState.classList.add('hide');
       loadingIndicator.classList.add("show");
+      folderInfo.classList.remove('hide');
+      folderInfoText.innerHTML = `🌐 Menghubungi HFS di ${hfsIp}:${hfsPort}...`;
       
-      const files = Array.from(e.target.files);
-      
-      for (const file of files) {
-        if (isValidImageForSlideshow(file)) {
-          imageFiles.push(file);
-        } else if (isValidVideoFile(file)) {
-          videoFiles.push(file);
-        } else if (isValidAudioFile(file)) {
-          audioFiles.push(file);
-        } else if (isValidLogoFile(file)) {
-          logoFiles.push(file);
+      try {
+        const response = await fetch(hfsUrl + '/?json');
+        
+        if (!response.ok) {
+          throw new Error(`Tidak bisa terhubung ke HFS (${response.status})`);
         }
+        
+        const data = await response.json();
+        
+        if (!data.items || data.items.length === 0) {
+          folderInfoText.innerHTML = '🌐 Tidak ada file di HFS';
+          loadingIndicator.classList.remove("show");
+          return;
+        }
+        
+        const hfsImages = [];
+        const hfsVideos = [];
+        
+        data.items.forEach(item => {
+          const fileName = item.name.toLowerCase();
+          if (fileName.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)) {
+            hfsImages.push({
+              type: 'image',
+              url: hfsUrl + '/' + item.name,
+              name: item.name,
+              source: 'hfs'
+            });
+          } else if (fileName.match(/\.(mp4|avi|mov|mkv)$/i)) {
+            hfsVideos.push({
+              type: 'video',
+              url: hfsUrl + '/' + item.name,
+              name: item.name,
+              source: 'hfs'
+            });
+          }
+        });
+        
+        // Gabungkan dengan file yang sudah ada
+        const existingNonHFS = allMediaFiles.filter(f => f.source !== 'hfs');
+        
+        allMediaFiles = [
+          ...existingNonHFS,
+          ...hfsImages,
+          ...hfsVideos
+        ];
+        
+        imageFiles = allMediaFiles.filter(f => f.type === 'image');
+        videoFiles = allMediaFiles.filter(f => f.type === 'video');
+        
+        folderInfoText.innerHTML = `🌐 HFS: ${hfsImages.length + hfsVideos.length} file ditambahkan. Total: ${allMediaFiles.length} media`;
+        
+        renderAllSlides();
+        
+      } catch (error) {
+        console.error('HFS error:', error);
+        folderInfoText.innerHTML = `🌐 Error: ${error.message}`;
+        loadingIndicator.classList.remove("show");
       }
-      
-      if (audioFiles.length > 0) { 
-        audioBtnText.textContent = 'Play MP3'; 
-        initAudioPlayer();
-        audioPlaylist.innerHTML = audioFiles.map(f => `<div>🎵 ${f.name}</div>`).join('');
-      }
+    };
 
-      if (logoFiles.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
+    document.getElementById('testHfsBtn')?.addEventListener('click', async () => {
+      const hfsIp = hfsIpInput.value || '192.168.1.5';
+      const hfsPort = hfsPortInput.value || '80';
+      const hfsUrl = `http://${hfsIp}:${hfsPort}`;
+      
+      try {
+        folderInfo.classList.remove('hide');
+        folderInfoText.innerHTML = `🌐 Testing koneksi ke ${hfsIp}:${hfsPort}...`;
+        
+        const response = await fetch(hfsUrl + '/?json');
+        
+        if (response.ok) {
+          const data = await response.json();
+          const fileCount = data.items ? data.items.length : 0;
+          folderInfoText.innerHTML = `🌐 ✅ Terhubung! ${fileCount} file tersedia`;
+          alert(`✅ Berhasil terhubung ke HFS!\nFile tersedia: ${fileCount}`);
+        } else {
+          throw new Error(`HTTP ${response.status}`);
+        }
+      } catch (error) {
+        folderInfoText.innerHTML = `🌐 ❌ Gagal: ${error.message}`;
+        alert(`❌ Gagal terhubung ke HFS!`);
+      }
+    });
+
+    // ===== FUNGSI VALIDASI FILE =====
+    function isValidImageForSlideshow(file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/webp'];
+      if (allowedTypes.includes(file.type)) return true;
+      const fileName = file.name.toLowerCase();
+      return ['.jpg', '.jpeg', '.png', '.bmp', '.webp'].some(ext => fileName.endsWith(ext));
+    }
+
+    function isValidVideoFile(file) {
+      return file.type.startsWith("video/");
+    }
+
+    function isValidAudioFile(file) {
+      return file.type.startsWith("audio/") && !file.type.includes('m3u');
+    }
+
+    function isValidLogoFile(file) {
+      const fileName = file.name.toLowerCase();
+      return file.type === 'image/x-icon' || file.type === 'image/vnd.microsoft.icon' || 
+             fileName.endsWith('.ico') || isValidImageForSlideshow(file);
+    }
+
+    // ===== FUNGSI LOGO =====
+    function updateLogo(position, dataUrl) {
+      const img = position === 'left' ? logoLeftImg : logoRightImg;
+      const placeholder = position === 'left' ? logoLeftPlaceholder : logoRightPlaceholder;
+      const logoCorner = position === 'left' ? logoLeft : logoRight;
+      
+      if (dataUrl) {
+        img.src = dataUrl;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+        logoCorner.classList.remove('hide-logo');
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        placeholder.style.display = 'flex';
+        logoCorner.classList.add('hide-logo');
+      }
+    }
+
+    function handleLogoUpload(input, position) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        if (position === 'left') {
           logoLeftData = e.target.result;
           updateLogo('left', logoLeftData);
-          
-          if (logoFiles.length > 1) {
-            const rightReader = new FileReader();
-            rightReader.onload = function(ev) {
-              logoRightData = ev.target.result;
-              updateLogo('right', logoRightData);
-            };
-            rightReader.readAsDataURL(logoFiles[1 % logoFiles.length]);
-          } else {
-            logoRightData = logoLeftData;
-            updateLogo('right', logoRightData);
-          }
-          
-          startLogoRotation();
-        };
-        reader.readAsDataURL(logoFiles[0]);
-      }
-      
-      const media = [...imageFiles, ...videoFiles];
-      if (media.length === 0) {
-        loadingIndicator.classList.remove("show");
-        folderInfo.classList.remove("hide");
-        folderInfoText.innerText = `${media.length} media, ${audioFiles.length} MP3, ${logoFiles.length} logo`;
-        return;
-      }
-      
-      folderInfo.classList.remove("hide");
-      folderInfoText.innerText = `${media.length} media (${imageFiles.length} gambar, ${videoFiles.length} video), ${audioFiles.length} MP3, ${logoFiles.length} logo`;
-
-      for (let i = 0; i < media.length; i++) {
-        const file = media[i];
-        const reader = new FileReader();
-        
-        reader.onload = function(ev) {
-          const slide = document.createElement("div"); 
-          slide.className = "slide";
-          
-          if (file.type.startsWith("image/")) {
-            const img = new Image(); 
-            img.className = "main";
-            img.src = ev.target.result;
-            img.onload = function() { 
-              this.classList.add(this.naturalHeight > this.naturalWidth ? 'portrait' : 'landscape'); 
-            };
-            slide.appendChild(img);
-          } else {
-            const video = document.createElement("video"); 
-            video.className = "video-main main";
-            video.src = ev.target.result; 
-            video.volume = videoMuted ? 0 : (videoVolume / 100);
-            slide.appendChild(video);
-          }
-          
-          container.appendChild(slide);
-          slides = document.querySelectorAll(".slide");
-          
-          if (i === media.length - 1) {
-            loadingIndicator.classList.remove("show");
-            if (slides.length > 0) { 
-              slides[0].classList.add("active"); 
-              applyAnimationToSlide(slides[0]);
-              startSlideshow(); 
-            }
-          }
-        };
-        
-        reader.readAsDataURL(file);
-        await new Promise(r => setTimeout(r, 10));
-      }
-    });
-  }
-
-  // ===== SETTINGS BINDINGS =====
-  settingsBtn?.addEventListener('click', (e) => { 
-    e.stopPropagation(); 
-    settingsPanel.classList.toggle('hide'); 
-    if (autoHideEnabled && !settingsPanel.classList.contains('hide')) {
-      clearTimeout(hideTimer);
+        } else {
+          logoRightData = e.target.result;
+          updateLogo('right', logoRightData);
+        }
+      };
+      reader.readAsDataURL(file);
     }
-  });
-  
-  document.getElementById('closeSettings')?.addEventListener('click', () => { 
-    settingsPanel.classList.add('hide'); 
-    resetHideTimer();
-  });
 
-  // Background Effect
-  const bgEffectSelect = document.getElementById('bgEffectSelect');
-  const bgIntensitySlider = document.getElementById('bgIntensitySlider');
-  const bgIntensityValue = document.getElementById('bgIntensityValue');
-  
-  bgEffectSelect.addEventListener('change', (e) => {
-    bgEffect = e.target.value;
-    updateBackgroundEffect();
-  });
-  
-  bgIntensitySlider.addEventListener('input', (e) => {
-    bgIntensity = parseInt(e.target.value);
-    bgIntensityValue.textContent = bgIntensity + '%';
-    updateBackgroundEffect();
-  });
-
-  // Slide Animation Settings
-  const slideModeSelect = document.getElementById('slideModeSelect');
-  const fixedAnimationContainer = document.getElementById('fixedAnimationContainer');
-  const fixedAnimationSelect = document.getElementById('fixedAnimationSelect');
-  const animationDurationSlider = document.getElementById('animationDurationSlider');
-  const animationDurationValue = document.getElementById('animationDurationValue');
-  
-  slideModeSelect.addEventListener('change', (e) => {
-    slideMode = e.target.value;
-    if (slideMode === 'fixed') {
-      fixedAnimationContainer.style.display = 'block';
-    } else {
-      fixedAnimationContainer.style.display = 'none';
-      if (slideMode.startsWith('cycle')) {
-        cycleIndex = 0;
-        cycleAnimations = [];
+    function clearLogo(position) {
+      if (position === 'left') {
+        logoLeftData = null;
+        logoLeftInput.value = '';
+        updateLogo('left', null);
+      } else {
+        logoRightData = null;
+        logoRightInput.value = '';
+        updateLogo('right', null);
       }
     }
-    if (slides[currentSlide]) applyAnimationToSlide(slides[currentSlide]);
-  });
-  
-  fixedAnimationSelect.addEventListener('change', (e) => {
-    fixedAnimation = e.target.value;
-    if (slideMode === 'fixed' && slides[currentSlide]) {
-      applyAnimationToSlide(slides[currentSlide]);
-    }
-  });
-  
-  animationDurationSlider.addEventListener('input', (e) => {
-    animationDuration = parseInt(e.target.value);
-    animationDurationValue.textContent = animationDuration + 's';
-    if (slides[currentSlide]) {
-      const img = slides[currentSlide].querySelector('.main');
-      if (img) img.style.animationDuration = animationDuration + 's';
-    }
-  });
 
-  document.getElementById('videoVolumeSlider')?.addEventListener('input', (e) => { 
-    videoVolume = parseInt(e.target.value); 
-    document.getElementById('videoVolumeValue').textContent = videoVolume + '%'; 
-    updateAllVideoVolumes(); 
-  });
-  
-  document.getElementById('videoMuteToggle')?.addEventListener('click', function() { 
-    videoMuted = !videoMuted; 
-    this.classList.toggle('active', videoMuted); 
-    updateAllVideoVolumes(); 
-  });
-  
-  const autoHideToggle = document.getElementById('autoHideToggle');
-  autoHideToggle.classList.remove('active');
-  autoHideToggle.addEventListener('click', function() {
-    autoHideEnabled = !autoHideEnabled;
-    this.classList.toggle('active', autoHideEnabled);
+    logoLeftInput.addEventListener('change', () => handleLogoUpload(logoLeftInput, 'left'));
+    logoRightInput.addEventListener('change', () => handleLogoUpload(logoRightInput, 'right'));
+    clearLogoLeft.addEventListener('click', () => clearLogo('left'));
+    clearLogoRight.addEventListener('click', () => clearLogo('right'));
+
+    function updateLogoScale(scalePercent) {
+      document.documentElement.style.setProperty('--logo-scale', scalePercent / 100);
+    }
+
+    // ===== TANGGAL =====
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['MINGGU','SENIN','SELASA','RABU','KAMIS','JUMAT','SABTU'];
+      const months = ['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
+      if (dayEl) dayEl.textContent = days[now.getDay()];
+      if (dateEl) dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+      if (hoursMinutesEl) hoursMinutesEl.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      if (secondsEl) secondsEl.textContent = String(now.getSeconds()).padStart(2,'0');
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    function updateAllVideoVolumes() {
+      document.querySelectorAll('video').forEach(v => { v.volume = videoMuted ? 0 : (videoVolume/100); });
+    }
+
+    // ===== FULLSCREEN =====
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
+      }
+    }
     
-    if (autoHideEnabled) {
-      resetHideTimer();
-    } else {
-      clearTimeout(hideTimer);
-      omTitle.classList.remove("hide");
-      folderInfo.classList.remove("hide");
-      bottomBar.classList.remove("hide");
-      datetime.classList.remove("datetime-hidden-pos");
-    }
-  });
-
-  document.getElementById('hideDelaySlider')?.addEventListener('input', (e) => { 
-    hideDelay = parseInt(e.target.value); 
-    document.getElementById('hideDelayValue').textContent = hideDelay + 's'; 
-    if (autoHideEnabled) resetHideTimer();
-  });
-
-  const dateToggle = document.getElementById('dateToggle');
-  if (dateToggle) {
-    dateToggle.classList.add('active');
-    dateToggle.addEventListener('click', function() {
-      dateEnabled = !dateEnabled;
-      this.classList.toggle('active', dateEnabled);
-      datetime.classList.toggle('hide', !dateEnabled);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    document.addEventListener('fullscreenchange', function() {
+      if (document.fullscreenElement) {
+        fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen-exit');
+      } else {
+        fullscreenBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'fullscreen');
+      }
     });
-  }
 
-  const shuffleToggle = document.getElementById('shuffleToggle');
-  if (shuffleToggle) {
-    shuffleToggle.addEventListener('click', function() {
-      shuffleEnabled = !shuffleEnabled;
-      this.classList.toggle('active', shuffleEnabled);
-    });
-  }
-
-  document.getElementById('brightnessSlider')?.addEventListener('input', (e) => {
-    brightness = parseInt(e.target.value);
-    document.getElementById('brightnessValue').textContent = brightness + '%';
-    document.body.style.filter = `brightness(${brightness / 100})`;
-  });
-
-  const logoScaleSlider = document.getElementById('logoScaleSlider');
-  const logoScaleValue = document.getElementById('logoScaleValue');
-  const logoIntervalSlider = document.getElementById('logoIntervalSlider');
-  const logoIntervalValue = document.getElementById('logoIntervalValue');
-
-  logoScaleSlider.addEventListener('input', (e) => {
-    logoScale = parseInt(e.target.value);
-    logoScaleValue.textContent = logoScale + '%';
-    updateLogoScale(logoScale);
-  });
-
-  logoIntervalSlider.addEventListener('input', (e) => {
-    logoInterval = parseInt(e.target.value);
-    logoIntervalValue.textContent = logoInterval + 's';
-    if (logoFiles.length > 0) {
-      startLogoRotation();
+    // ===== AUDIO =====
+    function initAudioPlayer() {
+      if (!audioPlayer) {
+        audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'dynamicAudio';
+        audioPlayer.loop = false;
+        audioContainer.appendChild(audioPlayer);
+        audioPlayer.volume = bgVolume/100;
+        audioPlayer.addEventListener('play', () => {
+          audioBtnText.textContent = 'Pause';
+          audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'volume-up');
+        });
+        audioPlayer.addEventListener('pause', () => {
+          audioBtnText.textContent = 'Play MP3';
+          audioToggleBtn.querySelector('span[data-icon]').setAttribute('data-icon', 'music');
+        });
+        audioPlayer.addEventListener('ended', () => {
+          if (audioFiles.length > 0) {
+            currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
+            playAudioAtIndex(currentAudioIndex);
+          }
+        });
+      }
+      return audioPlayer;
     }
-  });
 
-  document.getElementById('runningTextToggle')?.addEventListener('click', function() { 
-    runningTextEnabled = !runningTextEnabled; 
-    this.classList.toggle('active', runningTextEnabled); 
-    if (!runningTextEnabled) {
-      runningBox.classList.add('hide-by-settings');
-    } else {
-      runningBox.classList.remove('hide-by-settings');
+    function playAudioAtIndex(index) {
+      if (!audioPlayer) audioPlayer = initAudioPlayer();
+      if (audioFiles.length === 0) { 
+        audioBtnText.textContent = 'No MP3'; 
+        return; 
+      }
+      const audioFile = audioFiles[index];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        audioPlayer.src = e.target.result;
+        audioPlayer.volume = bgVolume/100;
+        audioPlayer.play().catch(() => {
+          if (audioFiles.length > 0) {
+            currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length;
+            playAudioAtIndex(currentAudioIndex);
+          }
+        });
+      };
+      reader.readAsDataURL(audioFile);
     }
-    if (runningTextEnabled) updateRunningTextContent(); 
-  });
-  
-  document.getElementById('updateRunningText')?.addEventListener('click', () => { 
-    const inp = document.getElementById('runningTextInput'); 
-    if (inp) { 
-      runningLines = inp.value.split('\n').filter(l => l.trim()); 
-      currentLineIndex = 0; 
-      updateRunningTextContent(); 
-    } 
-  });
-  
-  document.getElementById('fontFamilySelect')?.addEventListener('change', (e) => { 
-    fontFamily = e.target.value; 
-    updateRunningTextStyle(); 
-  });
-  
-  document.getElementById('speedSlider')?.addEventListener('input', (e) => { 
-    textSpeed = parseInt(e.target.value); 
-    document.getElementById('speedValue').textContent = textSpeed + 's'; 
-    updateRunningTextSpeed(); 
-  });
-  
-  document.getElementById('fontSizeSlider')?.addEventListener('input', (e) => { 
-    fontSize = parseInt(e.target.value); 
-    document.getElementById('fontSizeValue').textContent = fontSize + 'px'; 
-    runningBox.style.height = (fontSize + 40) + 'px'; 
-    updateRunningTextStyle(); 
-  });
-  
-  document.getElementById('textColor')?.addEventListener('input', (e) => { 
-    textColor = e.target.value; 
-    updateRunningTextStyle(); 
-  });
 
-  document.getElementById('bgVolumeSlider')?.addEventListener('input', (e) => { 
-    bgVolume = parseInt(e.target.value); 
-    document.getElementById('bgVolumeValue').textContent = bgVolume + '%'; 
-    if (audioPlayer) audioPlayer.volume = bgVolume / 100; 
-  });
-  
-  document.getElementById('prevAudioBtn')?.addEventListener('click', () => { 
-    if (audioFiles.length) { 
-      currentAudioIndex = (currentAudioIndex - 1 + audioFiles.length) % audioFiles.length; 
-      playAudioAtIndex(currentAudioIndex); 
-    } 
-  });
-  
-  document.getElementById('nextAudioBtn')?.addEventListener('click', () => { 
-    if (audioFiles.length) { 
-      currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length; 
-      playAudioAtIndex(currentAudioIndex); 
-    } 
-  });
+    window.toggleAudio = function() {
+      if (!audioPlayer) audioPlayer = initAudioPlayer();
+      if (audioFiles.length === 0) { 
+        alert('Tidak ada file MP3'); 
+        return; 
+      }
+      if (audioPlayer.paused) {
+        if (!audioPlayer.src) { 
+          currentAudioIndex = 0; 
+          playAudioAtIndex(0); 
+        } else audioPlayer.play();
+      } else audioPlayer.pause();
+    };
 
-  document.getElementById('saveSettings')?.addEventListener('click', () => {
-    try {
-      localStorage.setItem('weddingOffline', JSON.stringify({
-        autoHideEnabled, hideDelay, videoVolume, videoMuted, textSpeed, fontSize, textColor, fadeEnabled,
-        fontFamily, dateEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
-        logoScale, logoInterval, bgEffect, bgIntensity, 
-        slideMode, fixedAnimation, animationDuration,
-        hfsIp: hfsIpInput.value,
-        hfsPort: hfsPortInput.value,
-        runningText: document.getElementById('runningTextInput')?.value,
-        logoLeft: logoLeftData,
-        logoRight: logoRightData
-      }));
-      alert('Settings saved!');
-      settingsPanel.classList.add('hide');
-      resetHideTimer();
-    } catch (e) {}
-  });
-  
-  document.getElementById('resetSettings')?.addEventListener('click', () => { 
-    if (confirm('Reset semua pengaturan?')) {
-      localStorage.clear(); 
-      location.reload(); 
+    // ===== RUNNING TEXT =====
+    function createRunningItem(text) {
+      const item = document.createElement('div');
+      item.className = 'running-item';
+      let html = '';
+      for (let i = 0; i < text.length; i++) {
+        html += text[i] === ' ' ? '<span>&nbsp;</span>' : `<span>${text[i]}</span>`;
+      }
+      item.innerHTML = html; 
+      return item;
     }
-  });
 
-  // Load saved settings
-  try {
-    const saved = localStorage.getItem('weddingOffline');
-    if (saved) {
-      const data = JSON.parse(saved);
-      if (data.autoHideEnabled !== undefined) autoHideEnabled = data.autoHideEnabled;
-      if (data.hideDelay !== undefined) hideDelay = data.hideDelay;
-      if (data.videoVolume !== undefined) videoVolume = data.videoVolume;
-      if (data.videoMuted !== undefined) videoMuted = data.videoMuted;
-      if (data.textSpeed !== undefined) textSpeed = data.textSpeed;
-      if (data.fontSize !== undefined) fontSize = data.fontSize;
-      if (data.textColor !== undefined) textColor = data.textColor;
-      if (data.fadeEnabled !== undefined) fadeEnabled = data.fadeEnabled;
-      if (data.fontFamily !== undefined) fontFamily = data.fontFamily;
-      if (data.dateEnabled !== undefined) dateEnabled = data.dateEnabled;
-      if (data.shuffleEnabled !== undefined) shuffleEnabled = data.shuffleEnabled;
-      if (data.brightness !== undefined) brightness = data.brightness;
-      if (data.autoPlay !== undefined) autoPlay = data.autoPlay;
-      if (data.bgVolume !== undefined) bgVolume = data.bgVolume;
-      if (data.logoScale !== undefined) logoScale = data.logoScale;
-      if (data.logoInterval !== undefined) logoInterval = data.logoInterval;
-      if (data.bgEffect !== undefined) bgEffect = data.bgEffect;
-      if (data.bgIntensity !== undefined) bgIntensity = data.bgIntensity;
-      if (data.slideMode !== undefined) slideMode = data.slideMode;
-      if (data.fixedAnimation !== undefined) fixedAnimation = data.fixedAnimation;
-      if (data.animationDuration !== undefined) animationDuration = data.animationDuration;
-      if (data.hfsIp) hfsIpInput.value = data.hfsIp;
-      if (data.hfsPort) hfsPortInput.value = data.hfsPort;
+    function updateRunningTextStyle() {
+      if (!runningTrack) return;
+      let fontStyle = `${fontItalic ? 'italic' : 'normal'} ${fontWeight} ${fontSize}px ${fontFamily}`;
+      runningTrack.style.font = fontStyle;
+      runningTrack.style.letterSpacing = letterSpacing + 'px';
+      runningTrack.style.textTransform = textTransform;
+      runningTrack.style.color = textColor;
+      runningTrack.style.textShadow = textGlow ? `0 0 ${glowIntensity}px ${textColor}` : 'none';
       
-      if (data.runningText !== undefined) {
-        document.getElementById('runningTextInput').value = data.runningText;
-        runningLines = data.runningText.split('\n').filter(l => l.trim());
-      }
-      if (data.logoLeft) {
-        logoLeftData = data.logoLeft;
-        updateLogo('left', logoLeftData);
-      }
-      if (data.logoRight) {
-        logoRightData = data.logoRight;
-        updateLogo('right', logoRightData);
+      if (fontPreview) {
+        fontPreview.style.font = `normal ${fontWeight} 18px ${fontFamily}`;
+        fontPreview.style.color = textColor;
       }
       
-      document.getElementById('videoVolumeValue').textContent = videoVolume + '%';
-      document.getElementById('videoMuteToggle').classList.toggle('active', videoMuted);
-      document.getElementById('autoHideToggle').classList.toggle('active', autoHideEnabled);
-      document.getElementById('hideDelayValue').textContent = hideDelay + 's';
-      document.getElementById('hideDelaySlider').value = hideDelay;
-      document.getElementById('speedValue').textContent = textSpeed + 's';
-      document.getElementById('speedSlider').value = textSpeed;
-      document.getElementById('fontSizeValue').textContent = fontSize + 'px';
-      document.getElementById('fontSizeSlider').value = fontSize;
-      document.getElementById('textColor').value = textColor;
-      document.getElementById('fontFamilySelect').value = fontFamily;
-      document.getElementById('brightnessValue').textContent = brightness + '%';
-      document.getElementById('brightnessSlider').value = brightness;
-      document.body.style.filter = `brightness(${brightness / 100})`;
-      document.getElementById('bgVolumeValue').textContent = bgVolume + '%';
-      document.getElementById('bgVolumeSlider').value = bgVolume;
+      document.querySelectorAll('.running-item, .running-item span').forEach(el => {
+        el.style.lineHeight = (fontSize + 30) + 'px';
+        el.style.fontSize = fontSize + 'px';
+        el.style.color = textColor;
+      });
       
-      document.getElementById('bgEffectSelect').value = bgEffect;
-      document.getElementById('bgIntensityValue').textContent = bgIntensity + '%';
-      document.getElementById('bgIntensitySlider').value = bgIntensity;
-      
-      document.getElementById('slideModeSelect').value = slideMode;
-      document.getElementById('fixedAnimationSelect').value = fixedAnimation;
-      document.getElementById('animationDurationValue').textContent = animationDuration + 's';
-      document.getElementById('animationDurationSlider').value = animationDuration;
-      
-      if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
-      else fixedAnimationContainer.style.display = 'none';
-      
-      document.getElementById('dateToggle').classList.toggle('active', dateEnabled);
-      datetime.classList.toggle('hide', !dateEnabled);
-      
-      document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
-      
-      logoScaleValue.textContent = logoScale + '%';
-      logoScaleSlider.value = logoScale;
-      updateLogoScale(logoScale);
-      
-      logoIntervalValue.textContent = logoInterval + 's';
-      logoIntervalSlider.value = logoInterval;
-      
+      if (fadeLeft && fadeRight) {
+        fadeLeft.classList.toggle('hide', !fadeEnabled);
+        fadeRight.classList.toggle('hide', !fadeEnabled);
+      }
+    }
+
+    function updateRunningTextContent() {
+      if (!runningTrack || !runningTextEnabled) return;
+      if (runningLines.length === 0) runningLines = ['WELCOME'];
+      let combined = '';
+      for (let i = 0; i < 5; i++) {
+        const idx = (currentLineIndex + i) % runningLines.length;
+        if (runningLines[idx].trim()) combined += ` ✦ ${runningLines[idx].trim()} ✦ `;
+      }
+      runningTrack.innerHTML = '';
+      runningTrack.appendChild(createRunningItem(combined));
+      currentLineIndex = (currentLineIndex + 1) % runningLines.length;
       updateRunningTextStyle();
-      updateRunningTextContent();
-      updateRunningTextSpeed();
-      updateBackgroundEffect();
-      
-      if (autoHideEnabled) resetHideTimer();
     }
-  } catch (e) {}
 
-  // INIT
-  updateBackgroundEffect();
-  
-  const inp = document.getElementById('runningTextInput');
-  if (inp?.value && runningLines.length === 0) runningLines = inp.value.split('\n').filter(l => l.trim()); 
-  if (runningLines.length === 0) runningLines = [''];
-  
-  updateRunningTextStyle(); 
-  updateRunningTextContent(); 
-  updateRunningTextSpeed();
-  
-  if (!runningTextEnabled) runningBox.classList.add('hide-by-settings');
-  
-  folderInfo.classList.add('hide');
-  
-  updateLogoScale(logoScale);
-  
-  if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
-  else fixedAnimationContainer.style.display = 'none';
-  
-  setTimeout(() => {
-    if (slides.length > 0 && slides[currentSlide]) {
-      applyAnimationToSlide(slides[currentSlide]);
+    function updateRunningTextSpeed() {
+      if (runningTrack) runningTrack.style.animationDuration = textSpeed + 's';
     }
-  }, 500);
-  
-  console.log('✅ PWA Ready dengan 50+ Animasi PowerPoint 2007');
+
+    // ===== SLIDESHOW =====
+    window.nextSlide = function() {
+      if (slides.length === 0) return;
+      
+      document.querySelectorAll('video').forEach(v => v.pause());
+      
+      if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
+      
+      if (shuffleEnabled) {
+        do { 
+          currentMediaIndex = Math.floor(Math.random() * slides.length); 
+        } while (currentMediaIndex === currentSlide && slides.length > 1);
+      } else {
+        currentMediaIndex = (currentMediaIndex + 1) % slides.length;
+      }
+      
+      currentSlide = currentMediaIndex;
+      if (slides[currentSlide]) {
+        slides[currentSlide].classList.add("active");
+        applyAnimationToSlide(slides[currentSlide]);
+        
+        const video = slides[currentSlide].querySelector('video');
+        if (video) {
+          video.volume = videoMuted ? 0 : (videoVolume / 100);
+          video.play();
+          
+          if (video.duration && !isNaN(video.duration)) { 
+            clearTimeout(slideTimeout); 
+            slideTimeout = setTimeout(window.nextSlide, video.duration * 1000); 
+          } else {
+            startSlideshow();
+          }
+        } else {
+          startSlideshow();
+        }
+      }
+    };
+
+    window.prevSlide = function() {
+      if (slides.length === 0) return;
+      
+      document.querySelectorAll('video').forEach(v => v.pause());
+      
+      if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
+      
+      if (shuffleEnabled) {
+        do { 
+          currentMediaIndex = Math.floor(Math.random() * slides.length); 
+        } while (currentMediaIndex === currentSlide && slides.length > 1);
+      } else {
+        currentMediaIndex = (currentMediaIndex - 1 + slides.length) % slides.length;
+      }
+      
+      currentSlide = currentMediaIndex;
+      if (slides[currentSlide]) {
+        slides[currentSlide].classList.add("active");
+        applyAnimationToSlide(slides[currentSlide]);
+        
+        const video = slides[currentSlide].querySelector('video');
+        if (video) {
+          video.volume = videoMuted ? 0 : (videoVolume / 100);
+          video.play();
+        }
+        startSlideshow();
+      }
+    };
+
+    function startSlideshow() {
+      if (!autoPlay || slides.length === 0) return;
+      
+      clearTimeout(slideTimeout);
+      
+      let duration = durations[currentMediaIndex % durations.length];
+      
+      const video = slides[currentSlide]?.querySelector('video');
+      if (video && video.duration && !isNaN(video.duration)) {
+        duration = video.duration * 1000;
+      }
+      
+      slideTimeout = setTimeout(window.nextSlide, duration);
+    }
+
+    window.togglePlay = function() {
+      autoPlay = !autoPlay;
+      playBtn.querySelector('span[data-icon]').setAttribute('data-icon', autoPlay ? 'pause' : 'play');
+      if (autoPlay) { 
+        startSlideshow(); 
+        const video = slides[currentSlide]?.querySelector('video');
+        if (video) video.play(); 
+      } else { 
+        clearTimeout(slideTimeout); 
+        document.querySelectorAll('video').forEach(v => v.pause()); 
+      }
+    };
+
+    // ===== LOAD MEDIA (LOKAL) - MULTI FOLDER =====
+    if (folderInput) {
+      folderInput.addEventListener('change', async function(e) {
+        emptyState?.classList.add('hide');
+        loadingIndicator.classList.add("show");
+        
+        const files = Array.from(e.target.files);
+        
+        // Reset array lokal untuk menyimpan file baru
+        const localImages = [];
+        const localVideos = [];
+        const localAudios = [];
+        const localLogos = [];
+        
+        for (const file of files) {
+          if (isValidImageForSlideshow(file)) {
+            // Baca file sebagai data URL untuk ditampilkan
+            const reader = new FileReader();
+            const promise = new Promise((resolve) => {
+              reader.onload = function(ev) {
+                localImages.push({
+                  type: 'image',
+                  url: ev.target.result,
+                  name: file.name,
+                  source: 'local',
+                  file: file
+                });
+                resolve();
+              };
+              reader.readAsDataURL(file);
+            });
+            await promise;
+          } else if (isValidVideoFile(file)) {
+            const reader = new FileReader();
+            const promise = new Promise((resolve) => {
+              reader.onload = function(ev) {
+                localVideos.push({
+                  type: 'video',
+                  url: ev.target.result,
+                  name: file.name,
+                  source: 'local',
+                  file: file
+                });
+                resolve();
+              };
+              reader.readAsDataURL(file);
+            });
+            await promise;
+          } else if (isValidAudioFile(file)) {
+            localAudios.push(file);
+          } else if (isValidLogoFile(file)) {
+            localLogos.push(file);
+          }
+        }
+        
+        // Update audioFiles
+        if (localAudios.length > 0) {
+          audioFiles = [...audioFiles, ...localAudios];
+          audioBtnText.textContent = 'Play MP3';
+          initAudioPlayer();
+          audioPlaylist.innerHTML = audioFiles.map(f => `<div>🎵 ${f.name}</div>`).join('');
+        }
+
+        // Update logoFiles
+        if (localLogos.length > 0) {
+          const readerLeft = new FileReader();
+          readerLeft.onload = function(e) {
+            logoLeftData = e.target.result;
+            updateLogo('left', logoLeftData);
+            
+            if (localLogos.length > 1) {
+              const readerRight = new FileReader();
+              readerRight.onload = function(ev) {
+                logoRightData = ev.target.result;
+                updateLogo('right', logoRightData);
+              };
+              readerRight.readAsDataURL(localLogos[1]);
+            } else {
+              setTimeout(() => {
+                logoRightData = logoLeftData;
+                updateLogo('right', logoRightData);
+              }, 100);
+            }
+          };
+          readerLeft.readAsDataURL(localLogos[0]);
+        }
+        
+        // Gabungkan dengan file dari sumber lain yang sudah ada (Drive, HFS)
+        const existingNonLocal = allMediaFiles.filter(f => f.source !== 'local');
+        
+        allMediaFiles = [
+          ...existingNonLocal,
+          ...localImages,
+          ...localVideos
+        ];
+        
+        imageFiles = allMediaFiles.filter(f => f.type === 'image');
+        videoFiles = allMediaFiles.filter(f => f.type === 'video');
+        
+        folderInfo.classList.remove('hide');
+        
+        renderAllSlides();
+      });
+    }
+
+    // ===== SETTINGS BINDINGS =====
+    settingsBtn?.addEventListener('click', (e) => { 
+      e.stopPropagation(); 
+      settingsPanel.classList.toggle('hide'); 
+      if (autoHideEnabled && !settingsPanel.classList.contains('hide')) {
+        clearTimeout(hideTimer);
+      }
+    });
+    
+    document.getElementById('closeSettings')?.addEventListener('click', () => { 
+      settingsPanel.classList.add('hide'); 
+      resetHideTimer();
+    });
+
+    // Background Effect
+    const bgEffectSelect = document.getElementById('bgEffectSelect');
+    const bgIntensitySlider = document.getElementById('bgIntensitySlider');
+    const bgIntensityValue = document.getElementById('bgIntensityValue');
+    
+    bgEffectSelect.addEventListener('change', (e) => {
+      bgEffect = e.target.value;
+      updateBackgroundEffect();
+    });
+    
+    bgIntensitySlider.addEventListener('input', (e) => {
+      bgIntensity = parseInt(e.target.value);
+      bgIntensityValue.textContent = bgIntensity + '%';
+      updateBackgroundEffect();
+    });
+
+    // Slide Animation Settings
+    const slideModeSelect = document.getElementById('slideModeSelect');
+    const fixedAnimationContainer = document.getElementById('fixedAnimationContainer');
+    const fixedAnimationSelect = document.getElementById('fixedAnimationSelect');
+    const animationDurationSlider = document.getElementById('animationDurationSlider');
+    const animationDurationValue = document.getElementById('animationDurationValue');
+    
+    slideModeSelect.addEventListener('change', (e) => {
+      slideMode = e.target.value;
+      if (slideMode === 'fixed') {
+        fixedAnimationContainer.style.display = 'block';
+      } else {
+        fixedAnimationContainer.style.display = 'none';
+        if (slideMode.startsWith('cycle')) {
+          cycleIndex = 0;
+          cycleAnimations = [];
+        }
+      }
+      if (slides[currentSlide]) applyAnimationToSlide(slides[currentSlide]);
+    });
+    
+    fixedAnimationSelect.addEventListener('change', (e) => {
+      fixedAnimation = e.target.value;
+      if (slideMode === 'fixed' && slides[currentSlide]) {
+        applyAnimationToSlide(slides[currentSlide]);
+      }
+    });
+    
+    animationDurationSlider.addEventListener('input', (e) => {
+      animationDuration = parseInt(e.target.value);
+      animationDurationValue.textContent = animationDuration + 's';
+      if (slides[currentSlide]) {
+        const img = slides[currentSlide].querySelector('.main');
+        if (img) img.style.animationDuration = animationDuration + 's';
+      }
+    });
+
+    document.getElementById('videoVolumeSlider')?.addEventListener('input', (e) => { 
+      videoVolume = parseInt(e.target.value); 
+      document.getElementById('videoVolumeValue').textContent = videoVolume + '%'; 
+      updateAllVideoVolumes(); 
+    });
+    
+    document.getElementById('videoMuteToggle')?.addEventListener('click', function() { 
+      videoMuted = !videoMuted; 
+      this.classList.toggle('active', videoMuted); 
+      updateAllVideoVolumes(); 
+    });
+    
+    const autoHideToggle = document.getElementById('autoHideToggle');
+    autoHideToggle.classList.remove('active');
+    autoHideToggle.addEventListener('click', function() {
+      autoHideEnabled = !autoHideEnabled;
+      this.classList.toggle('active', autoHideEnabled);
+      
+      if (autoHideEnabled) {
+        resetHideTimer();
+      } else {
+        clearTimeout(hideTimer);
+        slideTitle.classList.remove("hide");
+        folderInfo.classList.remove("hide");
+        bottomBar.classList.remove("hide");
+        datetime.classList.remove("datetime-hidden-pos");
+      }
+    });
+
+    document.getElementById('hideDelaySlider')?.addEventListener('input', (e) => { 
+      hideDelay = parseInt(e.target.value); 
+      document.getElementById('hideDelayValue').textContent = hideDelay + 's'; 
+      if (autoHideEnabled) resetHideTimer();
+    });
+
+    const dateToggle = document.getElementById('dateToggle');
+    if (dateToggle) {
+      dateToggle.classList.add('active');
+      dateToggle.addEventListener('click', function() {
+        dateEnabled = !dateEnabled;
+        this.classList.toggle('active', dateEnabled);
+        datetime.classList.toggle('hide', !dateEnabled);
+      });
+    }
+
+    const shuffleToggle = document.getElementById('shuffleToggle');
+    if (shuffleToggle) {
+      shuffleToggle.addEventListener('click', function() {
+        shuffleEnabled = !shuffleEnabled;
+        this.classList.toggle('active', shuffleEnabled);
+      });
+    }
+
+    document.getElementById('brightnessSlider')?.addEventListener('input', (e) => {
+      brightness = parseInt(e.target.value);
+      document.getElementById('brightnessValue').textContent = brightness + '%';
+      document.body.style.filter = `brightness(${brightness / 100})`;
+    });
+
+    const logoScaleSlider = document.getElementById('logoScaleSlider');
+    const logoScaleValue = document.getElementById('logoScaleValue');
+
+    logoScaleSlider.addEventListener('input', (e) => {
+      logoScale = parseInt(e.target.value);
+      logoScaleValue.textContent = logoScale + '%';
+      updateLogoScale(logoScale);
+    });
+
+    document.getElementById('runningTextToggle')?.addEventListener('click', function() { 
+      runningTextEnabled = !runningTextEnabled; 
+      this.classList.toggle('active', runningTextEnabled); 
+      if (!runningTextEnabled) {
+        runningBox.classList.add('hide-by-settings');
+      } else {
+        runningBox.classList.remove('hide-by-settings');
+      }
+      if (runningTextEnabled) updateRunningTextContent(); 
+    });
+    
+    document.getElementById('updateRunningText')?.addEventListener('click', () => { 
+      const inp = document.getElementById('runningTextInput'); 
+      if (inp) { 
+        runningLines = inp.value.split('\n').filter(l => l.trim()); 
+        currentLineIndex = 0; 
+        updateRunningTextContent(); 
+      } 
+    });
+    
+    document.getElementById('fontFamilySelect')?.addEventListener('change', (e) => { 
+      fontFamily = e.target.value; 
+      updateRunningTextStyle(); 
+    });
+    
+    document.getElementById('speedSlider')?.addEventListener('input', (e) => { 
+      textSpeed = parseInt(e.target.value); 
+      document.getElementById('speedValue').textContent = textSpeed + 's'; 
+      updateRunningTextSpeed(); 
+    });
+    
+    document.getElementById('fontSizeSlider')?.addEventListener('input', (e) => { 
+      fontSize = parseInt(e.target.value); 
+      document.getElementById('fontSizeValue').textContent = fontSize + 'px'; 
+      runningBox.style.height = (fontSize + 40) + 'px'; 
+      updateRunningTextStyle(); 
+    });
+    
+    document.getElementById('textColor')?.addEventListener('input', (e) => { 
+      textColor = e.target.value; 
+      updateRunningTextStyle(); 
+    });
+
+    document.getElementById('bgVolumeSlider')?.addEventListener('input', (e) => { 
+      bgVolume = parseInt(e.target.value); 
+      document.getElementById('bgVolumeValue').textContent = bgVolume + '%'; 
+      if (audioPlayer) audioPlayer.volume = bgVolume / 100; 
+    });
+    
+    document.getElementById('prevAudioBtn')?.addEventListener('click', () => { 
+      if (audioFiles.length) { 
+        currentAudioIndex = (currentAudioIndex - 1 + audioFiles.length) % audioFiles.length; 
+        playAudioAtIndex(currentAudioIndex); 
+      } 
+    });
+    
+    document.getElementById('nextAudioBtn')?.addEventListener('click', () => { 
+      if (audioFiles.length) { 
+        currentAudioIndex = (currentAudioIndex + 1) % audioFiles.length; 
+        playAudioAtIndex(currentAudioIndex); 
+      } 
+    });
+
+    document.getElementById('saveSettings')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem('koramilOffline', JSON.stringify({
+          autoHideEnabled, hideDelay, videoVolume, videoMuted, textSpeed, fontSize, textColor, fadeEnabled,
+          fontFamily, dateEnabled, shuffleEnabled, brightness, autoPlay, bgVolume,
+          logoScale, bgEffect, bgIntensity, 
+          slideMode, fixedAnimation, animationDuration,
+          hfsIp: hfsIpInput.value,
+          hfsPort: hfsPortInput.value,
+          runningText: document.getElementById('runningTextInput')?.value,
+          logoLeft: logoLeftData,
+          logoRight: logoRightData
+        }));
+        alert('Settings saved!');
+        settingsPanel.classList.add('hide');
+        resetHideTimer();
+      } catch (e) {}
+    });
+    
+    document.getElementById('resetSettings')?.addEventListener('click', () => { 
+      if (confirm('Reset semua pengaturan?')) {
+        localStorage.clear(); 
+        location.reload(); 
+      }
+    });
+
+    // Load saved settings
+    try {
+      const saved = localStorage.getItem('koramilOffline');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.autoHideEnabled !== undefined) autoHideEnabled = data.autoHideEnabled;
+        if (data.hideDelay !== undefined) hideDelay = data.hideDelay;
+        if (data.videoVolume !== undefined) videoVolume = data.videoVolume;
+        if (data.videoMuted !== undefined) videoMuted = data.videoMuted;
+        if (data.textSpeed !== undefined) textSpeed = data.textSpeed;
+        if (data.fontSize !== undefined) fontSize = data.fontSize;
+        if (data.textColor !== undefined) textColor = data.textColor;
+        if (data.fadeEnabled !== undefined) fadeEnabled = data.fadeEnabled;
+        if (data.fontFamily !== undefined) fontFamily = data.fontFamily;
+        if (data.dateEnabled !== undefined) dateEnabled = data.dateEnabled;
+        if (data.shuffleEnabled !== undefined) shuffleEnabled = data.shuffleEnabled;
+        if (data.brightness !== undefined) brightness = data.brightness;
+        if (data.autoPlay !== undefined) autoPlay = data.autoPlay;
+        if (data.bgVolume !== undefined) bgVolume = data.bgVolume;
+        if (data.logoScale !== undefined) logoScale = data.logoScale;
+        if (data.bgEffect !== undefined) bgEffect = data.bgEffect;
+        if (data.bgIntensity !== undefined) bgIntensity = data.bgIntensity;
+        if (data.slideMode !== undefined) slideMode = data.slideMode;
+        if (data.fixedAnimation !== undefined) fixedAnimation = data.fixedAnimation;
+        if (data.animationDuration !== undefined) animationDuration = data.animationDuration;
+        if (data.hfsIp) hfsIpInput.value = data.hfsIp;
+        if (data.hfsPort) hfsPortInput.value = data.hfsPort;
+        
+        if (data.runningText !== undefined) {
+          document.getElementById('runningTextInput').value = data.runningText;
+          runningLines = data.runningText.split('\n').filter(l => l.trim());
+        }
+        if (data.logoLeft) {
+          logoLeftData = data.logoLeft;
+          updateLogo('left', logoLeftData);
+        }
+        if (data.logoRight) {
+          logoRightData = data.logoRight;
+          updateLogo('right', logoRightData);
+        }
+        
+        document.getElementById('videoVolumeValue').textContent = videoVolume + '%';
+        document.getElementById('videoMuteToggle').classList.toggle('active', videoMuted);
+        document.getElementById('autoHideToggle').classList.toggle('active', autoHideEnabled);
+        document.getElementById('hideDelayValue').textContent = hideDelay + 's';
+        document.getElementById('hideDelaySlider').value = hideDelay;
+        document.getElementById('speedValue').textContent = textSpeed + 's';
+        document.getElementById('speedSlider').value = textSpeed;
+        document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+        document.getElementById('fontSizeSlider').value = fontSize;
+        document.getElementById('textColor').value = textColor;
+        document.getElementById('fontFamilySelect').value = fontFamily;
+        document.getElementById('brightnessValue').textContent = brightness + '%';
+        document.getElementById('brightnessSlider').value = brightness;
+        document.body.style.filter = `brightness(${brightness / 100})`;
+        document.getElementById('bgVolumeValue').textContent = bgVolume + '%';
+        document.getElementById('bgVolumeSlider').value = bgVolume;
+        
+        document.getElementById('bgEffectSelect').value = bgEffect;
+        document.getElementById('bgIntensityValue').textContent = bgIntensity + '%';
+        document.getElementById('bgIntensitySlider').value = bgIntensity;
+        
+        document.getElementById('slideModeSelect').value = slideMode;
+        document.getElementById('fixedAnimationSelect').value = fixedAnimation;
+        document.getElementById('animationDurationValue').textContent = animationDuration + 's';
+        document.getElementById('animationDurationSlider').value = animationDuration;
+        
+        if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
+        else fixedAnimationContainer.style.display = 'none';
+        
+        document.getElementById('dateToggle').classList.toggle('active', dateEnabled);
+        datetime.classList.toggle('hide', !dateEnabled);
+        
+        document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
+        
+        logoScaleValue.textContent = logoScale + '%';
+        logoScaleSlider.value = logoScale;
+        updateLogoScale(logoScale);
+        
+        updateRunningTextStyle();
+        updateRunningTextContent();
+        updateRunningTextSpeed();
+        updateBackgroundEffect();
+        
+        if (autoHideEnabled) resetHideTimer();
+      }
+    } catch (e) {}
+
+    // ===== INIT =====
+    updateBackgroundEffect();
+    
+    const inp = document.getElementById('runningTextInput');
+    if (inp?.value && runningLines.length === 0) runningLines = inp.value.split('\n').filter(l => l.trim()); 
+    if (runningLines.length === 0) runningLines = [''];
+    
+    updateRunningTextStyle(); 
+    updateRunningTextContent(); 
+    updateRunningTextSpeed();
+    
+    if (!runningTextEnabled) runningBox.classList.add('hide-by-settings');
+    
+    folderInfo.classList.add('hide');
+    
+    updateLogoScale(logoScale);
+    
+    if (slideMode === 'fixed') fixedAnimationContainer.style.display = 'block';
+    else fixedAnimationContainer.style.display = 'none';
+    
+    // Auto load Google Drive
+    setTimeout(() => {
+      loadFromGoogleDrive(false);
+    }, 1000);
+    
+    console.log('✅ Aplikasi siap dengan Google Drive (auto-load)');
+  }
+
+  // ===== JALANKAN SPLASH DAHULU =====
+  showSplashThenMain();
 })();
 </script>
 
