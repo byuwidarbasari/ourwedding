@@ -1825,43 +1825,6 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
   // ===== KONFIGURASI VERSI APLIKASI =====
   const APP_VERSION = '1.0.0'; // UBAH ANGKA INI SETIAP KALI UPDATE!
   
-  // ===== FUNGSI UNTUK MENDAPATKAN BASE PATH =====
-  function getBasePath() {
-    const path = window.location.pathname;
-    // Jika di root, return '/'
-    if (path === '/' || path.endsWith('index.html')) {
-      return path.substring(0, path.lastIndexOf('/') + 1);
-    }
-    return '/';
-  }
-  
-  // ===== FUNGSI SPLASH SCREEN YANG TIDAK MENGGANGGU =====
-  async function showSplashIfExists() {
-    // Coba cek apakah file splash.html ada
-    try {
-      const basePath = getBasePath();
-      // Coba fetch dari lokasi yang benar
-      const splashUrl = window.location.origin + basePath + 'splash.html';
-      
-      console.log('Mencari splash di:', splashUrl);
-      
-      const response = await fetch(splashUrl, { method: 'HEAD' }); // Hanya cek HEAD, tidak ambil konten
-      
-      if (response.ok) {
-        console.log('✅ Splash ditemukan, menampilkan...');
-        // Redirect ke splash.html
-        window.location.href = splashUrl;
-        return true; // Keluar, tidak lanjut ke aplikasi utama
-      } else {
-        console.log('ℹ️ Splash tidak ditemukan (404), langsung ke aplikasi utama');
-        return false;
-      }
-    } catch (error) {
-      console.log('ℹ️ Gagal cek splash, langsung ke aplikasi utama:', error.message);
-      return false;
-    }
-  }
-
   // ===== FUNGSI UTAMA APLIKASI =====
   function initMainApp() {
     console.log('✅ Memulai aplikasi utama...');
@@ -1961,6 +1924,16 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
             // Tetap lanjutkan aplikasi meskipun SW gagal
           });
       });
+    }
+
+    // ===== FUNGSI UNTUK MENDAPATKAN BASE PATH =====
+    function getBasePath() {
+      const path = window.location.pathname;
+      // Jika di root, return '/'
+      if (path === '/' || path.endsWith('index.html')) {
+        return path.substring(0, path.lastIndexOf('/') + 1);
+      }
+      return '/';
     }
 
     // ===== BACKGROUND EFFECTS =====
@@ -3427,18 +3400,8 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     console.log('✅ Aplikasi siap dengan Google Drive (auto-load)');
   }
 
-  // ===== JALANKAN FUNGSI UTAMA DENGAN CEK SPLASH =====
-  (async function() {
-    // Cek apakah splash ada
-    const splashExists = await showSplashIfExists();
-    
-    // Jika splash tidak ada, langsung jalankan aplikasi utama
-    if (!splashExists) {
-      initMainApp();
-    }
-    // Jika splash ada, aplikasi akan redirect ke splash.html
-    // dan tidak menjalankan initMainApp()
-  })();
+  // ===== JALANKAN APLIKASI UTAMA LANGSUNG TANPA CEK SPLASH =====
+  initMainApp();
 })();
 </script>
 
