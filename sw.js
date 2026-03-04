@@ -6,11 +6,10 @@ const APP_VERSION = '1.0.0';
 // File yang wajib di-cache
 const urlsToCache = [
   '/',
-  '/index.html', // Sesuaikan dengan nama file HTML Anda
+  '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png'
-  // Tambahkan file statis lain jika ada
 ];
 
 // ===== INSTALL EVENT =====
