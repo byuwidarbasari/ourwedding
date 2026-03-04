@@ -1,7 +1,7 @@
 {
-  "name": "Koramil 1609-05/Sukasada",
-  "short_name": "Koramil",
-  "description": "Aplikasi Slideshow untuk Koramil 1609-05/Sukasada",
+  "name": "The Royal Wedding",
+  "short_name": "Wedding",
+  "description": "Aplikasi Slideshow The Royal Wedding",
   "start_url": "index.html",
   "display": "fullscreen",
   "background_color": "#000000",
