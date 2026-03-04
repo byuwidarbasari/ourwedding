@@ -1823,7 +1823,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
   'use strict';
   
   // ===== KONFIGURASI VERSI APLIKASI =====
-  const APP_VERSION = '1.0.0'; // UBAH ANGKA INI SETIAP KALI UPDATE!
+  const APP_VERSION = '1.0.0';
   
   // ===== FUNGSI UTAMA APLIKASI =====
   function initMainApp() {
@@ -1897,43 +1897,23 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
       }
     }, { once: true });
 
-    // ===== REGISTER SERVICE WORKER =====
+    // ===== REGISTER SERVICE WORKER (Opsional) =====
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        // Gunakan path yang benar
-        const basePath = getBasePath();
-        const swPath = basePath + 'sw.js';
-        
-        navigator.serviceWorker.register(swPath)
-          .then(reg => {
-            console.log('✅ Service Worker registered:', reg.scope);
-            
-            // Cek versi service worker
-            if (navigator.serviceWorker.controller) {
-              const channel = new MessageChannel();
-              channel.port1.onmessage = (e) => {
-                if (e.data) {
-                  console.log('SW Version:', e.data);
-                }
-              };
-              navigator.serviceWorker.controller.postMessage({type: 'GET_VERSION'}, [channel.port2]);
-            }
-          })
-          .catch(err => {
-            console.log('ℹ️ Service Worker tidak tersedia (lanjut tanpa SW):', err.message);
-            // Tetap lanjutkan aplikasi meskipun SW gagal
-          });
+        // Coba register service worker dengan error handling yang lebih baik
+        try {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => {
+              console.log('✅ Service Worker registered:', reg.scope);
+            })
+            .catch(err => {
+              // Abaikan error 404, tetap lanjutkan aplikasi
+              console.log('ℹ️ Service worker tidak tersedia (akan berjalan tanpa PWA)');
+            });
+        } catch (e) {
+          console.log('ℹ️ Service worker tidak didukung');
+        }
       });
-    }
-
-    // ===== FUNGSI UNTUK MENDAPATKAN BASE PATH =====
-    function getBasePath() {
-      const path = window.location.pathname;
-      // Jika di root, return '/'
-      if (path === '/' || path.endsWith('index.html')) {
-        return path.substring(0, path.lastIndexOf('/') + 1);
-      }
-      return '/';
     }
 
     // ===== BACKGROUND EFFECTS =====
@@ -2090,7 +2070,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     let durations = [9000, 11000, 10000, 12000];
     
     // File storage untuk multi-folder
-    let allMediaFiles = []; // Array of {type, url, name, source}
+    let allMediaFiles = [];
     let imageFiles = [];
     let videoFiles = [];
     let audioFiles = [];
@@ -2141,22 +2121,15 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     
     // Daftar semua animasi PowerPoint 2007
     const allAnimations = [
-      // ENTRANCE BASIC
       'ppt-appear', 'ppt-fade', 'ppt-fly-in', 'ppt-float-in', 'ppt-split', 'ppt-wipe', 'ppt-shape-circle', 'ppt-shape-plus', 'ppt-random-bars',
-      // ENTRANCE SUBTLE
       'ppt-expand', 'ppt-swell', 'ppt-bounce', 'ppt-rise-up', 'ppt-slide-up', 'ppt-slide-down', 'ppt-slide-left', 'ppt-slide-right',
-      // ENTRANCE MODERATE
       'ppt-zoom', 'ppt-rotate', 'ppt-grow-turn',
-      // ENTRANCE EXCITING
       'ppt-pinwheel', 'ppt-pulse', 'ppt-color-pulse', 'ppt-teeter', 'ppt-center-rotate', 'ppt-contract',
-      // EMPHASIS
       'ppt-pulse-emphasis', 'ppt-color-wave', 'ppt-sway', 'ppt-spin', 'ppt-grow-shrink', 'ppt-darken', 'ppt-lighten', 'ppt-teeter-emphasis', 
       'ppt-vertical-grow', 'ppt-horizontal-grow', 'ppt-flash-bulb', 'ppt-shimmer', 'ppt-blend', 'ppt-wave',
-      // EXIT
       'ppt-exit-fade', 'ppt-exit-fly-out', 'ppt-exit-float-out', 'ppt-exit-split', 'ppt-exit-wipe', 'ppt-exit-shape-circle', 
       'ppt-exit-shape-plus', 'ppt-exit-random-bars', 'ppt-exit-shrink', 'ppt-exit-swivel', 'ppt-exit-slide-up', 'ppt-exit-slide-down', 
       'ppt-exit-slide-left', 'ppt-exit-slide-right', 'ppt-exit-zoom-out', 'ppt-exit-rotate-out',
-      // MOTION PATHS
       'ppt-move-straight', 'ppt-move-arc', 'ppt-move-curve', 'ppt-move-loop', 'ppt-move-spiral', 'ppt-move-wave', 
       'ppt-move-bounce', 'ppt-move-heart', 'ppt-move-star', 'ppt-move-custom'
     ];
@@ -2165,7 +2138,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     let cycleIndex = 0;
     let cycleAnimations = [];
 
-    // Logo variables (tidak bergantian)
+    // Logo variables
     let logoLeftData = null;
     let logoRightData = null;
     let logoScale = 200;
@@ -2811,14 +2784,11 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     function gantiWarnaRunningText() {
       if (!warnaBergantianEnabled || !runningTextEnabled) return;
       
-      // Ganti ke warna berikutnya
       indeksWarna = (indeksWarna + 1) % warnaBergantian.length;
       textColor = warnaBergantian[indeksWarna];
       
-      // Update tampilan
       updateRunningTextStyle();
       
-      // Update preview di settings
       const colorPicker = document.getElementById('textColor');
       if (colorPicker) colorPicker.value = textColor;
     }
@@ -2934,7 +2904,6 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
         
         for (const file of files) {
           if (isValidImageForSlideshow(file)) {
-            // Baca file sebagai data URL untuk ditampilkan
             const reader = new FileReader();
             const promise = new Promise((resolve) => {
               reader.onload = function(ev) {
@@ -3204,13 +3173,12 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     // TAMBAHAN: Warna Bergantian Toggle
     const warnaToggle = document.getElementById('warnaBergantianToggle');
     if (warnaToggle) {
-        warnaToggle.classList.remove('active'); // Default mati
+        warnaToggle.classList.remove('active');
         
         warnaToggle.addEventListener('click', function() {
             warnaBergantianEnabled = !warnaBergantianEnabled;
             this.classList.toggle('active', warnaBergantianEnabled);
             
-            // Reset ke warna default jika dimatikan
             if (!warnaBergantianEnabled) {
                 textColor = '#C5A059';
                 updateRunningTextStyle();
@@ -3251,7 +3219,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
           runningText: document.getElementById('runningTextInput')?.value,
           logoLeft: logoLeftData,
           logoRight: logoRightData,
-          warnaBergantianEnabled: warnaBergantianEnabled // TAMBAHAN
+          warnaBergantianEnabled: warnaBergantianEnabled
         }));
         alert('Settings saved!');
         settingsPanel.classList.add('hide');
@@ -3294,7 +3262,6 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
         if (data.hfsIp) hfsIpInput.value = data.hfsIp;
         if (data.hfsPort) hfsPortInput.value = data.hfsPort;
         
-        // TAMBAHAN: Load warnaBergantianEnabled
         if (data.warnaBergantianEnabled !== undefined) warnaBergantianEnabled = data.warnaBergantianEnabled;
         
         if (data.runningText !== undefined) {
@@ -3344,7 +3311,6 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
         
         document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
         
-        // TAMBAHAN: Set warna toggle sesuai saved settings
         if (warnaBergantianEnabled) {
             document.getElementById('warnaBergantianToggle')?.classList.add('active');
         } else {
@@ -3375,7 +3341,6 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     updateRunningTextContent(); 
     updateRunningTextSpeed();
     
-    // TAMBAHAN: Event listener untuk deteksi akhir putaran running text
     const track = document.getElementById('runningTrack');
     if (track) {
         track.addEventListener('animationiteration', function() {
@@ -3400,7 +3365,7 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     console.log('✅ Aplikasi siap dengan Google Drive (auto-load)');
   }
 
-  // ===== JALANKAN APLIKASI UTAMA LANGSUNG TANPA CEK SPLASH =====
+  // ===== JALANKAN APLIKASI UTAMA LANGSUNG =====
   initMainApp();
 })();
 </script>
