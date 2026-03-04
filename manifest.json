@@ -1,22 +1,28 @@
 {
-  "name": "The Royal Wedding",
-  "short_name": "Wedding",
-  "description": "Aplikasi Slideshow The Royal Wedding",
-  "start_url": "index.html",
+  "name": "SLIDE SHOW",
+  "short_name": "SLIDE SHOW",
+  "description": "Aplikasi Slideshow dengan Google Drive Integration",
+  "version": "1.0.0",
+  "start_url": "/index.html?v=1.0.0",
   "display": "fullscreen",
-  "background_color": "#000000",
-  "theme_color": "#C5A059",
   "orientation": "landscape",
+  "background_color": "#0A0A0A",
+  "theme_color": "#C5A059",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["entertainment", "photo"],
+  "lang": "id-ID",
+  "dir": "ltr"
 }
