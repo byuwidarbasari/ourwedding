@@ -1717,16 +1717,22 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
       <div class="setting-item">
         <span class="setting-label">Scroll Speed</span>
         <span class="setting-value" id="speedValue">30s</span>
-        <input type="range" class="setting-slider" id="speedSlider" min="15" max="120" value="100" step="5">
+        <input type="range" class="setting-slider" id="speedSlider" min="15" max="120" value="90" step="5">
       </div>
       <div class="setting-item">
         <span class="setting-label">Text Size</span>
         <span class="setting-value" id="fontSizeValue">20px</span>
-        <input type="range" class="setting-slider" id="fontSizeSlider" min="14" max="40" value="20" step="1">
+        <input type="range" class="setting-slider" id="fontSizeSlider" min="14" max="40" value="100" step="1">
       </div>
       <div class="setting-item">
         <span class="setting-label">Text Color</span>
         <input type="color" class="setting-color" id="textColor" value="#C5A059">
+      </div>
+      
+      <!-- TAMBAHAN: Toggle Warna Bergantian -->
+      <div class="setting-item setting-toggle">
+        <span class="setting-label">Warna Bergantian</span>
+        <div class="toggle-switch" id="warnaBergantianToggle"></div>
       </div>
     </div>
     
@@ -2065,6 +2071,11 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
     let letterSpacing = 4;
     let textColor = '#C5A059';
     let runningTextEnabled = true;
+    
+    // TAMBAHAN: Variabel untuk warna bergantian
+    let warnaBergantian = ['#C5A059', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22'];
+    let indeksWarna = 0;
+    let warnaBergantianEnabled = false;
     
     let fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
     let fontWeight = 400;
@@ -2756,6 +2767,22 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
       if (runningTrack) runningTrack.style.animationDuration = textSpeed + 's';
     }
 
+    // TAMBAHAN: Fungsi untuk mengganti warna running text
+    function gantiWarnaRunningText() {
+      if (!warnaBergantianEnabled || !runningTextEnabled) return;
+      
+      // Ganti ke warna berikutnya
+      indeksWarna = (indeksWarna + 1) % warnaBergantian.length;
+      textColor = warnaBergantian[indeksWarna];
+      
+      // Update tampilan
+      updateRunningTextStyle();
+      
+      // Update preview di settings
+      const colorPicker = document.getElementById('textColor');
+      if (colorPicker) colorPicker.value = textColor;
+    }
+
     // ===== SLIDESHOW =====
     window.nextSlide = function() {
       if (slides.length === 0) return;
@@ -3134,6 +3161,24 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
       updateRunningTextStyle(); 
     });
 
+    // TAMBAHAN: Warna Bergantian Toggle
+    const warnaToggle = document.getElementById('warnaBergantianToggle');
+    if (warnaToggle) {
+        warnaToggle.classList.remove('active'); // Default mati
+        
+        warnaToggle.addEventListener('click', function() {
+            warnaBergantianEnabled = !warnaBergantianEnabled;
+            this.classList.toggle('active', warnaBergantianEnabled);
+            
+            // Reset ke warna default jika dimatikan
+            if (!warnaBergantianEnabled) {
+                textColor = '#C5A059';
+                updateRunningTextStyle();
+                document.getElementById('textColor').value = '#C5A059';
+            }
+        });
+    }
+
     document.getElementById('bgVolumeSlider')?.addEventListener('input', (e) => { 
       bgVolume = parseInt(e.target.value); 
       document.getElementById('bgVolumeValue').textContent = bgVolume + '%'; 
@@ -3165,7 +3210,8 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
           hfsPort: hfsPortInput.value,
           runningText: document.getElementById('runningTextInput')?.value,
           logoLeft: logoLeftData,
-          logoRight: logoRightData
+          logoRight: logoRightData,
+          warnaBergantianEnabled: warnaBergantianEnabled // TAMBAHAN
         }));
         alert('Settings saved!');
         settingsPanel.classList.add('hide');
@@ -3207,6 +3253,9 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
         if (data.animationDuration !== undefined) animationDuration = data.animationDuration;
         if (data.hfsIp) hfsIpInput.value = data.hfsIp;
         if (data.hfsPort) hfsPortInput.value = data.hfsPort;
+        
+        // TAMBAHAN: Load warnaBergantianEnabled
+        if (data.warnaBergantianEnabled !== undefined) warnaBergantianEnabled = data.warnaBergantianEnabled;
         
         if (data.runningText !== undefined) {
           document.getElementById('runningTextInput').value = data.runningText;
@@ -3255,6 +3304,13 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
         
         document.getElementById('shuffleToggle').classList.toggle('active', shuffleEnabled);
         
+        // TAMBAHAN: Set warna toggle sesuai saved settings
+        if (warnaBergantianEnabled) {
+            document.getElementById('warnaBergantianToggle')?.classList.add('active');
+        } else {
+            document.getElementById('warnaBergantianToggle')?.classList.remove('active');
+        }
+        
         logoScaleValue.textContent = logoScale + '%';
         logoScaleSlider.value = logoScale;
         updateLogoScale(logoScale);
@@ -3278,6 +3334,14 @@ Koramil 1609-05/Sukasada Siap Menjaga Keutuhan NKRI, Bersama Rakyat TNI Kuat.Kor
     updateRunningTextStyle(); 
     updateRunningTextContent(); 
     updateRunningTextSpeed();
+    
+    // TAMBAHAN: Event listener untuk deteksi akhir putaran running text
+    const track = document.getElementById('runningTrack');
+    if (track) {
+        track.addEventListener('animationiteration', function() {
+            gantiWarnaRunningText();
+        });
+    }
     
     if (!runningTextEnabled) runningBox.classList.add('hide-by-settings');
     
