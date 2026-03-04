@@ -3370,5 +3370,188 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     JavaScript is required.
   </div>
 </noscript>
+<!-- ===== SISTEM UPDATE PWA ===== -->
+<script>
+// ===== VERSION CHECK & UPDATE PROMPT =====
+(function() {
+  // VERSI APLIKASI - UBAH SETIAP KALI UPDATE!
+  const APP_VERSION = '1.0.0';
+  
+  // Simpan versi saat pertama kali install
+  if (!localStorage.getItem('appVersion')) {
+    localStorage.setItem('appVersion', APP_VERSION);
+    console.log('📱 Versi awal:', APP_VERSION);
+  }
+  
+  // Fungsi cek update dari Apps Script
+  async function checkForUpdates() {
+    if (!navigator.onLine) {
+      console.log('📴 Offline mode - menggunakan versi ' + localStorage.getItem('appVersion'));
+      updateOnlineIndicator('offline');
+      return;
+    }
+    
+    try {
+      updateOnlineIndicator('checking');
+      
+      // Ambil URL Apps Script dari input
+      const appsScriptUrl = document.getElementById('appsScriptUrl')?.value;
+      if (!appsScriptUrl) {
+        console.log('❌ URL Apps Script tidak ditemukan');
+        return;
+      }
+      
+      // Cek versi ke server
+      const response = await fetch(appsScriptUrl + '?action=version&t=' + Date.now());
+      const data = await response.json();
+      
+      const serverVersion = data.version;
+      const currentVersion = localStorage.getItem('appVersion');
+      
+      console.log(`📱 Versi lokal: ${currentVersion}, Server: ${serverVersion}`);
+      
+      if (serverVersion !== currentVersion) {
+        // Tampilkan notifikasi update
+        showUpdateNotification(serverVersion);
+        updateOnlineIndicator('update-available');
+      } else {
+        updateOnlineIndicator('online');
+      }
+      
+    } catch (error) {
+      console.log('❌ Gagal cek update:', error);
+      updateOnlineIndicator(navigator.onLine ? 'online' : 'offline');
+    }
+  }
+  
+  // Fungsi update online indicator
+  function updateOnlineIndicator(status) {
+    const indicator = document.getElementById('onlineIndicator');
+    if (!indicator) return;
+    
+    switch(status) {
+      case 'online':
+        indicator.innerHTML = '✅ ONLINE v' + localStorage.getItem('appVersion');
+        indicator.style.color = '#4CAF50';
+        break;
+      case 'offline':
+        indicator.innerHTML = '📴 OFFLINE v' + localStorage.getItem('appVersion');
+        indicator.style.color = '#C5A059';
+        break;
+      case 'checking':
+        indicator.innerHTML = '🔄 CHECKING UPDATE...';
+        indicator.style.color = '#FFA500';
+        break;
+      case 'update-available':
+        indicator.innerHTML = '🔄 UPDATE TERSEDIA';
+        indicator.style.color = '#FF6B6B';
+        break;
+      default:
+        indicator.innerHTML = '⚪ ' + status;
+    }
+  }
+  
+  // Fungsi tampilkan notifikasi update
+  function showUpdateNotification(newVersion) {
+    // Cek apakah notifikasi sudah ada
+    if (document.getElementById('updateNotification')) return;
+    
+    const notif = document.createElement('div');
+    notif.id = 'updateNotification';
+    notif.style.cssText = `
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #C5A059, #D4B47C);
+      color: #0A0A0A;
+      padding: 15px 25px;
+      border-radius: 50px;
+      z-index: 9999;
+      box-shadow: 0 5px 25px rgba(197, 160, 89, 0.5);
+      border: 2px solid white;
+      font-weight: bold;
+      text-align: center;
+      animation: slideDown 0.5s ease;
+      backdrop-filter: blur(10px);
+    `;
+    
+    notif.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <span style="font-size: 24px;">🔄</span>
+        <span>Update tersedia! v${newVersion}</span>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="pwaUpdateNow()" style="background: #0A0A0A; color: #C5A059; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-weight: bold;">UPDATE</button>
+          <button onclick="pwaUpdateLater()" style="background: transparent; color: #0A0A0A; border: 1px solid #0A0A0A; padding: 8px 15px; border-radius: 25px; cursor: pointer;">NANTI</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(notif);
+  }
+  
+  // Fungsi update sekarang
+  window.pwaUpdateNow = function() {
+    // Hapus notifikasi
+    const notif = document.getElementById('updateNotification');
+    if (notif) notif.remove();
+    
+    // Bersihkan cache lama
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) {
+          if (name.includes('slide-show-cache')) {
+            caches.delete(name);
+          }
+        }
+      });
+    }
+    
+    // Update status
+    localStorage.setItem('appVersion', 'updating...');
+    updateOnlineIndicator('checking');
+    
+    // Reload paksa ambil versi baru
+    window.location.reload(true);
+  };
+  
+  // Fungsi tunda update
+  window.pwaUpdateLater = function() {
+    const notif = document.getElementById('updateNotification');
+    if (notif) notif.remove();
+    updateOnlineIndicator('online');
+  };
+  
+  // Event listener online/offline
+  window.addEventListener('online', function() {
+    console.log('🌐 Kembali online');
+    setTimeout(checkForUpdates, 3000);
+  });
+  
+  window.addEventListener('offline', function() {
+    console.log('📴 Offline');
+    updateOnlineIndicator('offline');
+  });
+  
+  // Cek update saat halaman dimuat (tunda 5 detik)
+  setTimeout(checkForUpdates, 5000);
+  
+  // Cek update setiap 10 menit (600000 ms)
+  setInterval(() => {
+    if (navigator.onLine) {
+      checkForUpdates();
+    }
+  }, 600000);
+  
+  // Update indicator awal
+  setTimeout(() => {
+    if (navigator.onLine) {
+      updateOnlineIndicator('online');
+    } else {
+      updateOnlineIndicator('offline');
+    }
+  }, 1000);
+})();
+</script>
 </body>
 </html>
