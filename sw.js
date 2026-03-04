@@ -1,4 +1,4 @@
-const CACHE_NAME = 'koramil-cache-v1';
+const CACHE_NAME = 'Wedding-cache-v1';
 const urlsToCache = [
   'index.html',
   'manifest.json'
