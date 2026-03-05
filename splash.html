@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splash Screen Prewedding</title>
+  <!-- Google Fonts: Great Vibes untuk nama -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    /* CSS LENGKAP SPLASH SCREEN */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      overflow: hidden;
+    }
+    
+    .splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0f0c29, #1b1445, #000);
+      z-index: 9999;
+      overflow: hidden;
+      transition: opacity 3s ease, visibility 3s ease;
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    
+    .aura {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 150vmax;
+      height: 150vmax;
+      border-radius: 50%;
+      opacity: 0;
+      filter: blur(120px);
+      transition: 2s ease;
+      animation: auroraFlow 20s infinite alternate;
+      z-index: 1;
+    }
+    
+    @keyframes auroraFlow {
+      0% { background: radial-gradient(circle, rgba(255,215,0,0.6), rgba(255,182,193,0.3), transparent 70%); }
+      25% { background: radial-gradient(circle, rgba(255,192,203,0.6), rgba(255,255,255,0.4), transparent 70%); }
+      50% { background: radial-gradient(circle, rgba(200,162,255,0.6), rgba(255,215,0,0.3), transparent 70%); }
+      75% { background: radial-gradient(circle, rgba(147,112,219,0.6), rgba(255,182,193,0.4), transparent 70%); }
+      100% { background: radial-gradient(circle, rgba(255,215,0,0.6), rgba(255,182,193,0.3), transparent 70%); }
+    }
+    
+    .lotus {
+      position: absolute;
+      font-size: clamp(50px, 8vw, 80px);
+      filter: drop-shadow(0 0 15px gold);
+      transition: 2s ease;
+      will-change: left, top, transform;
+      z-index: 5;
+    }
+    
+    .big-lotus {
+      position: absolute;
+      top: 32%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 70vmin;
+      opacity: 0;
+      filter: drop-shadow(0 0 100px rgba(255,215,0,0.8));
+      transition: 3s ease;
+      z-index: 10;
+    }
+    
+    .text-container {
+      position: absolute;
+      bottom: 18%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 100%;
+      text-align: center;
+      z-index: 30;
+      opacity: 0;
+      transition: opacity 4s ease;
+      filter: drop-shadow(0 0 30px rgba(0,0,0,0.5));
+    }
+    
+    .text-line {
+      font-family: 'Great Vibes', cursive;
+      background: linear-gradient(135deg, 
+        #fff8e7, #ffe4e1, #fff0f5, #f0e6ff, #e6f3ff);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientShift 15s ease infinite;
+      text-shadow: 0 0 40px rgba(255,255,255,0.8), 
+                   0 0 80px rgba(255,215,0,0.6),
+                   2px 2px 4px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    
+    .line1 {
+      font-size: clamp(4.5rem, 15vw, 8.5rem);
+      letter-spacing: 8px;
+      margin-bottom: -25px;
+    }
+    
+    .line2 {
+      font-size: clamp(5.5rem, 17vw, 9.5rem);
+      letter-spacing: 12px;
+      line-height: 0.7;
+      margin-bottom: -20px;
+    }
+    
+    .line3 {
+      font-size: clamp(4.5rem, 15vw, 8.5rem);
+      letter-spacing: 8px;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .loading-indicator {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.5);
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      z-index: 40;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    
+    @media (max-width: 600px) {
+      .big-lotus {
+        top: 28%;
+        font-size: 60vmin;
+      }
+      .text-container {
+        bottom: 22%;
+      }
+      .line1, .line3 {
+        font-size: clamp(3rem, 12vw, 4.5rem);
+        letter-spacing: 5px;
+      }
+      .line2 {
+        font-size: clamp(3.5rem, 14vw, 5.5rem);
+        letter-spacing: 6px;
+      }
+      .line1 { margin-bottom: -12px; }
+      .line2 { margin-bottom: -10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- SPLASH SCREEN - INI YANG ANDA COPY -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="scene">
+      <div class="aura" id="aura"></div>
+      <div class="lotus" id="lotus1">🪷</div>
+      <div class="lotus" id="lotus2">🪷</div>
+      <div class="big-lotus" id="bigLotus">🪷</div>
+      <div class="text-container" id="textContainer">
+        <div class="text-line line1">Arta</div>   <!-- GANTI NAMA -->
+        <div class="text-line line2">&</div>
+        <div class="text-line line3">Esti</div>   <!-- GANTI NAMA -->
+      </div>
+      <div class="loading-indicator" id="loadingIndicator">✦ Mempersiapkan ✦</div>
+    </div>
+  </div>
+
+  <script>
+    // JAVASCRIPT LENGKAP SPLASH SCREEN
+    (function() {
+      const splashScreen = document.getElementById("splashScreen");
+      const lotus1 = document.getElementById("lotus1");
+      const lotus2 = document.getElementById("lotus2");
+      const bigLotus = document.getElementById("bigLotus");
+      const aura = document.getElementById("aura");
+      const textContainer = document.getElementById("textContainer");
+      const loadingIndicator = document.getElementById("loadingIndicator");
+
+      let angle1 = 0;
+      let angle2 = 180;
+      let spin1 = 0;
+      let spin2 = 0;
+      let radius = Math.min(window.innerWidth, window.innerHeight) * 0.28;
+      let centerX = window.innerWidth / 2;
+      let centerY = window.innerHeight / 2;
+      const speed = 2;
+
+      function animate() {
+        angle1 += speed;
+        angle2 -= speed;
+        spin1 += 5;
+        spin2 -= 5;
+
+        const r1 = angle1 * Math.PI / 180;
+        const r2 = angle2 * Math.PI / 180;
+
+        lotus1.style.left = centerX + radius * Math.cos(r1) - 40 + "px";
+        lotus1.style.top = centerY + radius * Math.sin(r1) - 40 + "px";
+        lotus2.style.left = centerX + radius * Math.cos(r2) - 40 + "px";
+        lotus2.style.top = centerY + radius * Math.sin(r2) - 40 + "px";
+
+        lotus1.style.transform = `rotate(${spin1}deg)`;
+        lotus2.style.transform = `rotate(${spin2}deg)`;
+
+        if (angle1 >= 720) {
+          unite();
+          return;
+        }
+        
+        requestAnimationFrame(animate);
+      }
+
+      function unite() {
+        lotus1.style.left = centerX - 40 + "px";
+        lotus2.style.left = centerX - 40 + "px";
+        lotus1.style.top = centerY - radius + "px";
+        lotus2.style.top = centerY - radius + "px";
+
+        setTimeout(() => {
+          lotus1.style.top = centerY - 40 + "px";
+          lotus2.style.top = centerY - 40 + "px";
+        }, 1000);
+
+        setTimeout(() => {
+          lotus1.style.opacity = 0;
+          lotus2.style.opacity = 0;
+
+          aura.style.opacity = 1;
+          aura.style.transform = "translate(-50%,-50%) scale(1)";
+
+          bigLotus.style.opacity = 1;
+          bigLotus.style.transform = "translate(-50%,-50%) scale(1)";
+          
+          textContainer.style.opacity = 1;
+          
+          if (loadingIndicator) {
+            loadingIndicator.style.opacity = "0";
+            loadingIndicator.style.transition = "opacity 1s ease";
+          }
+          
+          // SPLASH SCREEN HIDE - 5 detik setelah teks muncul
+          setTimeout(() => {
+            splashScreen.classList.add('hidden');
+          }, 5000);
+          
+        }, 2800);
+      }
+
+      // Mulai animasi
+      setTimeout(() => {
+        animate();
+      }, 100);
+
+      // Resize handler
+      window.addEventListener('resize', () => {
+        radius = Math.min(window.innerWidth, window.innerHeight) * 0.28;
+        centerX = window.innerWidth / 2;
+        centerY = window.innerHeight / 2;
+      });
+    })();
+  </script>
+</body>
+</html>
