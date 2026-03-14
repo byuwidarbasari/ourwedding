@@ -283,7 +283,7 @@ html:fullscreen {
   max-height: 100%;
   width: auto;
   height: auto;
-  object-fit: contain;
+  object-fit: contain; /* Default, akan diubah oleh JS */
   object-position: center;
   margin: auto;
   display: block;
@@ -1557,6 +1557,36 @@ html:fullscreen {
         <input type="range" class="setting-slider" id="bgIntensitySlider" min="0" max="200" value="100" step="10">
       </div>
     </div>
+
+    <!-- ===== NEW SECTION: IMAGE FIT SETTINGS ===== -->
+    <div class="settings-section">
+      <h4>🖼️ IMAGE FIT (Tampilan Gambar)</h4>
+      <div class="setting-item">
+        <span class="setting-label">Mode Fit</span>
+        <select class="setting-select" id="imageFitSelect">
+          <option value="contain" selected>Fit (sesuaikan)</option>
+          <option value="cover">Fill (penuhi layar, crop)</option>
+          <option value="stretch">Stretch (regang)</option>
+          <option value="center">Center (tengah, ukuran asli)</option>
+          <option value="custom">Kustom (zoom + posisi)</option>
+        </select>
+      </div>
+      <div class="setting-item" id="customZoomContainer" style="display: none;">
+        <span class="setting-label">Zoom (%)</span>
+        <span class="setting-value" id="customZoomValue">100%</span>
+        <input type="range" class="setting-slider" id="customZoomSlider" min="10" max="300" value="100" step="5">
+      </div>
+      <div class="setting-item" id="customPosXContainer" style="display: none;">
+        <span class="setting-label">Posisi X</span>
+        <span class="setting-value" id="customPosXValue">center</span>
+        <input type="range" class="setting-slider" id="customPosXSlider" min="-50" max="50" value="0" step="1">
+      </div>
+      <div class="setting-item" id="customPosYContainer" style="display: none;">
+        <span class="setting-label">Posisi Y</span>
+        <span class="setting-value" id="customPosYValue">center</span>
+        <input type="range" class="setting-slider" id="customPosYSlider" min="-50" max="50" value="0" step="1">
+      </div>
+    </div>
     
     <div class="settings-section">
       <h4>🖼️ SLIDE ANIMATION</h4>
@@ -2191,6 +2221,89 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
     const clearLogoLeft = document.getElementById('clearLogoLeft');
     const clearLogoRight = document.getElementById('clearLogoRight');
 
+    // ===== NEW: Image Fit Variables =====
+    let imageFitMode = 'contain';
+    let customZoom = 100;
+    let customPosX = 0; // -50 to 50
+    let customPosY = 0;
+
+    const imageFitSelect = document.getElementById('imageFitSelect');
+    const customZoomContainer = document.getElementById('customZoomContainer');
+    const customZoomSlider = document.getElementById('customZoomSlider');
+    const customZoomValue = document.getElementById('customZoomValue');
+    const customPosXContainer = document.getElementById('customPosXContainer');
+    const customPosXSlider = document.getElementById('customPosXSlider');
+    const customPosXValue = document.getElementById('customPosXValue');
+    const customPosYContainer = document.getElementById('customPosYContainer');
+    const customPosYSlider = document.getElementById('customPosYSlider');
+    const customPosYValue = document.getElementById('customPosYValue');
+
+    // Fungsi untuk mengaplikasikan image fit ke semua gambar .main (img)
+    function applyImageFitToAllImages() {
+      const images = document.querySelectorAll('.main');
+      images.forEach(img => {
+        if (imageFitMode === 'custom') {
+          // Custom: gunakan transform scale & translate
+          img.style.objectFit = 'none';
+          img.style.maxWidth = 'none';
+          img.style.maxHeight = 'none';
+          img.style.width = 'auto';
+          img.style.height = 'auto';
+          img.style.transform = `scale(${customZoom/100}) translate(${customPosX}%, ${customPosY}%)`;
+        } else {
+          // Reset transform dan terapkan object-fit
+          img.style.transform = 'none';
+          img.style.maxWidth = '100%';
+          img.style.maxHeight = '100%';
+          img.style.width = 'auto';
+          img.style.height = 'auto';
+          
+          if (imageFitMode === 'stretch') {
+            img.style.objectFit = 'fill';
+          } else if (imageFitMode === 'cover') {
+            img.style.objectFit = 'cover';
+          } else if (imageFitMode === 'center') {
+            img.style.objectFit = 'none';
+          } else {
+            img.style.objectFit = 'contain';
+          }
+        }
+      });
+    }
+
+    // Event listeners untuk image fit
+    imageFitSelect.addEventListener('change', (e) => {
+      imageFitMode = e.target.value;
+      if (imageFitMode === 'custom') {
+        customZoomContainer.style.display = 'block';
+        customPosXContainer.style.display = 'block';
+        customPosYContainer.style.display = 'block';
+      } else {
+        customZoomContainer.style.display = 'none';
+        customPosXContainer.style.display = 'none';
+        customPosYContainer.style.display = 'none';
+      }
+      applyImageFitToAllImages();
+    });
+
+    customZoomSlider.addEventListener('input', (e) => {
+      customZoom = parseInt(e.target.value);
+      customZoomValue.textContent = customZoom + '%';
+      applyImageFitToAllImages();
+    });
+
+    customPosXSlider.addEventListener('input', (e) => {
+      customPosX = parseInt(e.target.value);
+      customPosXValue.textContent = customPosX + '%';
+      applyImageFitToAllImages();
+    });
+
+    customPosYSlider.addEventListener('input', (e) => {
+      customPosY = parseInt(e.target.value);
+      customPosYValue.textContent = customPosY + '%';
+      applyImageFitToAllImages();
+    });
+
     // ===== FUNGSI AUTO HIDE =====
     function hideControls() {
       if (!autoHideEnabled) return;
@@ -2362,6 +2475,9 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
         
         startSlideshow();
       }
+
+      // Terapkan image fit setelah slide dibuat
+      applyImageFitToAllImages();
     }
 
     // ===== FUNGSI LOAD DARI GOOGLE DRIVE =====
@@ -3219,7 +3335,12 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
           runningText: document.getElementById('runningTextInput')?.value,
           logoLeft: logoLeftData,
           logoRight: logoRightData,
-          warnaBergantianEnabled: warnaBergantianEnabled
+          warnaBergantianEnabled: warnaBergantianEnabled,
+          // Save image fit settings
+          imageFitMode: imageFitMode,
+          customZoom: customZoom,
+          customPosX: customPosX,
+          customPosY: customPosY
         }));
         alert('Settings saved!');
         settingsPanel.classList.add('hide');
@@ -3263,6 +3384,32 @@ silahkan atur animasi slide maupun type fonts dan pengaturan lainnya </textarea>
         if (data.hfsPort) hfsPortInput.value = data.hfsPort;
         
         if (data.warnaBergantianEnabled !== undefined) warnaBergantianEnabled = data.warnaBergantianEnabled;
+        
+        // Load image fit settings
+        if (data.imageFitMode !== undefined) {
+          imageFitMode = data.imageFitMode;
+          imageFitSelect.value = imageFitMode;
+          if (imageFitMode === 'custom') {
+            customZoomContainer.style.display = 'block';
+            customPosXContainer.style.display = 'block';
+            customPosYContainer.style.display = 'block';
+          }
+        }
+        if (data.customZoom !== undefined) {
+          customZoom = data.customZoom;
+          customZoomSlider.value = customZoom;
+          customZoomValue.textContent = customZoom + '%';
+        }
+        if (data.customPosX !== undefined) {
+          customPosX = data.customPosX;
+          customPosXSlider.value = customPosX;
+          customPosXValue.textContent = customPosX + '%';
+        }
+        if (data.customPosY !== undefined) {
+          customPosY = data.customPosY;
+          customPosYSlider.value = customPosY;
+          customPosYValue.textContent = customPosY + '%';
+        }
         
         if (data.runningText !== undefined) {
           document.getElementById('runningTextInput').value = data.runningText;
